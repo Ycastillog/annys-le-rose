@@ -488,7 +488,7 @@ $('#navigation').addEventListener('click', event => { if (event.target.closest('
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && $('#navigation').classList.contains('open')) { closeNavigation(); $('#menu-toggle').focus({preventScroll:true}); }
 });
-['#size-guide','#size-guide-bottom'].forEach(selector => $(selector).addEventListener('click', event => showInfo('sizes', null, event.currentTarget)));
+['#size-guide','#size-guide-bottom'].forEach(selector => $(selector)?.addEventListener('click', event => showInfo('sizes', null, event.currentTarget)));
 
 $$('dialog').forEach(dialog => {
   dialog.addEventListener('click', event => {

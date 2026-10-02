@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <title>Annys Le´ Rose app icon concept</title>
+  <rect width="512" height="512" rx="112" fill="#bc1534"/>
+  <g stroke="#fffcf7" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" transform="translate(88 80) scale(3.5)">
+    <path d="M18 76C27 53 35 33 48 16C58 33 66 54 77 76"/>
+    <path d="M31 51C41 46 51 45 63 50"/>
+    <path d="M47 37V76H65"/>
+    <path d="M47 37C61 29 77 37 73 48C70 56 58 60 47 57"/>
+    <path d="M56 58L77 76"/>
+  </g>
+</svg>
