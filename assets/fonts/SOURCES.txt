@@ -1,0 +1,17 @@
+Annys Le´ Rose — self-hosted web fonts
+Retrieved from the official Google Fonts CSS API on 2026-10-02.
+Original font files are unmodified Latin WOFF2 subsets.
+
+Cormorant Garamond, normal variable weight 400–600:
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2
+
+Cormorant Garamond, italic variable weight 400–500:
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtImSo.woff2
+
+Manrope, normal variable weight 400–700:
+https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2
+
+Licenses are included as Cormorant-Garamond-OFL.txt and Manrope-OFL.txt.
+Official source and license references:
+https://github.com/google/fonts/tree/main/ofl/cormorantgaramond
+https://github.com/google/fonts/tree/main/ofl/manrope
