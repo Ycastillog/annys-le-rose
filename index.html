@@ -12,7 +12,8 @@
   <meta property="og:title" data-i18n-content="meta.title" content="Annys Le´ Rose — Your own kind of feminine">
   <meta property="og:description" data-i18n-content="meta.description" content="Meet the Annys Le´ Rose world: an intimate clothing, fragrance and beauty brand taking shape. Explore its identity and 16 concepts in development.">
   <meta property="og:url" content="https://ycastillog.github.io/annys-le-rose/">
-  <meta property="og:image" content="https://ycastillog.github.io/annys-le-rose/assets/beauty-ritual.jpg">
+  <meta property="og:image" content="https://ycastillog.github.io/annys-le-rose/assets/campaign-hero.jpg">
+  <meta property="og:image:alt" data-i18n-content="hero.imageAlt" content="Two adult women with different body types wearing cherry-red and ivory sleepwear, conceptual Annys Le´ Rose editorial photography.">
   <meta property="og:image:width" content="1536">
   <meta property="og:image:height" content="1024">
   <meta name="twitter:card" content="summary_large_image">
@@ -20,18 +21,18 @@
   <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts.css?v=f212715fea">
-  <link rel="stylesheet" href="styles.css?v=7b1decf026">
-  <script src="i18n.js?v=17f5fe21fe" defer></script>
+  <link rel="stylesheet" href="styles.css?v=3441c3c8f2">
+  <script src="i18n.js?v=c832a72da2" defer></script>
   <script src="catalog.js?v=f16b7ee0de" defer></script>
-  <script src="catalog-query.js?v=ccaa15ec51" defer></script>
+  <script src="catalog-query.js?v=e658b03c87" defer></script>
   <script src="edition.js?v=e14353736e" defer></script>
-  <script src="app.js?v=1f2debcd5f" defer></script>
+  <script src="app.js?v=f37397900e" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content" data-i18n="skip.main">Skip to content</a>
   <div class="announcement">
-    <span data-i18n="announcement.copy">A brand taking shape. A ritual beginning.</span>
-    <a href="#identidad" data-i18n="announcement.link">Meet our world</a>
+    <span data-i18n="announcement.copy">Five days. Once a year.</span>
+    <a href="#edicion" data-i18n="announcement.link">Édition 05 · Dates to be announced</a>
   </div>
 
   <header class="site-header">
@@ -52,11 +53,11 @@
       </div>
     </div>
     <nav class="site-navigation" aria-label="Collections and brand" data-i18n-aria-label="nav.label" id="navigation">
-      <a href="#identidad" data-i18n="identity.nav">Our world</a>
-      <a href="#coleccion" data-category="Todo" data-i18n="nav.new">Concepts</a>
-      <a href="#coleccion" data-category="fragrance" data-i18n="nav.fragrance">Fragrance</a>
-      <a href="#coleccion" data-category="beauty" data-i18n="nav.beauty">Lip gloss</a>
+      <a href="?category=intimates#coleccion" data-discover="intimates" data-i18n="nav.intimates">Intimates</a>
+      <a href="?category=fragrance#coleccion" data-discover="fragrance" data-i18n="nav.fragrance">Fragrance</a>
+      <a href="?category=beauty#coleccion" data-discover="beauty" data-i18n="nav.beauty">Lip gloss</a>
       <a href="#edicion" data-i18n="nav.exclusive">Édition 05</a>
+      <a href="#identidad" data-i18n="identity.nav">Our world</a>
       <a href="brand.html" data-i18n="nav.studio">Brand studio</a>
     </nav>
     <div class="search-bar" id="search-bar" hidden>
@@ -69,74 +70,35 @@
 
   <main id="main-content" tabindex="-1">
     <noscript><p class="small-note section" data-i18n="site.noScript">This preview needs JavaScript for catalog filters, language changes and the sample bag. You can still explore our brand story and the brand studio.</p></noscript>
-    <section class="hero" id="inicio" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow" data-i18n="hero.eyebrow">ANNYS LE´ ROSE · A BRAND TAKING SHAPE</p>
-        <h1 id="hero-title" data-i18n-html="hero.title">Your own kind<br><em>of feminine.</em></h1>
-        <p data-i18n="hero.copy">Lace close to your skin. A scent chosen for yourself. A touch of gloss. A world of intimate rituals, taking shape around your own kind of feminine.</p>
-        <div class="hero-actions"><a class="button" href="#identidad" data-i18n="hero.cta">Meet Annys Le´ Rose</a><a class="hero-secondary underlined" href="#coleccion" data-i18n="hero.secondary">Explore the concepts</a></div>
-      </div>
+    <section class="hero hero-campaign" id="inicio" aria-labelledby="hero-title">
       <figure class="hero-media">
-        <img src="assets/beauty-ritual.jpg" alt="Annys Le´ Rose pink fragrance and red lip gloss on ivory satin, conceptual image" data-i18n-alt="hero.imageAlt" fetchpriority="high" decoding="async" width="1536" height="1024">
-        <figcaption class="hero-caption" data-i18n="hero.caption">A glimpse of the world we are creating.</figcaption>
+        <img src="assets/campaign-hero.jpg" alt="Two adult women with different body types wearing cherry-red and ivory sleepwear, conceptual Annys Le´ Rose editorial photography." data-i18n-alt="hero.imageAlt" fetchpriority="high" decoding="async" width="1536" height="1024">
+        <figcaption class="hero-caption" data-i18n="hero.caption">Annys Le´ Rose · Campaign concept</figcaption>
       </figure>
-    </section>
-    <div class="brand-strip"><span data-i18n="strip.softness">Softness that stays with you</span><span data-i18n="strip.details">Details to fall for</span><span data-i18n="strip.confidence">Confidence you can feel</span></div>
-
-    <section class="identity-story section" id="identidad" aria-labelledby="identity-title">
-      <figure class="identity-symbol"><img src="assets/brand/symbol.svg" alt="" aria-hidden="true" width="256" height="256"><figcaption data-i18n="identity.signature">Your own kind of feminine.</figcaption></figure>
-      <div class="identity-copy">
-        <p class="eyebrow" data-i18n="identity.eyebrow">THE ANNYS LE´ ROSE WORLD</p>
-        <h2 id="identity-title" data-i18n-html="identity.title">A feeling<br><em>before a collection.</em></h2>
-        <p data-i18n="identity.copy">Annys Le´ Rose begins with the freedom to feel feminine your own way. We are developing an identity for intimate clothing, fragrance and beauty, with warmth, care and a character of its own.</p>
-        <ul class="identity-values">
-          <li><h3 data-i18n="identity.value1Title">Your femininity, your words</h3><p data-i18n="identity.value1Copy">Soft, bold, quiet or expressive. There is room for every side of you.</p></li>
-          <li><h3 data-i18n="identity.value2Title">Rituals that feel personal</h3><p data-i18n="identity.value2Copy">Lace, scent and a touch of gloss. Everyday gestures, chosen for how you want to feel.</p></li>
-          <li><h3 data-i18n="identity.value3Title">An identity with intention</h3><p data-i18n="identity.value3Copy">A vivid red, a soft rose, a considered detail. Expression with warmth and many ways to be beautiful.</p></li>
-        </ul>
-        <a class="identity-link underlined" href="brand.html" data-i18n="identity.studioLink">Explore the brand studio</a>
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.eyebrow">INTIMATES · FRAGRANCE · BEAUTY</p>
+        <h1 id="hero-title" data-i18n-html="hero.title">Softness.<br><em>With character.</em></h1>
+        <p data-i18n="hero.copy">Lace, scent and a touch of gloss. A feminine world, expressed your way.</p>
+        <div class="hero-actions"><a class="button" href="#universos" data-i18n="hero.cta">Find your ritual</a><a class="hero-secondary underlined" href="?category=all#coleccion" data-discover="all" data-i18n="hero.secondary">Explore the concepts</a></div>
       </div>
     </section>
+    <div class="brand-strip"><span data-i18n="strip.softness">Wear your mood</span><span data-i18n="strip.details">Make scent personal</span><span data-i18n="strip.confidence">Add your touch</span></div>
 
-    <section class="collection-shortcuts section" aria-labelledby="moments-title">
-      <div class="section-heading"><div><p class="eyebrow" data-i18n="moments.eyebrow">FIND YOUR MOMENT</p><h2 id="moments-title" data-i18n="moments.title">For every side of you.</h2></div></div>
-      <div class="shortcut-grid">
-        <a class="shortcut-card" href="#coleccion" data-category="Lencería">
-          <div class="shortcut-image"><img src="assets/editorial.jpg" alt="Red lace lingerie detail" data-i18n-alt="moments.lingerieAlt" loading="lazy" decoding="async" width="1672" height="941"></div>
-          <div class="shortcut-copy"><h3 data-i18n="moments.lingerie">Lingerie</h3><p data-i18n="moments.lingerieCopy">Lace and details that express your essence</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
+    <section class="universes section" id="universos" aria-labelledby="universe-title">
+      <div class="section-heading"><div><p class="eyebrow" data-i18n="universe.eyebrow">EXPLORE YOUR WORLD</p><h2 id="universe-title" data-i18n-html="universe.title">Three rituals.<br><em>Entirely yours.</em></h2></div><p data-i18n="universe.copy">Lace, scent or a touch of gloss. Begin with what feels like you.</p></div>
+      <div class="universe-grid">
+        <a class="universe-card" href="?category=intimates#coleccion" data-discover="intimates">
+          <div class="universe-image"><img src="assets/cherry-body.jpg" alt="Cherry-red lace lingerie on ivory satin, conceptual image." data-i18n-alt="universe.intimatesAlt" loading="lazy" decoding="async" width="1024" height="1280"></div>
+          <div class="universe-copy"><span class="universe-index" aria-hidden="true">01</span><h3 data-i18n="universe.intimatesTitle">Intimates</h3><p data-i18n="universe.intimatesCopy">Lace, everyday layers and moments of rest.</p><span class="universe-link" data-i18n="universe.intimatesCta">Explore intimates</span></div>
         </a>
-        <a class="shortcut-card" href="#coleccion" data-category="Esenciales">
-          <div class="shortcut-image"><img src="assets/noir.jpg" alt="Black lace intimates set" data-i18n-alt="moments.essentialsAlt" loading="lazy" decoding="async" width="1024" height="1536"></div>
-          <div class="shortcut-copy"><h3 data-i18n="moments.essentials">Essentials</h3><p data-i18n="moments.essentialsCopy">Your everyday favorites</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
+        <a class="universe-card" href="?category=fragrance#coleccion" data-discover="fragrance">
+          <div class="universe-image"><img src="assets/perfume-rose.jpg" alt="Conceptual Rose Veil fragrance in a pink bottle with an ivory cap." data-i18n-alt="universe.fragranceAlt" loading="lazy" decoding="async" width="1024" height="1280"></div>
+          <div class="universe-copy"><span class="universe-index" aria-hidden="true">02</span><h3 data-i18n="universe.fragranceTitle">Fragrance</h3><p data-i18n="universe.fragranceCopy">A personal gesture. A signature of your own.</p><span class="universe-link" data-i18n="universe.fragranceCta">Explore fragrance</span></div>
         </a>
-        <a class="shortcut-card" href="#coleccion" data-category="Descanso">
-          <div class="shortcut-image"><img src="assets/lune.jpg" alt="Blush satin camisole and shorts" data-i18n-alt="moments.loungeAlt" loading="lazy" decoding="async" width="1024" height="1536"></div>
-          <div class="shortcut-copy"><h3 data-i18n="moments.lounge">Sleep &amp; lounge</h3><p data-i18n="moments.loungeCopy">Slow down. Make room for yourself.</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
+        <a class="universe-card" href="?category=beauty#coleccion" data-discover="beauty">
+          <div class="universe-image"><img src="assets/gloss-cherry.jpg" alt="Cherry Kiss lip gloss concept in cherry red." data-i18n-alt="universe.lipglossAlt" loading="lazy" decoding="async" width="1024" height="1280"></div>
+          <div class="universe-copy"><span class="universe-index" aria-hidden="true">03</span><h3 data-i18n="universe.lipglossTitle">Lip gloss</h3><p data-i18n="universe.lipglossCopy">A touch of color to express your mood.</p><span class="universe-link" data-i18n="universe.lipglossCta">Explore lip gloss</span></div>
         </a>
-        <a class="shortcut-card" href="#coleccion" data-category="fragrance">
-          <div class="shortcut-image"><img src="assets/perfume-rose.jpg" alt="Conceptual Rose Veil fragrance in a pink bottle with an ivory cap" data-i18n-alt="moments.fragranceAlt" loading="lazy" decoding="async" width="1024" height="1280"></div>
-          <div class="shortcut-copy"><h3 data-i18n="moments.fragrance">Fragrance</h3><p data-i18n="moments.fragranceCopy">A signature for your ritual</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
-        </a>
-        <a class="shortcut-card" href="#coleccion" data-category="beauty">
-          <div class="shortcut-image"><img src="assets/gloss-cherry.jpg" alt="Conceptual Cherry Kiss lip gloss" data-i18n-alt="moments.beautyAlt" loading="lazy" decoding="async" width="1024" height="1280"></div>
-          <div class="shortcut-copy"><h3 data-i18n="moments.beauty">Lip gloss</h3><p data-i18n="moments.beautyCopy">A touch of gloss, your way</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
-        </a>
-      </div>
-    </section>
-
-    <section class="edition section" id="edicion" aria-labelledby="edition-title">
-      <figure class="edition-media"><img src="assets/edition-coffret.jpg" alt="Conceptual cherry red ALR Édition 05 coffret with fragrance and lip gloss" data-i18n-alt="edition.imageAlt" loading="lazy" decoding="async" width="1024" height="1280"><figcaption data-i18n="edition.imageCaption">Scent. Gloss. A shared ritual.</figcaption></figure>
-      <div class="edition-copy">
-        <p class="eyebrow" data-i18n="edition.eyebrow">THE ANNUAL ANNYS LE´ ROSE RITUAL</p>
-        <p class="edition-mark" aria-hidden="true">05</p>
-        <p class="edition-name" data-i18n="edition.name">ALR · Édition 05</p>
-        <h2 id="edition-title" data-i18n-html="edition.title">Five days.<br><em>Once a year.</em></h2>
-        <p data-i18n="edition.copy">A proposed annual fragrance and lip gloss collection, imagined for one five-day opening. Explore the concepts individually or together in a coffret. Dates are still to be confirmed.</p>
-        <ul class="edition-facts"><li data-i18n="edition.factFrequency">1 edition a year</li><li data-i18n="edition.factDuration">5 days of access</li><li data-i18n="edition.factRituals">2 rituals: scent + gloss</li></ul>
-        <p class="edition-status" id="edition-status" role="status" aria-live="polite" data-i18n="edition.pending">Dates to be announced</p>
-        <p id="edition-window-dates" class="small-note" hidden></p>
-        <div class="edition-actions"><a href="#coleccion" class="button" data-category="exclusive" data-i18n="edition.preview">Explore the edition</a><button type="button" id="edition-interest" class="button secondary" aria-pressed="false" aria-describedby="edition-interest-note" data-i18n="edition.saveInterest">Save my interest</button></div>
-        <p id="edition-interest-note" class="small-note" role="status" aria-live="polite" data-i18n="edition.interestNote">Saved only in this browser. No emails or notifications are sent.</p>
       </div>
     </section>
 
@@ -157,6 +119,7 @@
       <div class="catalog-controls">
         <div class="tabs" role="group" aria-label="Filter collection" data-i18n-aria-label="filter.label">
           <button type="button" class="active" data-filter="Todo" aria-pressed="true" data-i18n="filter.all">All concepts</button>
+          <button type="button" data-filter="intimates" aria-pressed="false" data-i18n="filter.intimates">Intimates</button>
           <button type="button" data-filter="Lencería" aria-pressed="false" data-i18n="filter.lingerie">Lingerie</button>
           <button type="button" data-filter="Esenciales" aria-pressed="false" data-i18n="filter.essentials">Essentials</button>
           <button type="button" data-filter="Descanso" aria-pressed="false" data-i18n="filter.lounge">Sleep &amp; lounge</button>
@@ -181,6 +144,37 @@
       <p class="small-note" data-i18n="catalog.sampleNote">Designs, images and prices are samples. Not available for purchase yet.</p>
       <div id="product-grid" class="product-grid" aria-describedby="catalog-note"></div>
       <div class="empty-state" id="catalog-empty" hidden><h3 data-i18n="catalog.emptyTitle">No matching concepts.</h3><p id="empty-text" data-i18n="catalog.emptyCopy">Try another search or adjust the filters.</p><button type="button" class="button" id="reset-filter" data-i18n="catalog.reset">View all concepts</button></div>
+    </section>
+
+    <section class="edition section" id="edicion" aria-labelledby="edition-title">
+      <figure class="edition-media"><img src="assets/edition-coffret.jpg" alt="Conceptual cherry red ALR Édition 05 coffret with fragrance and lip gloss" data-i18n-alt="edition.imageAlt" loading="lazy" decoding="async" width="1024" height="1280"><figcaption data-i18n="edition.imageCaption">Scent. Gloss. A shared ritual.</figcaption></figure>
+      <div class="edition-copy">
+        <p class="eyebrow" data-i18n="edition.eyebrow">THE ANNUAL ANNYS LE´ ROSE RITUAL</p>
+        <p class="edition-mark" aria-hidden="true">05</p>
+        <p class="edition-name" data-i18n="edition.name">ALR · Édition 05</p>
+        <h2 id="edition-title" data-i18n-html="edition.title">Five days.<br><em>Once a year.</em></h2>
+        <p data-i18n="edition.copy">A proposed annual fragrance and lip gloss collection, imagined for one five-day opening. Explore the concepts individually or together in a coffret. Dates are still to be confirmed.</p>
+        <ul class="edition-facts"><li data-i18n="edition.factFrequency">1 edition a year</li><li data-i18n="edition.factDuration">5 days of access</li><li data-i18n="edition.factRituals">2 rituals: scent + gloss</li></ul>
+        <p class="edition-status" id="edition-status" role="status" aria-live="polite" data-i18n="edition.pending">Dates to be announced</p>
+        <p id="edition-window-dates" class="small-note" hidden></p>
+        <div class="edition-actions"><a href="#coleccion" class="button" data-category="exclusive" data-i18n="edition.preview">Explore the edition</a><button type="button" id="edition-interest" class="button secondary" aria-pressed="false" aria-describedby="edition-interest-note" data-i18n="edition.saveInterest">Save my interest</button></div>
+        <p id="edition-interest-note" class="small-note" role="status" aria-live="polite" data-i18n="edition.interestNote">Saved only in this browser. No emails or notifications are sent.</p>
+      </div>
+    </section>
+
+    <section class="identity-story section" id="identidad" aria-labelledby="identity-title">
+      <figure class="identity-symbol"><img src="assets/brand/symbol.svg" alt="" aria-hidden="true" width="256" height="256"><figcaption data-i18n="identity.signature">Your own kind of feminine.</figcaption></figure>
+      <div class="identity-copy">
+        <p class="eyebrow" data-i18n="identity.eyebrow">THE ANNYS LE´ ROSE WORLD</p>
+        <h2 id="identity-title" data-i18n-html="identity.title">A feeling<br><em>before a collection.</em></h2>
+        <p data-i18n="identity.copy">Annys Le´ Rose begins with the freedom to feel feminine your own way. An intimate world of clothing, fragrance and beauty, taking shape with warmth and character.</p>
+        <ul class="identity-values">
+          <li><h3 data-i18n="identity.value1Title">Your femininity, your words</h3><p data-i18n="identity.value1Copy">Soft, bold, quiet or expressive. There is room for every side of you.</p></li>
+          <li><h3 data-i18n="identity.value2Title">Rituals that feel personal</h3><p data-i18n="identity.value2Copy">Lace, scent and a touch of gloss. Everyday gestures, chosen for how you want to feel.</p></li>
+          <li><h3 data-i18n="identity.value3Title">An identity with intention</h3><p data-i18n="identity.value3Copy">A vivid red, a soft rose, a considered detail. Expression with warmth and many ways to be beautiful.</p></li>
+        </ul>
+        <a class="identity-link underlined" href="brand.html" data-i18n="identity.studioLink">Explore the brand studio</a>
+      </div>
     </section>
 
     <section class="beauty-story section" id="rituales" aria-labelledby="beauty-title">

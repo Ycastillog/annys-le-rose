@@ -14,7 +14,7 @@ const edition = window.ALRedition;
 const productById = new Map(products.map(product => [product.id, product]));
 const productText = (product, field) => t(`products.${product.id}.${field}`);
 const colorName = color => t(`color.${color.id}`);
-const categoryAliases = {Todo:'all', 'Lencería':'lingerie', Esenciales:'essentials', Descanso:'lounge', Perfumes:'fragrance', Brillos:'beauty', Exclusiva:'exclusive', Favoritos:'favorites'};
+const categoryAliases = {Todo:'all', 'Íntimos':'intimates', Intimates:'intimates', 'Lencería':'lingerie', Esenciales:'essentials', Descanso:'lounge', Perfumes:'fragrance', Brillos:'beauty', Exclusiva:'exclusive', Favoritos:'favorites'};
 const normalizeCategory = value => categoryAliases[value] || value;
 const variantKind = product => product.variantKind || 'size';
 const productCategoryKey = product => variantKind(product) === 'set' ? 'product.coffretCategory' : `category.${product.category}`;
@@ -26,6 +26,7 @@ const unavailableAction = () => edition.getWindow().status === 'pending' ? 'edit
 const searchIndex = catalogQuery.createIndex(products, product => ['es','en'].map(locale => [
   i18n.t(`products.${product.id}.name`, {}, locale),
   i18n.t(`category.${product.category}`, {}, locale),
+  catalogQuery.isIntimate(product) ? i18n.t('category.intimates', {}, locale) : '',
   i18n.t(productCategoryKey(product), {}, locale),
   i18n.t(`products.${product.id}.description`, {}, locale),
   ...product.sizes.map(size => variantKind(product) === 'set' ? i18n.t('product.setValue', {}, locale) : size),
@@ -300,12 +301,27 @@ function closeNavigation() {
 
 function setCategory(value) {
   const next = normalizeCategory(value);
-  if (!['all', 'lingerie', 'essentials', 'lounge', 'fragrance', 'beauty', 'exclusive', 'favorites'].includes(next)) return;
+  if (!['all', 'intimates', 'lingerie', 'essentials', 'lounge', 'fragrance', 'beauty', 'exclusive', 'favorites'].includes(next)) return;
   category = next;
   if (['fragrance', 'beauty', 'exclusive'].includes(next)) filters.size = '';
   renderProducts();
   closeNavigation();
   syncCatalogURL('push');
+}
+
+function discoverCategory(value) {
+  if (!['all', 'intimates', 'fragrance', 'beauty'].includes(value)) return false;
+  // Editorial entrances start a fresh view; the previous filtered view stays
+  // in history so Back returns to it. Catalog tabs keep their existing filters.
+  query = '';
+  sort = 'featured';
+  Object.keys(filters).forEach(key => { filters[key] = ''; });
+  $('#search').value = '';
+  $('#catalog-search').value = '';
+  $('#sort').value = sort;
+  setCategory(value);
+  finishSearch();
+  return true;
 }
 
 function openDialog(dialog, trigger = document.activeElement) {
@@ -441,6 +457,12 @@ function updateSize() {
 document.addEventListener('click', event => {
   const button = event.target.closest('button,a');
   if (!button) return;
+  if (button.dataset.discover !== undefined) {
+    if (button.tagName === 'A' && (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || (event.button !== undefined && event.button !== 0))) return;
+    event.preventDefault();
+    discoverCategory(button.dataset.discover);
+    return;
+  }
   if (button.dataset.clearFilter) {
     const key = button.dataset.clearFilter;
     if (key === 'query') setQuery('');
