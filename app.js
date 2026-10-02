@@ -8,26 +8,13 @@ const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({'&'
 const text = (key, variables) => escapeHTML(t(key, variables));
 const money = amount => new Intl.NumberFormat(i18n.language === 'en' ? 'en-US' : 'es-US', {style:'currency', currency:'USD'}).format(amount);
 
-// IDs, category keys and legacy color names stay independent of the display language.
-const colors = {
-  cherry: {id:'cherry', name:'Rojo cereza', hex:'#bc1534'},
-  black: {id:'black', name:'Negro', hex:'#292327'},
-  blush: {id:'blush', name:'Rosa suave', hex:'#d69aa6'}
-};
-const products = [
-  {id:'rose', category:'lingerie', price:58, image:'assets/editorial.jpg', position:'78% center', colors:[colors.cherry]},
-  {id:'noir', category:'lingerie', price:62, image:'assets/noir.jpg', position:'center', colors:[colors.black]},
-  {id:'lune', category:'lounge', price:72, image:'assets/lune.jpg', position:'center', colors:[colors.blush]},
-  {id:'rose-bra', category:'essentials', price:38, image:'assets/editorial.jpg', position:'80% 35%', colors:[colors.cherry]},
-  {id:'noir-brief', category:'essentials', price:24, image:'assets/noir.jpg', position:'center bottom', colors:[colors.black]},
-  {id:'lune-top', category:'lounge', price:44, image:'assets/lune.jpg', position:'center top', colors:[colors.blush]}
-].map(product => ({...product, sizes:['XS','S','M','L','XL','XXL']}));
+const {products} = window.ALRcatalog;
+const catalogQuery = window.ALRcatalogQuery;
 const productById = new Map(products.map(product => [product.id, product]));
 const productText = (product, field) => t(`products.${product.id}.${field}`);
 const colorName = color => t(`color.${color.id}`);
 const categoryAliases = {Todo:'all', 'Lencería':'lingerie', Esenciales:'essentials', Descanso:'lounge', Favoritos:'favorites'};
 const normalizeCategory = value => categoryAliases[value] || value;
-const normalizeSearch = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase(i18n.language).trim();
 
 function readStorage(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -43,6 +30,7 @@ let cart = Array.isArray(savedCart) ? savedCart.filter(line => {
 let category = 'all';
 let query = '';
 let sort = 'featured';
+const filters = {size:'', color:'', price:''};
 let activeProduct = null;
 let selectedSize = '';
 let selectedColor = '';
@@ -119,25 +107,21 @@ function restoreFocus(reference, fallback = '#cart-toggle') {
 
 function renderProducts() {
   const focus = $('#product-grid').contains(document.activeElement) ? focusReference() : null;
-  const search = normalizeSearch(query);
-  let list = products.filter(product => {
-    const categoryMatches = category === 'all' || (category === 'favorites' ? favorites.has(product.id) : product.category === category);
+  const list = catalogQuery.select(products, {category, query, sort, favorites, ...filters}, product => {
     // Search both languages so the same query still finds a piece after a switch.
-    const searchText = ['es','en'].map(locale => [
+    return ['es','en'].map(locale => [
       i18n.t(`products.${product.id}.name`, {}, locale),
       i18n.t(`category.${product.category}`, {}, locale),
       i18n.t(`products.${product.id}.description`, {}, locale),
       ...product.colors.map(color => i18n.t(`color.${color.id}`, {}, locale))
     ].join(' ')).join(' ');
-    return categoryMatches && normalizeSearch(searchText).includes(search);
   });
-  if (sort === 'low') list.sort((a, b) => a.price - b.price);
-  if (sort === 'high') list.sort((a, b) => b.price - a.price);
+  renderFilters();
   const resultCount = t(list.length === 1 ? 'catalog.piece' : 'catalog.pieces', {count:list.length});
   $('#results-count').textContent = resultCount;
   if ($('#search-results-status')) $('#search-results-status').textContent = resultCount;
   $('#catalog-empty').hidden = list.length > 0;
-  $('#empty-text').textContent = t(category === 'favorites' ? 'catalog.emptyFavorites' : 'catalog.emptySearch');
+  $('#empty-text').textContent = t(category === 'favorites' && favorites.size === 0 ? 'catalog.emptyFavorites' : 'catalog.emptySearch');
   $('#product-grid').innerHTML = list.map(product => {
     const name = productText(product, 'name');
     const favorite = favorites.has(product.id);
@@ -151,6 +135,7 @@ function renderProducts() {
       <div class="product-title-row"><h3><button class="product-title-button" data-product="${product.id}">${escapeHTML(name)}</button></h3><span>${money(product.price)}</span></div>
       <p class="product-description">${text(`category.${product.category}`)} · ${product.sizes[0]}–${product.sizes.at(-1)}</p>
       <div class="swatches">${product.colors.map(color => `<span class="swatch" style="--swatch:${color.hex}" aria-hidden="true"></span>`).join('')}<span>${escapeHTML(colorName(product.colors[0]))}</span></div>
+      <p class="product-sample-label">${text('catalog.sampleBadge')}</p>
     </article>`;
   }).join('');
   $$('[data-filter]').forEach(button => {
@@ -158,7 +143,38 @@ function renderProducts() {
     button.classList.toggle('active', active);
     button.setAttribute('aria-pressed', String(active));
   });
-  if (focus) restoreFocus(focus, '#reset-filter');
+  if (focus) restoreFocus(focus, list.length ? '#product-grid .product-open' : '#reset-filter');
+}
+
+function renderFilters() {
+  const chips = [];
+  if (category !== 'all') chips.push({key:'category', label:t(category === 'favorites' ? 'filter.favorites' : `category.${category}`)});
+  if (query.trim()) chips.push({key:'query', label:t('catalog.searchChip', {query:query.trim()})});
+  if (filters.size) chips.push({key:'size', label:`${t('catalog.size')}: ${filters.size}`});
+  if (filters.color) chips.push({key:'color', label:t(`color.${filters.color}`)});
+  if (filters.price) chips.push({key:'price', label:t(`catalog.${filters.price}`)});
+  const count = Object.values(filters).filter(Boolean).length;
+  $('#filter-count').hidden = count === 0;
+  $('#filter-count').textContent = t(count === 1 ? 'catalog.filterCountOne' : 'catalog.filterCount', {count});
+  for (const key of Object.keys(filters)) $(`#filter-${key}`).value = filters[key];
+  $('#active-filters').hidden = chips.length === 0;
+  $('#active-filters').innerHTML = chips.map(({key,label}) => `<button type="button" class="filter-chip" data-clear-filter="${key}" aria-label="${text('catalog.removeFilter', {label})}">${escapeHTML(label)}<span aria-hidden="true">×</span></button>`).join('');
+  $('#catalog-search-clear').hidden = query.length === 0;
+}
+
+function setQuery(value) {
+  query = value;
+  $('#search').value = value;
+  $('#catalog-search').value = value;
+  renderProducts();
+}
+
+function resetCatalog() {
+  category = 'all';
+  sort = 'featured';
+  $('#sort').value = sort;
+  Object.keys(filters).forEach(key => { filters[key] = ''; });
+  setQuery('');
 }
 
 function closeNavigation() {
@@ -301,6 +317,14 @@ function updateSize() {
 document.addEventListener('click', event => {
   const button = event.target.closest('button,a');
   if (!button) return;
+  if (button.dataset.clearFilter) {
+    const key = button.dataset.clearFilter;
+    if (key === 'query') setQuery('');
+    else if (key === 'category') setCategory('all');
+    else if (Object.hasOwn(filters, key)) { filters[key] = ''; renderProducts(); }
+    $('#catalog-search').focus({preventScroll:true});
+    return;
+  }
   if (button.dataset.product) { openProduct(button.dataset.product, button); return; }
   if (button.dataset.favorite) {
     const id = button.dataset.favorite;
@@ -375,12 +399,18 @@ $('#search-close').addEventListener('click', () => {
   $('#search-toggle').setAttribute('aria-expanded', 'false');
   $('#search-toggle').focus({preventScroll:true});
 });
-$('#search').addEventListener('input', event => { query = event.target.value; renderProducts(); });
+$('#search').addEventListener('input', event => setQuery(event.target.value));
 $('#search').addEventListener('keydown', event => {
   if (event.key === 'Escape') { event.preventDefault(); $('#search-close').click(); }
   if (event.key === 'Enter') { event.preventDefault(); $('#coleccion').scrollIntoView({behavior:'smooth'}); }
 });
-$('#reset-filter').addEventListener('click', () => { query = ''; $('#search').value = ''; setCategory('all'); });
+$('#catalog-search').addEventListener('input', event => setQuery(event.target.value));
+$('#catalog-search-clear').addEventListener('click', () => { setQuery(''); $('#catalog-search').focus({preventScroll:true}); });
+for (const key of Object.keys(filters)) {
+  $(`#filter-${key}`).addEventListener('change', event => { filters[key] = event.target.value; renderProducts(); });
+}
+$('#clear-filters').addEventListener('click', resetCatalog);
+$('#reset-filter').addEventListener('click', () => { resetCatalog(); $('#catalog-search').focus({preventScroll:true}); });
 $('#menu-toggle').addEventListener('click', () => {
   const open = $('#navigation').classList.toggle('open');
   $('#menu-toggle').setAttribute('aria-expanded', String(open));
