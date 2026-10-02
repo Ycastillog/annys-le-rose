@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-La marca está en creación y todavía no tiene catálogo real. Primera versión: tienda editorial en español, moneda USD, rojo cereza #BC1534, rojo oscuro #8D1028, marfil #FFFCF7 y rosa suave #F4E5E4. Catálogo conceptual de seis piezas, búsqueda, colecciones, orden por precio, detalles de producto, selección de talla, favoritos, bolsa con cantidades y revisión de selección. Bolsa y favoritos se conservan en este dispositivo. No hay pedidos, pagos, cuentas, inventario ni administración comercial reales.
+La marca está en creación y todavía no tiene catálogo real. Versión actual: tienda editorial en español e inglés, moneda USD, rojo cereza #BC1534, rojo oscuro #8D1028, marfil #FFFCF7 y rosa suave #F4E5E4. Catálogo conceptual de seis piezas, búsqueda, colecciones, orden por precio, detalles de producto, selección de talla, favoritos, bolsa con cantidades y revisión de selección. Bolsa, favoritos y preferencia de idioma se conservan en este dispositivo. No hay pedidos, pagos, cuentas, inventario ni administración comercial reales.
 
 Las fotografías se generaron con image_gen integrado para ilustrar conceptos. No representan mercancía disponible. Tres imágenes: conjunto rojo de encaje sobre satén (editorial), conjunto negro de encaje (Noir), camisola y shorts rosa (Lune). Las piezas individuales reutilizan la imagen del conjunto al que pertenecen; sustituir por fotos individuales al cargar el catálogo. Los precios y la guía de tallas son ejemplos que deben reemplazarse. El nombre se mantiene como Annys Le´ Rose; confirmar la grafía comercial definitiva antes de registrar dominio o preparar etiquetas.
 
@@ -36,7 +36,7 @@ Reutilizar el catálogo, inventario y sistema de pedidos de la web. Decidir iOS 
 
 ## Desarrollo local
 
-Desde esta carpeta ejecutar `node preview.cjs` y abrir `http://127.0.0.1:4173`. Los archivos públicos están en `dist`. La configuración de Sites está en `.openai/hosting.json`. Esta versión es HTML/CSS/JavaScript estático, sin dependencias de compilación. Para el comercio real, integrar servicios de servidor y una plataforma de ventas; no simular pagos o pedidos con almacenamiento local.
+Desde esta carpeta ejecutar `node preview.cjs` y abrir `http://127.0.0.1:4173`. Los archivos públicos están en `dist`. El código se publica en GitHub y el contenido de `dist` se sirve desde la rama `gh-pages`. Esta versión es HTML/CSS/JavaScript estático, sin dependencias de compilación. Para el comercio real, integrar servicios de servidor y una plataforma de ventas; no simular pagos o pedidos con almacenamiento local.
 
 ## Verificación de la primera versión
 

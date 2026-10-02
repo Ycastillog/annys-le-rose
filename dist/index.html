@@ -1,50 +1,136 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Annys Le´ Rose — Tu esencia, en cada capa</title>
-  <meta name="description" content="Descubre lencería, esenciales y ropa de descanso de Annys Le´ Rose. Una experiencia íntima, femenina y hecha para ti.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title data-i18n="meta.title">Annys Le´ Rose — Tu esencia, en cada capa</title>
+  <meta name="description" data-i18n-content="meta.description" content="Explora la colección conceptual de lencería, esenciales y ropa de descanso de Annys Le´ Rose. Una experiencia femenina, íntima y hecha para ti.">
   <meta name="theme-color" content="#bc1534">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23bc1534'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia' font-size='30' fill='white'%3EAR%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23bc1534'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Georgia' font-size='23' fill='white'%3EALR%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=088724cf29">
+  <script src="i18n.js?v=c7b700395c" defer></script>
+  <script src="app.js?v=670cb1d5b0" defer></script>
 </head>
 <body>
-  <div class="announcement">Una nueva forma de sentirte tú. <span>Descubre Annys Le´ Rose</span></div>
-  <header>
+  <a class="skip-link" href="#main-content" data-i18n="skip.main">Ir al contenido</a>
+  <div class="announcement">
+    <span data-i18n="announcement.copy">Una nueva forma de sentirte tú.</span>
+    <a href="#coleccion" data-i18n="announcement.link">Descubre Annys Le´ Rose</a>
+  </div>
+
+  <header class="site-header">
     <div class="header-main">
-      <button class="icon-button mobile-only" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false"><span class="menu-icon"></span></button>
-      <a class="wordmark" href="#inicio" aria-label="Annys Le Rose, inicio">Annys Le<span>´</span> Rose<small>LINGERIE & INTIMATES</small></a>
+      <div class="header-tools">
+        <button type="button" class="icon-button mobile-only" id="menu-toggle" aria-label="Abrir menú" data-i18n-aria-label="menu.open" aria-expanded="false" aria-controls="navigation"><span class="menu-icon" aria-hidden="true"></span></button>
+        <div class="language-switcher">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+          <label class="sr-only" for="language-select" data-i18n="language.label">Idioma</label>
+          <select id="language-select" aria-label="Idioma" data-i18n-aria-label="language.label"><option value="es" lang="es" aria-label="Español">ES</option><option value="en" lang="en" aria-label="English">EN</option></select>
+        </div>
+      </div>
+      <a class="wordmark" href="#inicio" aria-label="Annys Le Rose, inicio" data-i18n-aria-label="home.label">Annys Le<span>´</span> Rose<small data-i18n="brand.descriptor">LENCERÍA &amp; ROPA ÍNTIMA</small></a>
       <div class="header-actions">
-        <button class="icon-button" id="search-toggle" aria-label="Buscar prendas"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
-        <button class="icon-button" id="favorites-toggle" aria-label="Ver favoritos"><svg viewBox="0 0 24 24"><path d="M20.8 4.6c-2-2-5.3-1.7-7.1.4L12 7l-1.7-2C8.5 2.9 5.2 2.6 3.2 4.6c-2.3 2.3-1.7 5.7.4 7.8L12 21l8.4-8.6c2.1-2.1 2.7-5.5.4-7.8Z"/></svg><span id="favorite-count" class="count" hidden>0</span></button>
-        <button class="icon-button" id="cart-toggle" aria-label="Abrir bolsa"><svg viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg><span id="cart-count" class="count" hidden>0</span></button>
+        <button type="button" class="icon-button" id="search-toggle" aria-label="Buscar prendas" data-i18n-aria-label="search.open" aria-expanded="false" aria-controls="search-bar"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+        <button type="button" class="icon-button" id="favorites-toggle" aria-label="Ver favoritos" data-i18n-aria-label="favorites.open"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.6c-2-2-5.3-1.7-7.1.4L12 7l-1.7-2C8.5 2.9 5.2 2.6 3.2 4.6c-2.3 2.3-1.7 5.7.4 7.8L12 21l8.4-8.6c2.1-2.1 2.7-5.5.4-7.8Z"/></svg><span id="favorite-count" class="count" hidden>0</span></button>
+        <button type="button" class="icon-button" id="cart-toggle" aria-label="Abrir bolsa" data-i18n-aria-label="cart.open"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg><span id="cart-count" class="count" hidden>0</span></button>
       </div>
     </div>
-    <nav aria-label="Colecciones" id="navigation"><a href="#coleccion" data-category="Todo">Novedades</a><a href="#coleccion" data-category="Lencería">Lencería</a><a href="#coleccion" data-category="Esenciales">Esenciales</a><a href="#coleccion" data-category="Descanso">Sleep & lounge</a><button id="size-guide">Encuentra tu talla</button><a href="#esencia">Nuestra esencia</a></nav>
-    <div class="search-bar" id="search-bar" hidden><label for="search">Encuentra tu próxima favorita</label><input id="search" type="search" placeholder="Busca encaje, conjunto, pijama…" autocomplete="off"><button class="text-button" id="search-close">Cerrar</button></div>
+    <nav class="site-navigation" aria-label="Colecciones y marca" data-i18n-aria-label="nav.label" id="navigation">
+      <a href="#coleccion" data-category="Todo" data-i18n="nav.new">La colección</a>
+      <a href="#coleccion" data-category="Lencería" data-i18n="nav.lingerie">Lencería</a>
+      <a href="#coleccion" data-category="Esenciales" data-i18n="nav.essentials">Esenciales</a>
+      <a href="#coleccion" data-category="Descanso" data-i18n="nav.lounge">Descanso</a>
+      <button type="button" id="size-guide" data-i18n="nav.sizes">Encuentra tu talla</button>
+      <a href="#esencia" data-i18n="nav.essence">Nuestra esencia</a>
+    </nav>
+    <div class="search-bar" id="search-bar" hidden>
+      <label for="search" data-i18n="search.label">Encuentra tu próxima favorita</label>
+      <input id="search" type="search" placeholder="Busca encaje, conjunto, pijama…" data-i18n-placeholder="search.placeholder" autocomplete="off">
+      <button type="button" class="text-button" id="search-close" data-i18n="search.close">Cerrar búsqueda</button>
+      <span id="search-results-status" role="status" aria-live="polite"></span>
+    </div>
   </header>
-  <main>
-    <section class="hero" id="inicio">
-      <img src="assets/editorial.png" alt="Conjunto de lencería roja con encaje sobre satén marfil" fetchpriority="high">
-      <div class="hero-copy"><p class="eyebrow">ANNYS LE´ ROSE · LA PRIMERA COLECCIÓN</p><h1>Tu esencia.<br>Tu piel.<br><em>Tu momento.</em></h1><p>Lo que llevas cerca de ti debe sentirse tan especial como tú.</p><a class="button" href="#coleccion">Descubre la colección</a><span class="hero-note">Confidence in Every Layer.</span></div>
-      <span class="hero-side">UN PEQUEÑO LUJO. COMPLETAMENTE TUYO.</span>
+
+  <main id="main-content" tabindex="-1">
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="hero.eyebrow">ANNYS LE´ ROSE · LA PRIMERA COLECCIÓN</p>
+        <h1 id="hero-title" data-i18n-html="hero.title">Cada capa,<br><em>más tú.</em></h1>
+        <p data-i18n="hero.copy">Encaje, suavidad y pequeños rituales. Piezas para sentirte cómoda en tu piel y fiel a tu esencia.</p>
+        <div class="hero-actions"><a class="button" href="#coleccion" data-i18n="hero.cta">Explora la colección</a><a class="hero-secondary underlined" href="#esencia" data-i18n="hero.secondary">Conoce nuestra esencia</a></div>
+        <span class="hero-note" data-i18n="hero.tagline">Confidence in Every Layer.</span>
+      </div>
+      <figure class="hero-media">
+        <img src="assets/editorial.jpg" alt="Conjunto de lencería roja con encaje sobre satén marfil" data-i18n-alt="hero.imageAlt" fetchpriority="high" decoding="async">
+        <figcaption class="hero-caption" data-i18n="hero.caption">Un pequeño lujo. Completamente tuyo.</figcaption>
+      </figure>
     </section>
-    <div class="brand-strip"><span>Suavidad que acompaña</span><span>Detalles que enamoran</span><span>Confianza que se siente</span></div>
-    <section class="collection section" id="coleccion">
-      <div class="section-heading"><div><p class="eyebrow">TU NUEVO RITUAL</p><h2>Más cerca de <em>ti.</em></h2></div><p>Piezas para cada versión de ti.<br>Desde lo cotidiano hasta lo inolvidable.</p></div>
-      <div class="catalog-controls"><div class="tabs" aria-label="Filtrar colección"><button class="active" data-filter="Todo" aria-pressed="true">Todo</button><button data-filter="Lencería" aria-pressed="false">Lencería</button><button data-filter="Esenciales" aria-pressed="false">Esenciales</button><button data-filter="Descanso" aria-pressed="false">Descanso</button><button data-filter="Favoritos" aria-pressed="false">Mis favoritos</button></div><label class="sort">Ordenar por <select id="sort"><option value="featured">Destacados</option><option value="low">Precio: menor a mayor</option><option value="high">Precio: mayor a menor</option></select></label></div>
-      <div class="catalog-meta"><span id="results-count"></span><span>Catálogo de muestra · USD</span></div>
-      <div id="product-grid" class="product-grid"></div>
-      <div class="empty-state" id="catalog-empty" hidden><h3>Aún no hay piezas aquí.</h3><p id="empty-text">Prueba otra búsqueda o colección.</p><button class="button" id="reset-filter">Ver toda la colección</button></div>
+    <div class="brand-strip"><span data-i18n="strip.softness">Suavidad que acompaña</span><span data-i18n="strip.details">Detalles que enamoran</span><span data-i18n="strip.confidence">Confianza que se siente</span></div>
+
+    <section class="collection-shortcuts section" aria-labelledby="moments-title">
+      <div class="section-heading"><div><p class="eyebrow" data-i18n="moments.eyebrow">ELIGE TU MOMENTO</p><h2 id="moments-title" data-i18n="moments.title">Para cada versión de ti.</h2></div></div>
+      <div class="shortcut-grid">
+        <a class="shortcut-card" href="#coleccion" data-category="Lencería">
+          <div class="shortcut-image"><img src="assets/editorial.jpg" alt="Detalle de lencería roja de encaje" data-i18n-alt="moments.lingerieAlt" loading="lazy" decoding="async"></div>
+          <div class="shortcut-copy"><h3 data-i18n="moments.lingerie">Lencería</h3><p data-i18n="moments.lingerieCopy">Encaje y detalles que expresan tu esencia</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
+        </a>
+        <a class="shortcut-card" href="#coleccion" data-category="Esenciales">
+          <div class="shortcut-image"><img src="assets/noir.jpg" alt="Conjunto íntimo negro con encaje" data-i18n-alt="moments.essentialsAlt" loading="lazy" decoding="async"></div>
+          <div class="shortcut-copy"><h3 data-i18n="moments.essentials">Esenciales</h3><p data-i18n="moments.essentialsCopy">Tus favoritas para el día a día</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
+        </a>
+        <a class="shortcut-card" href="#coleccion" data-category="Descanso">
+          <div class="shortcut-image"><img src="assets/lune.jpg" alt="Camisola y shorts de satén rosa" data-i18n-alt="moments.loungeAlt" loading="lazy" decoding="async"></div>
+          <div class="shortcut-copy"><h3 data-i18n="moments.lounge">Descanso</h3><p data-i18n="moments.loungeCopy">Baja el ritmo. Haz espacio para ti.</p><span class="shortcut-arrow" aria-hidden="true">↗</span></div>
+        </a>
+      </div>
     </section>
-    <section class="essence" id="esencia"><div class="essence-title"><p class="eyebrow">EL ARTE DE SENTIRTE TÚ</p><h2>La confianza<br>empieza <em>contigo.</em></h2></div><div class="essence-copy"><p>No existe una sola forma de ser mujer. Hay días de suavidad, días de fuerza y momentos que son solo tuyos.</p><p>Annys Le´ Rose nace de esa libertad: elegir lo que te hace sentir cómoda, hermosa y fiel a ti misma.</p><a href="#coleccion" class="underlined">Encuentra tu próxima favorita</a></div></section>
-    <section class="care section"><p class="eyebrow">CADA DETALLE CUENTA</p><div class="care-grid"><article><span>01</span><h3>Tu ajuste, tu comodidad</h3><p>Consulta las medidas antes de elegir. La comodidad comienza con una talla que te acompaña.</p><button class="underlined" id="size-guide-bottom">Explorar guía de tallas</button></article><article><span>02</span><h3>Prendas para cuidar</h3><p>Agua fría, lavado delicado y secado al aire. Pequeños gestos para conservar tus piezas favoritas.</p></article><article><span>03</span><h3>Un momento para ti</h3><p>Encaje, satén y esenciales suaves. Elige según cómo quieres sentirte hoy.</p></article></div></section>
+
+    <section class="collection section" id="coleccion" aria-labelledby="collection-title">
+      <div class="section-heading">
+        <div><p class="eyebrow" data-i18n="collection.eyebrow">TU NUEVO RITUAL</p><h2 id="collection-title" data-i18n-html="collection.title">Más cerca de <em>ti.</em></h2></div>
+        <p data-i18n="collection.copy">Piezas para cada versión de ti. Desde lo cotidiano hasta lo inolvidable.</p>
+      </div>
+      <div class="catalog-controls">
+        <div class="tabs" role="group" aria-label="Filtrar colección" data-i18n-aria-label="filter.label">
+          <button type="button" class="active" data-filter="Todo" aria-pressed="true" data-i18n="filter.all">Todo</button>
+          <button type="button" data-filter="Lencería" aria-pressed="false" data-i18n="filter.lingerie">Lencería</button>
+          <button type="button" data-filter="Esenciales" aria-pressed="false" data-i18n="filter.essentials">Esenciales</button>
+          <button type="button" data-filter="Descanso" aria-pressed="false" data-i18n="filter.lounge">Descanso</button>
+          <button type="button" data-filter="Favoritos" aria-pressed="false" data-i18n="filter.favorites">Mis favoritos</button>
+        </div>
+        <label class="sort" for="sort"><span data-i18n="sort.label">Ordenar por</span><select id="sort" aria-label="Ordenar por" data-i18n-aria-label="sort.label"><option value="featured" data-i18n="sort.featured">Destacados</option><option value="low" data-i18n="sort.low">Precio: menor a mayor</option><option value="high" data-i18n="sort.high">Precio: mayor a menor</option></select></label>
+      </div>
+      <div class="catalog-meta"><span id="results-count" role="status" aria-live="polite"></span><span id="catalog-note" data-i18n="catalog.demo">Colección conceptual · USD</span></div>
+      <div id="product-grid" class="product-grid" aria-describedby="catalog-note"></div>
+      <div class="empty-state" id="catalog-empty" hidden><h3 data-i18n="catalog.emptyTitle">Aún no hay piezas aquí.</h3><p id="empty-text" data-i18n="catalog.emptyCopy">Prueba otra búsqueda o colección.</p><button type="button" class="button" id="reset-filter" data-i18n="catalog.reset">Ver toda la colección</button></div>
+    </section>
+
+    <section class="essence" id="esencia" aria-labelledby="essence-title">
+      <div class="essence-title"><p class="eyebrow" data-i18n="essence.eyebrow">EL ARTE DE SENTIRTE TÚ</p><h2 id="essence-title" data-i18n-html="essence.title">La confianza<br>empieza <em>contigo.</em></h2></div>
+      <div class="essence-copy"><p data-i18n="essence.copyOne">No existe una sola forma de ser mujer. Hay días de suavidad, días de fuerza y momentos que son solo tuyos.</p><p data-i18n="essence.copyTwo">Annys Le´ Rose nace de esa libertad: elegir lo que te hace sentir cómoda, hermosa y fiel a ti misma.</p><a href="#coleccion" class="underlined" data-i18n="essence.cta">Encuentra tu próxima favorita</a></div>
+    </section>
+
+    <section class="care section" aria-labelledby="care-title">
+      <h2 class="eyebrow" id="care-title" data-i18n="care.eyebrow">CADA DETALLE CUENTA</h2>
+      <div class="care-grid">
+        <article><span aria-hidden="true">01</span><h3 data-i18n="care.fitTitle">Tu ajuste, tu comodidad</h3><p data-i18n="care.fitCopy">Consulta las medidas antes de elegir. La comodidad comienza con una talla que te acompaña.</p><button type="button" class="underlined" id="size-guide-bottom" data-i18n="care.fitCta">Explorar guía de tallas</button></article>
+        <article><span aria-hidden="true">02</span><h3 data-i18n="care.washTitle">Prendas para cuidar</h3><p data-i18n="care.washCopy">Consulta siempre la etiqueta de cuidado de cada prenda. El lavado delicado ayuda a conservar tus piezas favoritas.</p></article>
+        <article><span aria-hidden="true">03</span><h3 data-i18n="care.momentTitle">Un momento para ti</h3><p data-i18n="care.momentCopy">Encaje, satén y esenciales suaves. Elige según cómo quieres sentirte hoy.</p></article>
+      </div>
+    </section>
   </main>
-  <footer><div class="footer-brand"><a href="#inicio" class="wordmark">Annys Le´ Rose</a><p>Confidence in Every Layer.</p></div><div><h3>Explora</h3><a href="#coleccion" data-category="Lencería">Lencería</a><a href="#coleccion" data-category="Esenciales">Esenciales</a><a href="#coleccion" data-category="Descanso">Sleep & lounge</a></div><div><h3>A tu lado</h3><button data-info="sizes">Guía de tallas</button><button data-info="shipping">Envíos y devoluciones</button><button data-info="privacy">Privacidad</button></div><div class="footer-note"><p>Una experiencia hecha para ti.</p><small>Versión de presentación.<br>Compras y pagos aún no habilitados.</small></div><div class="footer-bottom"><span>© <span id="year"></span> Annys Le´ Rose</span><span>Español · USD</span></div></footer>
-  <dialog id="product-dialog" aria-labelledby="product-title"><button class="close-dialog icon-button" aria-label="Cerrar detalle">×</button><div id="product-detail"></div></dialog>
-  <dialog id="cart-dialog" class="drawer" aria-labelledby="cart-title"><div class="drawer-heading"><h2 id="cart-title">Tu bolsa <em>íntima.</em></h2><button class="close-dialog icon-button" aria-label="Cerrar bolsa">×</button></div><div id="cart-items"></div><div id="cart-summary"></div></dialog>
-  <dialog id="info-dialog" aria-labelledby="info-title"><button class="close-dialog icon-button" aria-label="Cerrar información">×</button><div id="info-content"></div></dialog>
+
+  <footer>
+    <div class="footer-brand"><a href="#inicio" class="wordmark" aria-label="Annys Le Rose, inicio" data-i18n-aria-label="home.label">Annys Le´ Rose</a><p data-i18n="hero.tagline">Confidence in Every Layer.</p></div>
+    <div class="footer-links"><h3 data-i18n="footer.explore">Explora</h3><a href="#coleccion" data-category="Lencería" data-i18n="nav.lingerie">Lencería</a><a href="#coleccion" data-category="Esenciales" data-i18n="nav.essentials">Esenciales</a><a href="#coleccion" data-category="Descanso" data-i18n="nav.lounge">Descanso</a></div>
+    <div class="footer-links"><h3 data-i18n="footer.support">A tu lado</h3><button type="button" data-info="sizes" data-i18n="footer.sizes">Guía de tallas</button><button type="button" data-info="shipping" data-i18n="footer.shipping">Envíos y devoluciones</button><button type="button" data-info="privacy" data-i18n="footer.privacy">Privacidad</button></div>
+    <div class="footer-note"><p data-i18n="footer.note">Una experiencia hecha para ti.</p><small data-i18n="footer.demo">Colección conceptual. Compras y pagos aún no habilitados.</small></div>
+    <div class="footer-bottom"><span>© <span id="year"></span> Annys Le´ Rose</span><span data-i18n="footer.locale">Español · USD</span></div>
+  </footer>
+
+  <dialog id="product-dialog" aria-labelledby="product-title"><button type="button" class="close-dialog icon-button" aria-label="Cerrar detalle" data-i18n-aria-label="product.close">×</button><div id="product-detail"></div></dialog>
+  <dialog id="cart-dialog" class="drawer" aria-labelledby="cart-title"><div class="drawer-heading"><h2 id="cart-title" data-i18n-html="cart.title">Tu bolsa <em>íntima.</em></h2><button type="button" class="close-dialog icon-button" aria-label="Cerrar bolsa" data-i18n-aria-label="cart.close">×</button></div><div id="cart-items"></div><div id="cart-summary"></div></dialog>
+  <dialog id="info-dialog" aria-labelledby="info-title"><button type="button" class="close-dialog icon-button" aria-label="Cerrar información" data-i18n-aria-label="info.close">×</button><div id="info-content"></div></dialog>
   <div id="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
