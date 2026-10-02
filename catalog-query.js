@@ -10,7 +10,8 @@ window.ALRcatalogQuery = Object.freeze({
     const terms = query.split(/\s+/).filter(Boolean);
     const result = products.filter(product => {
       if (state.category === 'favorites' && !state.favorites.has(product.id)) return false;
-      if (state.category && !['all', 'favorites'].includes(state.category) && product.category !== state.category) return false;
+      if (state.category === 'exclusive' && !product.exclusive) return false;
+      if (state.category && !['all', 'favorites', 'exclusive'].includes(state.category) && product.category !== state.category) return false;
       if (state.size && !product.sizes.includes(state.size)) return false;
       if (state.color && !product.colors.some(color => color.id === state.color)) return false;
       if (state.price === 'under40' && product.price >= 40) return false;
