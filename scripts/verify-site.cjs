@@ -16,6 +16,13 @@ for (const filename of ['index.html', 'brand.html']) {
   }
 }
 for (const script of ['app.js', 'i18n.js', 'catalog.js', 'catalog-query.js', 'edition.js', 'brand.js']) new vm.Script(fs.readFileSync(path.join(root, script), 'utf8'), {filename: script});
+// A published stylesheet must not point to a font omitted from the static release.
+for (const match of fs.readFileSync(path.join(root, 'fonts.css'), 'utf8').matchAll(/url\(['"]?([^)'"\s]+)['"]?\)/g)) {
+  const fontPath = path.resolve(root, match[1]);
+  assert.ok(fontPath.startsWith(root + path.sep), 'Font must stay inside dist');
+  const fontBytes = fs.readFileSync(fontPath);
+  assert.equal(fontBytes.subarray(0, 4).toString(), 'wOF2', `Invalid font: ${match[1]}`);
+}
 
 // Exercise localization without a browser; storage denial must not prevent rendering.
 const context = {
@@ -77,9 +84,9 @@ for (const language of ['es', 'en']) {
     for (const color of product.colors) assert.notEqual(context.window.ALRi18n.t(`color.${color.id}`), `color.${color.id}`, 'Translated color');
   }
 }
-assert.equal(context.window.ALRi18n.t('catalog.pieces', {count: 6}), '6 products', 'English count interpolation');
+assert.equal(context.window.ALRi18n.t('catalog.pieces', {count: 6}), '6 concepts', 'English count interpolation');
 context.window.ALRi18n.setLanguage('es');
-assert.equal(context.window.ALRi18n.t('catalog.pieces', {count: 6}), '6 productos', 'Spanish count interpolation');
+assert.equal(context.window.ALRi18n.t('catalog.pieces', {count: 6}), '6 conceptos', 'Spanish count interpolation');
 context.window.ALRi18n.setLanguage('invalid');
 assert.equal(context.window.ALRi18n.language, 'es', 'Invalid language must preserve selection');
 

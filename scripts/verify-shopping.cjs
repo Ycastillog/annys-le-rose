@@ -11,12 +11,17 @@ const sources = Object.fromEntries(['catalog.js', 'catalog-query.js', 'edition.j
 
 // A small DOM surface lets the real application register and run its handlers.
 // Templates are kept as strings; layout, native focus and rendering belong to browser QA.
-function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCart = [], language = 'es'} = {}) {
+function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCart = [], language = 'es', href = 'https://example.test/annys-le-rose/', clipboard = true, reduceMotion = false, deferredClose = false} = {}) {
   const documentListeners = new Map();
+  const windowListeners = new Map();
   const registeredTools = new Map();
   const elements = new Map();
   const storage = new Map([['alr-cart', JSON.stringify(savedCart)], ['alr-language', language]]);
   let clock = new Date(now);
+  const copiedLinks = [];
+  const closeEvents = [];
+  const historyEntries = [{url:new URL(href).href, state:null}];
+  let historyIndex = 0;
   const schedule = {startMonthDay:announced ? '10-01' : null, durationDays:5, timeZone:'America/Santo_Domingo'};
 
   class Element {
@@ -55,11 +60,18 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     hasAttribute(name) { return this.getAttribute(name) !== null; }
     contains(element) { return element === this; }
     focus() { document.activeElement = this; }
-    scrollIntoView() {}
+    scrollIntoView(options) { this.lastScrollOptions = options; }
+    dispatch(type, extra = {}) {
+      const event = {target:this, currentTarget:this, preventDefault() { this.defaultPrevented = true; }, ...extra};
+      for (const callback of this.listeners.get(type) || []) callback(event);
+      return event;
+    }
+    click() { this.dispatch('click'); }
     showModal() { this.open = true; }
     close() {
       this.open = false;
-      for (const callback of this.listeners.get('close') || []) callback({target:this});
+      const notify = () => { for (const callback of this.listeners.get('close') || []) callback({target:this}); };
+      deferredClose ? closeEvents.push(notify) : notify();
     }
     querySelector(selector) { return selector === '.dialog-feedback' ? element(`${this.id}-feedback`) : null; }
     getBoundingClientRect() { return {left:0, top:0, right:100, bottom:100}; }
@@ -91,13 +103,42 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     },
     modelContext:{registerTool(tool) { registeredTools.set(tool.name, tool); }}
   };
+  const history = {
+    get length() { return historyEntries.length; },
+    get state() { return historyEntries[historyIndex].state; },
+    pushState(state, unused, url) {
+      historyEntries.splice(historyIndex + 1);
+      historyEntries.push({state, url:new URL(url, context.window.location.href).href});
+      historyIndex += 1;
+      context.window.location = new URL(historyEntries[historyIndex].url);
+    },
+    replaceState(state, unused, url) {
+      historyEntries[historyIndex] = {state, url:new URL(url, context.window.location.href).href};
+      context.window.location = new URL(historyEntries[historyIndex].url);
+    },
+    go(delta) {
+      const index = historyIndex + delta;
+      if (index < 0 || index >= historyEntries.length) return;
+      historyIndex = index;
+      context.window.location = new URL(historyEntries[historyIndex].url);
+      for (const callback of windowListeners.get('popstate') || []) callback({state:this.state});
+    }
+  };
   const context = vm.createContext({
-    window:{addEventListener() {}},
+    window:{
+      location:new URL(href), history,
+      matchMedia:() => ({matches:reduceMotion}),
+      addEventListener(type, callback) {
+        if (!windowListeners.has(type)) windowListeners.set(type, []);
+        windowListeners.get(type).push(callback);
+      }
+    },
     document,
-    navigator:{language:'es', languages:['es']},
+    navigator:{language:'es', languages:['es'], clipboard:clipboard ? {writeText:async value => { copiedLinks.push(value); }} : undefined},
     localStorage:{getItem:key => storage.get(key) ?? null, setItem:(key, value) => storage.set(key, String(value))},
     HTMLElement:Element,
     CSS:{escape:value => String(value)},
+    URL, URLSearchParams,
     AbortController,
     setInterval:() => 0,
     setTimeout:() => 0,
@@ -122,6 +163,13 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     clock:instant => { clock = new Date(instant); },
     stage:input => registeredTools.get('stage_sample_bag').execute(input),
     readCatalog:() => registeredTools.get('read_sample_catalog').execute(),
+    view:() => JSON.parse(run('JSON.stringify({category,query,sort,...filters})')),
+    url:() => context.window.location.href,
+    history,
+    copiedLinks,
+    flushCloseEvents:() => { while (closeEvents.length) closeEvents.shift()(); },
+    focused:() => document.activeElement?.id,
+    emit:(id, type, extra) => element(id).dispatch(type, extra),
     cart:() => JSON.parse(run('JSON.stringify(cart)')),
     storedCart:() => JSON.parse(storage.get('alr-cart')),
     click({id = '', dataset = {}}) {
@@ -133,11 +181,9 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
   };
 }
 
-let passed = 0;
+const tests = [];
 function test(name, callback) {
-  callback();
-  passed += 1;
-  console.log(`PASS ${name}`);
+  tests.push({name, callback});
 }
 const exclusiveSelection = {id:'edition-perfume', size:'50 ml', color:'cherry'};
 const regularSelection = {id:'perfume-rose', size:'50 ml', color:'ivory'};
@@ -258,4 +304,212 @@ test('Changing language preserves volume selections and stable saved colors', ()
   assert.deepEqual(shop.storedCart(), before);
 });
 
-console.log(`Verified ${passed} shopping regressions with the actual app handlers and WebMCP tools.`);
+test('Malformed view enums and personal fields cannot become catalog URL state', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=favorites&size=50+ml&color=magenta&price=free&sort=random&cart=rose&language=es&email=private%40example.test'});
+  assert.deepEqual(shop.view(), {category:'all', query:'', sort:'featured', size:'', color:'', price:''});
+  assert.equal(shop.run('catalogViewURL().search'), '');
+  assert.equal(shop.cart().length, 0);
+});
+
+test('View encoding is stable, bounded and includes only recognized filters', () => {
+  const shop = createHarness();
+  const encoded = shop.run("catalogQuery.encodeView({category:'lingerie',query:'  ROSE\\u0000  ',size:'M',color:'cherry',price:'from40to65',sort:'low',cart:'secret',language:'es'},products)");
+  assert.equal(encoded, 'category=lingerie&q=ROSE&size=M&color=cherry&price=from40to65&sort=low');
+  assert.equal(shop.run(`catalogQuery.encodeView(catalogQuery.readView(${JSON.stringify(encoded)},products),products)`), encoded);
+  assert.equal(shop.run("catalogQuery.readView('?q='+ 'x'.repeat(200),products).query.length"), 120);
+  assert.equal(shop.run("catalogQuery.readView('?category=lingerie&category=beauty&q=%00rose%7F',products).query"), 'rose');
+});
+
+test('A linked view restores controls and results on reload in either language', () => {
+  const href = 'https://example.test/annys-le-rose/?category=fragrance&q=50+ml&color=ivory&price=from40to65&sort=low#coleccion';
+  const expected = {category:'fragrance', query:'50 ml', sort:'low', size:'', color:'ivory', price:'from40to65'};
+  for (const language of ['en', 'es']) {
+    const shop = createHarness({href, language});
+    assert.deepEqual(shop.view(), expected);
+    assert.equal(shop.element('search').value, '50 ml');
+    assert.equal(shop.element('catalog-search').value, '50 ml');
+    assert.equal(shop.element('filter-color').value, 'ivory');
+    assert.equal(shop.element('sort').value, 'low');
+    assert.ok(shop.element('product-grid').innerHTML.includes('data-product="perfume-rose"'));
+    assert.ok(!shop.element('product-grid').innerHTML.includes('data-product="perfume-ambre"'));
+  }
+});
+
+test('Category navigation has Back and Forward while typing and filters replace one view', () => {
+  const shop = createHarness();
+  shop.click({dataset:{category:'lingerie'}});
+  assert.equal(shop.history.length, 2);
+  shop.element('catalog-search').value = 'rose';
+  shop.emit('catalog-search', 'input');
+  shop.element('filter-size').value = 'M';
+  shop.emit('filter-size', 'change');
+  shop.element('sort').value = 'high';
+  shop.emit('sort', 'change');
+  assert.equal(shop.history.length, 2);
+  shop.click({dataset:{category:'fragrance'}});
+  assert.equal(shop.history.length, 3);
+  assert.equal(shop.view().size, '');
+  shop.history.go(-1);
+  assert.deepEqual(shop.view(), {category:'lingerie', query:'rose', sort:'high', size:'M', color:'', price:''});
+  assert.equal(shop.element('filter-size').value, 'M');
+  assert.equal(shop.element('filter-size').disabled, false);
+  shop.history.go(1);
+  assert.equal(shop.view().category, 'fragrance');
+  assert.equal(shop.element('filter-size').disabled, true);
+  assert.equal(shop.element('filter-size').value, '');
+});
+
+test('Back closes a nested guide without delayed close events reopening its product', () => {
+  const shop = createHarness({deferredClose:true});
+  shop.click({dataset:{category:'lingerie'}});
+  shop.run("openProduct('rose', $('#cart-toggle')); showInfo('sizes','product',$('#size-guide'))");
+  assert.equal(shop.element('info-dialog').open, true);
+  shop.history.go(-1);
+  assert.equal(shop.element('info-dialog').open, false);
+  assert.equal(shop.focused(), 'catalog-search');
+  shop.flushCloseEvents();
+  assert.equal(shop.element('product-dialog').open, false);
+  assert.equal(shop.element('info-dialog').open, false);
+  assert.equal(shop.focused(), 'catalog-search');
+  assert.equal(shop.run("document.body.classList.contains('modal-open')"), false);
+});
+
+test('Copying a view shares an allowlisted link without bag or language data', async () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=fragrance&q=50+ml&token=private&cart=rose&language=es#old'});
+  await shop.run('shareCatalogView()');
+  assert.deepEqual(shop.copiedLinks, ['https://example.test/annys-le-rose/?category=fragrance&q=50+ml#coleccion']);
+  assert.equal(shop.url(), shop.copiedLinks[0]);
+  assert.equal(shop.run('currentToastKey'), 'toast.linkCopied');
+});
+
+test('Unavailable clipboard leaves a clean current link and useful feedback', async () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=beauty&email=private%40example.test', clipboard:false});
+  await shop.run('shareCatalogView()');
+  assert.equal(shop.url(), 'https://example.test/annys-le-rose/?category=beauty#coleccion');
+  assert.equal(shop.run('currentToastKey'), 'toast.linkCopyUnavailable');
+});
+
+test('Favorites remain local and their view cannot be copied as a public collection', async () => {
+  const shop = createHarness();
+  shop.click({dataset:{favorite:'rose'}});
+  assert.equal(shop.run('currentToastKey'), 'toast.favoriteAdded');
+  shop.click({dataset:{category:'favorites'}});
+  assert.equal(shop.element('catalog-share').disabled, true);
+  assert.equal(new URL(shop.url()).searchParams.has('favorites'), false);
+  await shop.run('shareCatalogView()');
+  assert.equal(shop.copiedLinks.length, 0);
+  shop.click({dataset:{favorite:'rose'}});
+  assert.equal(shop.run('currentToastKey'), 'toast.favoriteRemoved');
+});
+
+test('A valid clothing size filter defaults a new selection and remembers a chosen alternative', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=lingerie&size=M'});
+  shop.run("openProduct('rose')");
+  assert.equal(shop.run('selectedSize'), 'M');
+  shop.click({dataset:{size:'L'}});
+  shop.run("openProduct('noir'); openProduct('rose')");
+  assert.equal(shop.run('selectedSize'), 'L');
+});
+
+test('Saved bag variants survive reload and take priority over a new size filter', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?size=M', savedCart:[{id:'rose', size:'XL', color:'Rojo cereza', quantity:1}]});
+  shop.run("openProduct('rose')");
+  assert.equal(shop.run('selectedSize'), 'XL');
+  assert.equal(shop.run('selectedColor'), 'Rojo cereza');
+  assert.deepEqual(shop.storedCart(), shop.cart());
+});
+
+test('Invalid and beauty-incompatible linked sizes cannot select a clothing format', () => {
+  const invalid = createHarness({href:'https://example.test/annys-le-rose/?size=50+ml'});
+  invalid.run("openProduct('rose')");
+  assert.equal(invalid.view().size, '');
+  assert.equal(invalid.run('selectedSize'), '');
+  const beauty = createHarness({href:'https://example.test/annys-le-rose/?category=beauty&size=M'});
+  assert.equal(beauty.view().size, '');
+  assert.equal(beauty.element('filter-size').disabled, true);
+  beauty.run("openProduct('gloss-pearl')");
+  assert.equal(beauty.run('selectedSize'), '6 ml');
+});
+
+test('Bilingual accent-insensitive search survives a display-language switch', () => {
+  const shop = createHarness({language:'en'});
+  shop.element('catalog-search').value = 'ambar';
+  shop.emit('catalog-search', 'input');
+  assert.ok(shop.element('product-grid').innerHTML.includes('data-product="perfume-ambre"'));
+  assert.ok(!shop.element('product-grid').innerHTML.includes('data-product="perfume-rose"'));
+  shop.run("i18n.setLanguage('es')");
+  assert.equal(shop.view().query, 'ambar');
+  assert.ok(shop.element('product-grid').innerHTML.includes('data-product="perfume-ambre"'));
+  shop.element('catalog-search').value = 'perfume 50 ml';
+  shop.emit('catalog-search', 'input');
+  assert.ok(shop.element('product-grid').innerHTML.includes('data-product="perfume-rose"'));
+  assert.ok(!shop.element('product-grid').innerHTML.includes('data-product="gloss-pearl"'));
+});
+
+test('Repeated filter searches reuse the bilingual index instead of re-translating every product', () => {
+  const shop = createHarness();
+  const results = shop.run(`(() => {
+    let indexed = 0;
+    const index = catalogQuery.createIndex(products, product => { indexed += 1; return product.id; });
+    const matches = ['rose','perfume','gloss'].map(query => catalogQuery.select(products,{query},index).length);
+    return JSON.stringify({indexed,total:products.length,matches});
+  })()`);
+  const observed = JSON.parse(results);
+  assert.equal(observed.indexed, observed.total);
+  assert.ok(observed.matches.every(count => count > 0));
+});
+
+test('Multiword typing keeps its space and IME composition commits only on completion', () => {
+  const shop = createHarness();
+  shop.element('catalog-search').value = '50 ';
+  shop.emit('catalog-search', 'input');
+  assert.equal(shop.element('catalog-search').value, '50 ');
+  shop.element('catalog-search').value = '50 ml';
+  shop.emit('catalog-search', 'input', {isComposing:true});
+  assert.equal(shop.view().query, '50 ');
+  const composingEnter = shop.emit('catalog-search', 'keydown', {key:'Enter', isComposing:true});
+  assert.notEqual(composingEnter.defaultPrevented, true);
+  shop.emit('catalog-search', 'compositionend');
+  assert.equal(shop.view().query, '50 ml');
+  assert.equal(shop.element('search').value, '50 ml');
+  assert.equal(new URL(shop.url()).searchParams.get('q'), '50 ml');
+});
+
+test('Enter moves focus to results, closes header search and honors reduced motion', () => {
+  const shop = createHarness({reduceMotion:true});
+  shop.element('search-bar').hidden = false;
+  shop.element('search').value = '50 ml';
+  shop.emit('search', 'input');
+  const enter = shop.emit('search', 'keydown', {key:'Enter'});
+  assert.equal(enter.defaultPrevented, true);
+  assert.equal(shop.focused(), 'results-count');
+  assert.equal(shop.element('results-count').getAttribute('tabindex'), '-1');
+  assert.equal(shop.element('search-bar').hidden, true);
+  assert.equal(shop.element('search-toggle').getAttribute('aria-expanded'), 'false');
+  assert.equal(shop.element('coleccion').lastScrollOptions.behavior, 'auto');
+});
+
+test('Search is bounded and Escape clears both inputs and the linked query without history spam', () => {
+  const shop = createHarness();
+  shop.element('catalog-search').value = 'x'.repeat(200);
+  shop.emit('catalog-search', 'input');
+  assert.equal(shop.view().query.length, 120);
+  assert.equal(shop.element('search').value.length, 120);
+  const escape = shop.emit('catalog-search', 'keydown', {key:'Escape'});
+  assert.equal(escape.defaultPrevented, true);
+  assert.equal(shop.view().query, '');
+  assert.equal(shop.element('search').value, '');
+  assert.equal(shop.element('catalog-search').value, '');
+  assert.equal(new URL(shop.url()).searchParams.has('q'), false);
+  assert.equal(shop.history.length, 1);
+});
+
+(async () => {
+  let passed = 0;
+  for (const {name, callback} of tests) {
+    await callback();
+    passed += 1;
+    console.log(`PASS ${name}`);
+  }
+  console.log(`Verified ${passed} catalog and shopping regressions with the actual app handlers and WebMCP tools.`);
+})().catch(error => { console.error(error); process.exitCode = 1; });

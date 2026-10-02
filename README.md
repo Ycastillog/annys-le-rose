@@ -26,15 +26,16 @@ Abrir http://127.0.0.1:4173 y http://127.0.0.1:4173/brand.html para el estudio. 
 
 - `dist/index.html`: estructura de la tienda.
 - `dist/styles.css`: diseño y estilos adaptables.
+- `dist/fonts.css`, `dist/assets/fonts/`: fuentes WOFF2 locales, procedencia y licencias OFL.
 - `dist/brand.html`, `dist/brand.css`, `dist/brand.js`: estudio de identidad EN/ES con idioma compartido.
 - `dist/catalog.js`: 16 conceptos de producto, precios de muestra, colores, tallas, contenidos y presentaciones.
-- `dist/catalog-query.js`: búsqueda bilingüe y filtros combinados del catálogo.
+- `dist/catalog-query.js`: búsqueda bilingüe indexada, filtros combinados y vistas de catálogo en URL.
 - `dist/edition.js`: configuración y ventana anual de cinco días para ALR Édition 05.
 - `dist/app.js`: búsqueda, filtros y demás interacciones de la tienda.
 - `dist/i18n.js`: traducciones de español e inglés y preferencia de idioma.
 - `dist/assets/`: fotografías conceptuales generadas con IA.
 - `dist/assets/brand/`: siete SVG de identidad y `tokens.json`, referencia de paleta, tipografías y firma para web y futura app.
-- `scripts/sync-english.cjs`: sincronización del contenido HTML inicial de la portada con el diccionario inglés.
+- `scripts/sync-english.cjs`: sincronización del HTML inicial de portada y estudio con su contenido inglés.
 - `scripts/verify-site.cjs`: comprobación de estructura, catálogo, traducciones, filtros y calendario anual.
 - `scripts/verify-shopping.cjs`: regresiones de bolsa y herramientas WebMCP con reloj controlado.
 - `PROCESO.md`: identidad, voz, sistema web/app, briefs de líneas, decisiones abiertas y proceso desde diseño a operación comercial.
@@ -47,6 +48,10 @@ La marca todavía no tiene un catálogo real. El catálogo reúne 16 conceptos: 
 
 Los productos se editan en `dist/catalog.js`; sus nombres y descripciones se mantienen en `dist/i18n.js` para conservar ambos idiomas. Cada producto tiene un ID estable, categoría, precio, imagen, colores y variantes en `sizes`. Las prendas usan tallas; los perfumes y brillos usan `variantKind: 'volume'` con una única presentación de 50 ml o 6 ml; el coffret usa `variantKind: 'set'`. Los filtros por talla se aplican a ropa y muestran opciones propuestas, no disponibilidad de stock. Los tonos cosméticos, direcciones olfativas, fórmulas, concentraciones e ingredientes se deben validar con el proveedor, al igual que precios, tallaje y fotografías, antes de habilitar ventas.
 
+Las vistas del catálogo conservan categoría, búsqueda, talla, color, rango de precio y orden en la URL. «Copy view link» / «Copiar enlace de vista» copia esa exploración y permite abrirla en otro navegador. Recargar y usar Atrás/Adelante recupera los controles. Solo los cambios de categoría añaden una entrada al historial; escribir, filtrar y ordenar actualiza la vista actual. El enlace excluye bolsa, favoritos e idioma. Los favoritos permanecen locales y su vista no se comparte. Si el navegador impide copiar, la interfaz indica que se puede copiar el enlace desde la barra de direcciones.
+
+La búsqueda utiliza un índice de texto en ambos idiomas. Enter lleva al resultado y cierra la búsqueda de cabecera; Escape limpia la búsqueda del catálogo. Elegir una talla en los filtros la propone en el detalle si es válida para esa prenda; una variante previamente elegida en la bolsa tiene prioridad. La edición anual conserva sus restricciones.
+
 ## ALR Édition 05
 
 La línea anual está formada por `edition-perfume`, `edition-gloss` y `edition-coffret`, marcados con `exclusive: true`. El coffret reúne el perfume de 50 ml y el brillo de 6 ml; no incluye prendas. Se puede explorar todo el año, pero la selección de muestras en bolsa debe quedar cerrada fuera de su ventana anual de cinco días. Las fechas están **por anunciar**; no se inventa una apertura ni se muestra una cuenta regresiva ficticia. Este prototipo no representa un lanzamiento comercial ni reserva existencias. Al activar ventas, el servidor deberá validar las fechas, la disponibilidad, los precios y las restricciones de la edición.
@@ -55,7 +60,7 @@ La fecha de apertura se configura en `dist/edition.js` con `startMonthDay` (`MM-
 
 ## Alojamiento independiente
 
-El sitio público está contenido en `dist/` y puede alojarse en cualquier servicio que sirva archivos estáticos. No necesita ChatGPT para funcionar. Las tipografías se cargan desde Google Fonts con alternativas locales.
+El sitio público está contenido en `dist/` y puede alojarse en cualquier servicio que sirva archivos estáticos. No necesita ChatGPT para funcionar. Las tipografías se sirven desde este repositorio: tres archivos WOFF2 de aproximadamente 102 KB en total, con alternativas del sistema, `font-display: swap` y precarga de las fuentes principales. Se eliminó la importación remota de Google Fonts. La procedencia y las licencias se incluyen en `dist/assets/fonts/`. La estrategia sigue las referencias de [MDN sobre fuentes y rendimiento](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Performance/Best_practices).
 
 Sitio publicado: https://ycastillog.github.io/annys-le-rose/
 
@@ -65,11 +70,13 @@ Antes de habilitar ventas se deben conectar catálogo e inventario reales, pago 
 
 ## Comprobación
 
-Si cambia el texto de portada en `dist/i18n.js`, sincronizar el HTML inglés:
+Si cambia el texto en `dist/i18n.js` o `dist/brand.js`, sincronizar ambos HTML en inglés:
 
 ```sh
 node scripts/sync-english.cjs
 ```
+
+Se puede limitar la sincronización con `--home` o `--studio`. Los textos, atributos accesibles y metadatos iniciales quedan alineados con el contenido que renderiza JavaScript.
 
 Ejecutar ese paso **antes** de calcular los hashes finales y actualizar los parámetros de caché `v` de los recursos modificados. Con los archivos finales, comprobar:
 
@@ -95,6 +102,8 @@ La página principal y el estudio de identidad quedaron verificados a 320, 390, 
 
 La expansión de belleza también verificó fotografías con proporciones corregidas, búsqueda de `50 ml`, limpieza del filtro de talla al pasar a perfumes y selección automática del contenido único. La bolsa mantuvo el formato de 50 ml al traducirse, sin perder la selección. Perfume de $64 más brillo de $18 produjo un subtotal de muestra de $82 y una revisión traducida. Se verificaron favoritos, interés local y bloqueo de la edición anual y su coffret mientras las fechas están pendientes. Guardar interés no envía correos ni notificaciones.
 
-`verify-site.cjs` valida estructura y activos de portada y estudio, los 16 conceptos, consultas del catálogo y 152 claves de traducción de la portada. La revisión del estudio cubrió 73 elementos localizados. También se comprueba el calendario anual, límites de apertura y cierre, cambio de horario estacional y cruce de fin de año. `verify-shopping.cjs` pasa 10 regresiones con la aplicación y herramientas WebMCP reales en una VM, DOM mínimo y reloj controlado: formatos en ml y set, tallas inválidas, edición pendiente, persistencia, cierre exacto, purga antes del subtotal, cantidades con índices desplazados, revisión e idioma. Diseño, foco nativo y renderizado se revisan en navegador.
+`verify-site.cjs` valida estructura y activos de portada y estudio, fuentes WOFF2, los 16 conceptos, consultas del catálogo y 154 claves de traducción de la portada. La revisión del estudio cubrió 76 campos localizados. También se comprueba el calendario anual, límites de apertura y cierre, cambio de horario estacional y cruce de fin de año. `verify-shopping.cjs` pasa 26 regresiones con la aplicación y herramientas WebMCP reales en una VM, DOM mínimo y reloj controlado. Incluye las diez comprobaciones de bolsa y ventana anual, más URL válidas e inválidas, recarga, historial, copia y su alternativa, favoritos locales, selección recuperada, búsqueda bilingüe, composición de texto, teclado y movimiento reducido. Diseño, foco nativo y renderizado se revisan en navegador.
+
+La última revisión en navegador comprobó ambas páginas sin desbordamiento a 320, 390, 768 y 1440 píxeles CSS. Se verificó la búsqueda de `50 ml`, compartir un perfume filtrado y restaurar búsqueda/precio/orden al recargar; Atrás cerró un detalle abierto, devolvió el foco al catálogo y Adelante recuperó la categoría. La talla XL filtrada se propuso en el detalle de ropa. El coffret anual permaneció bloqueado con fechas pendientes y la vista de favoritos deshabilitó compartir. Inglés y español conservaron los mismos formatos y controles.
 
 CSS y JavaScript llevan una versión de caché en el HTML; al modificarlos se debe renovar su parámetro `v`.

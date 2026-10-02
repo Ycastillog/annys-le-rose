@@ -23,6 +23,14 @@ const variantLabel = product => t(variantKind(product) === 'size' ? 'product.siz
 const variantPrompt = product => t(variantKind(product) === 'size' ? 'product.sizePrompt' : 'product.formatPrompt');
 const lineVariant = (product, value) => t(`bag.${variantKind(product) === 'size' ? 'size' : variantKind(product) === 'volume' ? 'volume' : 'format'}`, {size:variantText(product, value), value:variantText(product, value)});
 const unavailableAction = () => edition.getWindow().status === 'pending' ? 'edition.pending' : 'edition.previewOnly';
+const searchIndex = catalogQuery.createIndex(products, product => ['es','en'].map(locale => [
+  i18n.t(`products.${product.id}.name`, {}, locale),
+  i18n.t(`category.${product.category}`, {}, locale),
+  i18n.t(productCategoryKey(product), {}, locale),
+  i18n.t(`products.${product.id}.description`, {}, locale),
+  ...product.sizes.map(size => variantKind(product) === 'set' ? i18n.t('product.setValue', {}, locale) : size),
+  ...product.colors.map(color => i18n.t(`color.${color.id}`, {}, locale))
+].join(' ')).join(' '));
 
 function readStorage(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
@@ -35,16 +43,17 @@ let cart = Array.isArray(savedCart) ? savedCart.filter(line => {
   const product = line && productById.get(line.id);
   return product && edition.canSelect(product) && product.sizes.includes(line.size) && product.colors.some(color => color.name === line.color) && Number.isInteger(line.quantity) && line.quantity > 0 && line.quantity <= 10;
 }).map(({id, size, color, quantity}) => ({id, size, color, quantity})) : [];
-let category = 'all';
-let query = '';
-let sort = 'featured';
-const filters = {size:'', color:'', price:''};
+const initialView = catalogQuery.readView(window.location?.search || '', products);
+let category = initialView.category;
+let query = initialView.query;
+let sort = initialView.sort;
+const filters = {size:initialView.size, color:initialView.color, price:initialView.price};
 let activeProduct = null;
 let selectedSize = '';
 let selectedColor = '';
 let infoType = 'sizes';
 let infoReturn = null;
-const rememberedChoices = new Map();
+const rememberedChoices = new Map(cart.map(({id, size, color}) => [id, {size, color}]));
 const dialogTriggers = new WeakMap();
 const suppressedClosures = new WeakMap();
 let toastTimer;
@@ -118,17 +127,8 @@ function restoreFocus(reference, fallback = '#cart-toggle') {
 
 function renderProducts() {
   const focus = $('#product-grid').contains(document.activeElement) ? focusReference() : null;
-  const list = catalogQuery.select(products, {category, query, sort, favorites, ...filters}, product => {
-    // Search both languages so the same query still finds a piece after a switch.
-    return ['es','en'].map(locale => [
-      i18n.t(`products.${product.id}.name`, {}, locale),
-      i18n.t(`category.${product.category}`, {}, locale),
-      i18n.t(productCategoryKey(product), {}, locale),
-      i18n.t(`products.${product.id}.description`, {}, locale),
-      ...product.sizes.map(size => variantKind(product) === 'set' ? i18n.t('product.setValue', {}, locale) : size),
-      ...product.colors.map(color => i18n.t(`color.${color.id}`, {}, locale))
-    ].join(' ')).join(' ');
-  });
+  // The bilingual index stays valid when the display language changes.
+  const list = catalogQuery.select(products, {category, query, sort, favorites, ...filters}, searchIndex);
   renderFilters();
   const resultCount = t(list.length === 1 ? 'catalog.piece' : 'catalog.pieces', {count:list.length});
   $('#results-count').textContent = resultCount;
@@ -145,7 +145,7 @@ function renderProducts() {
         <button class="favorite-button" data-favorite="${product.id}" aria-label="${text(favorite ? 'product.removeFavorite' : 'product.addFavorite', {name})}" aria-pressed="${favorite}"><span aria-hidden="true">${favorite ? '♥' : '♡'}</span></button>
         <button class="quick-view" data-product="${product.id}">${text(product.exclusive ? 'product.previewEdition' : variantKind(product) === 'size' ? 'product.chooseSize' : 'product.discoverBeauty')}</button>
       </div>
-      <div class="product-title-row"><h3><button class="product-title-button" data-product="${product.id}">${escapeHTML(name)}</button></h3><span>${money(product.price)}</span></div>
+      <div class="product-title-row"><h3><button class="product-title-button" data-product="${product.id}">${escapeHTML(name)}</button></h3><span><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</span></div>
       <p class="product-description">${text(productCategoryKey(product))} · ${escapeHTML(product.sizes.length === 1 ? variantText(product, product.sizes[0]) : `${product.sizes[0]}–${product.sizes.at(-1)}`)}</p>
       <div class="swatches">${product.colors.map(color => `<span class="swatch" style="--swatch:${color.hex}" aria-hidden="true"></span>`).join('')}<span>${escapeHTML(colorName(product.colors[0]))}</span></div>
       <p class="product-sample-label">${text('catalog.sampleBadge')}</p>
@@ -175,13 +175,81 @@ function renderFilters() {
   $('#active-filters').hidden = chips.length === 0;
   $('#active-filters').innerHTML = chips.map(({key,label}) => `<button type="button" class="filter-chip" data-clear-filter="${key}" aria-label="${text('catalog.removeFilter', {label})}">${escapeHTML(label)}<span aria-hidden="true">×</span></button>`).join('');
   $('#catalog-search-clear').hidden = query.length === 0;
+  const share = $('#catalog-share');
+  if (share) {
+    share.disabled = category === 'favorites';
+    share.setAttribute('title', t(category === 'favorites' ? 'catalog.shareFavorites' : 'catalog.share'));
+  }
+}
+
+function catalogViewURL() {
+  if (!window.location) return null;
+  const url = new URL(window.location.href);
+  url.search = catalogQuery.encodeView({category, query, sort, ...filters}, products);
+  url.hash = 'coleccion';
+  return url;
+}
+
+function syncCatalogURL(mode = 'replace') {
+  if (category === 'favorites') return;
+  const url = catalogViewURL();
+  if (!url || url.href === window.location.href || !window.history?.[`${mode}State`]) return;
+  try { window.history[`${mode}State`]({alrCatalog:true}, '', url.href); } catch {}
+}
+
+function restoreCatalogView() {
+  const view = catalogQuery.readView(window.location?.search || '', products);
+  const hadDialog = !!$('dialog[open]');
+  infoReturn = null;
+  $$('dialog[open]').forEach(dialog => {
+    suppressedClosures.set(dialog, (suppressedClosures.get(dialog) || 0) + 1);
+    dialog.close();
+  });
+  document.body.classList.remove('modal-open');
+  category = view.category;
+  query = view.query;
+  sort = view.sort;
+  Object.assign(filters, {size:view.size, color:view.color, price:view.price});
+  $('#search').value = query;
+  $('#catalog-search').value = query;
+  $('#sort').value = sort;
+  renderProducts();
+  closeNavigation();
+  refreshFeedback();
+  if (hadDialog) $('#catalog-search').focus({preventScroll:true});
+}
+
+async function shareCatalogView() {
+  if (category === 'favorites') return;
+  const url = catalogViewURL();
+  syncCatalogURL();
+  try {
+    if (!url || !navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(url.href);
+    toast('toast.linkCopied');
+  } catch { toast('toast.linkCopyUnavailable'); }
 }
 
 function setQuery(value) {
-  query = value;
-  $('#search').value = value;
-  $('#catalog-search').value = value;
+  // Keep a trailing space while typing so multiword queries remain easy to enter.
+  query = String(value).replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 120);
+  $('#search').value = query;
+  $('#catalog-search').value = query;
   renderProducts();
+  syncCatalogURL();
+}
+
+function scrollToCatalog() {
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  $('#coleccion').scrollIntoView({behavior:reduceMotion ? 'auto' : 'smooth'});
+}
+
+function finishSearch() {
+  $('#search-bar').hidden = true;
+  $('#search-toggle').setAttribute('aria-expanded', 'false');
+  $('#results-count').setAttribute('tabindex', '-1');
+  $('#results-count').focus({preventScroll:true});
+  scrollToCatalog();
 }
 
 function resetCatalog() {
@@ -237,6 +305,7 @@ function setCategory(value) {
   if (['fragrance', 'beauty', 'exclusive'].includes(next)) filters.size = '';
   renderProducts();
   closeNavigation();
+  syncCatalogURL('push');
 }
 
 function openDialog(dialog, trigger = document.activeElement) {
@@ -260,7 +329,7 @@ function renderProductDetail() {
   const actionKey = !allowed ? unavailableAction() : selectedSize ? 'product.addBag' : clothing ? 'product.sizePrompt' : 'product.formatPrompt';
   $('#product-detail').innerHTML = `<div class="detail-layout" data-product-id="${product.id}">
     <img class="detail-photo" src="${product.image}" style="object-position:${product.position}" alt="${text('product.image', {name})}" width="1024" height="1280">
-    <div class="detail-copy"><p class="eyebrow">${text(productCategoryKey(product))}</p><h2 id="product-title">${escapeHTML(name)}</h2><div class="price">${money(product.price)}</div><p>${escapeHTML(productText(product, 'description'))}</p>
+    <div class="detail-copy"><p class="eyebrow">${text(productCategoryKey(product))}</p><h2 id="product-title">${escapeHTML(name)}</h2><div class="price"><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</div><p>${escapeHTML(productText(product, 'description'))}</p>
       ${product.exclusive ? `<p class="detail-exclusive-notice">${text(allowed ? 'edition.windowOpen' : 'edition.unavailable')}</p>` : ''}
       <fieldset class="detail-field"><legend class="detail-label">${text(product.category === 'fragrance' || variantKind(product) === 'set' ? 'product.packaging' : clothing ? 'product.color' : 'product.tone')}</legend><div class="choices color-choices">${product.colors.map(color => `<button class="${selectedColor === color.name ? 'selected' : ''}" data-color="${color.name}" aria-pressed="${selectedColor === color.name}"><span class="swatch" style="--swatch:${color.hex}" aria-hidden="true"></span>${escapeHTML(colorName(color))}</button>`).join('')}</div></fieldset>
       <fieldset class="detail-field"><legend class="detail-label">${escapeHTML(variantLabel(product))} <span id="size-selection" class="selection-hint" aria-live="polite">· ${escapeHTML(selectedSize ? variantText(product, selectedSize) : variantPrompt(product))}</span></legend><div class="choices">${product.sizes.map(size => `<button class="${selectedSize === size ? 'selected' : ''}" data-size="${size}" aria-pressed="${selectedSize === size}">${escapeHTML(variantText(product, size))}</button>`).join('')}</div></fieldset>
@@ -276,7 +345,7 @@ function openProduct(id, trigger) {
   if (!product) return;
   activeProduct = product;
   const previous = rememberedChoices.get(id);
-  selectedSize = previous?.size || (variantKind(product) !== 'size' && product.sizes.length === 1 ? product.sizes[0] : '');
+  selectedSize = previous?.size || (variantKind(product) === 'size' && product.sizes.includes(filters.size) ? filters.size : variantKind(product) !== 'size' && product.sizes.length === 1 ? product.sizes[0] : '');
   selectedColor = previous?.color || product.colors[0].name;
   renderProductDetail();
   openDialog($('#product-dialog'), trigger);
@@ -376,7 +445,7 @@ document.addEventListener('click', event => {
     const key = button.dataset.clearFilter;
     if (key === 'query') setQuery('');
     else if (key === 'category') setCategory('all');
-    else if (Object.hasOwn(filters, key)) { filters[key] = ''; renderProducts(); }
+    else if (Object.hasOwn(filters, key)) { filters[key] = ''; renderProducts(); syncCatalogURL(); }
     $('#catalog-search').focus({preventScroll:true});
     return;
   }
@@ -386,6 +455,7 @@ document.addEventListener('click', event => {
     favorites.has(id) ? favorites.delete(id) : favorites.add(id);
     persist();
     renderProducts();
+    toast(favorites.has(id) ? 'toast.favoriteAdded' : 'toast.favoriteRemoved');
     return;
   }
   if (button.dataset.filter) { setCategory(button.dataset.filter); return; }
@@ -430,7 +500,7 @@ document.addEventListener('click', event => {
   if (button.hasAttribute('data-continue')) {
     $('#cart-dialog').close();
     setCategory('all');
-    $('#coleccion').scrollIntoView({behavior:'smooth'});
+    scrollToCatalog();
     return;
   }
   if (button.id === 'review-order') {
@@ -453,9 +523,10 @@ document.addEventListener('click', event => {
 });
 
 $('#cart-toggle').addEventListener('click', event => openCart(event.currentTarget));
+$('#catalog-share')?.addEventListener('click', shareCatalogView);
 $('#edition-interest').addEventListener('click', () => { editionInterest = !editionInterest; persist(); renderEdition(); });
-$('#favorites-toggle').addEventListener('click', () => { setCategory('favorites'); $('#coleccion').scrollIntoView({behavior:'smooth'}); });
-$('#sort').addEventListener('change', event => { sort = event.target.value; renderProducts(); });
+$('#favorites-toggle').addEventListener('click', () => { setCategory('favorites'); scrollToCatalog(); });
+$('#sort').addEventListener('change', event => { sort = event.target.value; renderProducts(); syncCatalogURL(); });
 $('#search-toggle').addEventListener('click', () => {
   const hidden = !$('#search-bar').hidden;
   $('#search-bar').hidden = hidden;
@@ -467,15 +538,23 @@ $('#search-close').addEventListener('click', () => {
   $('#search-toggle').setAttribute('aria-expanded', 'false');
   $('#search-toggle').focus({preventScroll:true});
 });
-$('#search').addEventListener('input', event => setQuery(event.target.value));
+$('#search').addEventListener('input', event => { if (!event.isComposing) setQuery(event.target.value); });
+$('#search').addEventListener('compositionend', event => setQuery(event.target.value));
 $('#search').addEventListener('keydown', event => {
+  if (event.isComposing) return;
   if (event.key === 'Escape') { event.preventDefault(); $('#search-close').click(); }
-  if (event.key === 'Enter') { event.preventDefault(); $('#coleccion').scrollIntoView({behavior:'smooth'}); }
+  if (event.key === 'Enter') { event.preventDefault(); finishSearch(); }
 });
-$('#catalog-search').addEventListener('input', event => setQuery(event.target.value));
+$('#catalog-search').addEventListener('input', event => { if (!event.isComposing) setQuery(event.target.value); });
+$('#catalog-search').addEventListener('compositionend', event => setQuery(event.target.value));
+$('#catalog-search').addEventListener('keydown', event => {
+  if (event.isComposing) return;
+  if (event.key === 'Enter') { event.preventDefault(); finishSearch(); }
+  if (event.key === 'Escape' && query) { event.preventDefault(); setQuery(''); }
+});
 $('#catalog-search-clear').addEventListener('click', () => { setQuery(''); $('#catalog-search').focus({preventScroll:true}); });
 for (const key of Object.keys(filters)) {
-  $(`#filter-${key}`).addEventListener('change', event => { filters[key] = event.target.value; renderProducts(); });
+  $(`#filter-${key}`).addEventListener('change', event => { filters[key] = event.target.value; renderProducts(); syncCatalogURL(); });
 }
 $('#clear-filters').addEventListener('click', resetCatalog);
 $('#reset-filter').addEventListener('click', () => { resetCatalog(); $('#catalog-search').focus({preventScroll:true}); });
@@ -534,12 +613,16 @@ i18n.subscribe(() => {
 });
 
 $('#year').textContent = new Date().getFullYear();
+$('#search').value = query;
+$('#catalog-search').value = query;
+$('#sort').value = sort;
 renderProducts();
 renderEdition();
 updateCounts();
 if (Array.isArray(savedCart) && savedCart.length !== cart.length) persist();
 setInterval(() => { if (!document.hidden) refreshEditionWindow(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshEditionWindow(); });
+window.addEventListener('popstate', restoreCatalogView);
 
 if (document.modelContext?.registerTool) {
   const lifecycle = new AbortController();
