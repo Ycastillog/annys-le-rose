@@ -4,3 +4,4 @@ node_modules/
 *.tar
 *.log
 publication-helper.cjs
+.openai/
