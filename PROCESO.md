@@ -6,6 +6,8 @@ La prioridad de esta etapa es construir la identidad de Annys Le´ Rose antes de
 
 Las fotografías se generaron con image_gen integrado para ilustrar conceptos. No representan mercancía disponible. La colección de ropa mantiene seis imágenes: conjunto rojo de encaje sobre satén (Rose), conjunto negro de encaje (Noir), camisola y shorts rosa (Lune), body rojo cereza (Cherry), bralette marfil (Ivory) y bata rosa (Blush). Las tres prendas individuales reutilizan la imagen del conjunto al que pertenecen; sustituir por fotos individuales al cargar el catálogo real. La expansión añade conceptos visuales para Rose Veil, Ambre Doux, Cherry Kiss, Pearl Glow, el perfume y brillo de Édition 05 y su coffret, además de una imagen editorial de belleza. Los 16 productos se mantienen en `dist/catalog.js`; nombres y descripciones en ambos idiomas, en `dist/i18n.js`. Los precios y la guía de tallas son ejemplos que deben reemplazarse. Las tallas representan propuestas del concepto y no stock; el body y el bralette abarcan XS–XXL, mientras que la bata abarca S–XXL. Los perfumes proponen 50 ml y los brillos 6 ml, sin implicar fórmulas aprobadas, pruebas ni producción confirmadas. El nombre se mantiene como Annys Le´ Rose; confirmar la grafía comercial definitiva antes de registrar dominio o preparar etiquetas.
 
+La portada incorpora `dist/assets/campaign-hero.jpg`, una imagen original generada con image_gen integrado, de 1536 × 1024 píxeles y 174413 bytes. Muestra dos mujeres adultas de distintas complexiones con pijamas rojo cereza y marfil. Su función es expresar una campaña conceptual; las fotos de venta deberán corresponder a prendas reales.
+
 ## Dirección de identidad
 
 Annys Le´ Rose se construye como una casa de rituales íntimos: la capa que eliges, el aroma que te acompaña y el brillo con el que expresas tu momento. El territorio emocional es la feminidad autodeterminada. Una mujer puede sentirse suave, segura, sensual, serena o audaz sin que la marca le imponga una apariencia o un papel. La cercanía cotidiana y una edición visual cuidada conectan ropa y belleza en el mismo universo.
@@ -26,11 +28,25 @@ La lectura se limita a cómo estas empresas describen su propuesta; no es una au
 
 Las observaciones sobre Victoria’s Secret proceden de [su descripción corporativa](https://www.victoriassecretandco.com/our-company/about-us) y [su comunicación del 21 de mayo de 2026](https://www.victoriassecretandco.com/news-releases/news-release-details/vsxy-standing-fully-who-we-are). Fashion Nova describe su enfoque en [About Us](https://www.fashionnova.com/pages/about-us). Temu presenta su red comercial en [Who We Are](https://www.temu.com/about_temu/home.html). Las decisiones de la última columna son inferencias de diseño para ALR, no características que esas fuentes atribuyan a nuestra marca. No reutilizar sus logos, campañas, composición gráfica o frases.
 
+### Lectura de portadas para esta actualización
+
+Las portadas oficiales actuales aportaron referencias para la jerarquía de la primera pantalla. Son observaciones cualitativas de contenido y presentación, no un ranking ni una medición de conversión.
+
+| Referente | Observación de su portada oficial | Aplicación propia en ALR |
+| --- | --- | --- |
+| [SKIMS](https://skims.com/en-do) | Fotografía de campaña protagonista, mensaje breve y llamada a la acción; después aparecen productos y accesos de categoría. | Abrir con una campaña comprensible y ofrecer rutas claras hacia los universos. |
+| [Agent Provocateur](https://www.agentprovocateur.com/int_en/) | Fotografía editorial protagonista, campaña y llamadas breves; las rutas posteriores llevan a novedades y familias de prendas. | Usar una imagen original con carácter y reducir el texto previo a la exploración. |
+| [Rhode](https://www.rhodeskin.com/) | Titular sensorial corto y una acción concreta hacia la campaña de producto. | Conectar tacto, aroma y brillo mediante un titular memorable y texto breve. |
+
+Estas decisiones son inferencias para Annys Le´ Rose. La fotografía, el titular y la composición de nuestra portada se desarrollaron para la marca; no se reutilizan elementos de las campañas observadas.
+
 ### Voz y contenido
 
 El inglés es la voz principal y el español mantiene el mismo sentido emocional y la misma claridad funcional. La voz es íntima, segura, cálida y concreta. Se dirige a una persona, invita a elegir y deja espacio a distintas maneras de vivir la feminidad. Usa frases breves en titulares y explicaciones directas en el catálogo, la bolsa y las condiciones.
 
-Una expresión editorial de trabajo es **“Your own kind of feminine.”**, con la adaptación **“Tu propia forma de ser femenina.”**. El relato de esta fase debe indicar que la marca toma forma y que sus conceptos están en desarrollo. Las llamadas a la acción invitan a explorar el universo o guardar una idea; los estados de muestra explican lo que efectivamente sucede. Los textos no atribuyen a una prenda la capacidad de corregir un cuerpo ni a un cosmético resultados, seguridad clínica o duración sin pruebas. Los nombres de trabajo y las frases están sujetos a revisión antes de su uso comercial.
+El lema de identidad es **“Your own kind of feminine.”**, con la adaptación **“Tu propia forma de ser femenina.”**. La campaña de portada usa **“Softness. With character.”** / **“Suavidad. Con carácter.”**, sin sustituir ese lema. Su texto conecta encaje, perfume y un toque de brillo; «Find your ritual» / «Encuentra tu ritual» invita a explorar los tres universos y una segunda acción lleva a los conceptos.
+
+La primera pantalla expresa el territorio emocional con pocas palabras. El catálogo y los estados de muestra explican que los productos son conceptos en desarrollo y lo que efectivamente sucede al seleccionarlos. Las llamadas a la acción invitan a explorar o guardar una idea. Los textos no atribuyen a una prenda la capacidad de corregir un cuerpo ni a un cosmético resultados, seguridad clínica o duración sin pruebas. Los nombres de trabajo y las frases están sujetos a revisión antes de su uso comercial.
 
 ### Sistema visual para web, aplicación y piezas físicas
 
@@ -38,7 +54,7 @@ La base visual combina rojo cereza, marfil cálido y rosa suave, con rojo oscuro
 
 Refinar el nombre completo y el monograma ALR como dos escalas de una identidad. Preparar firma horizontal y vertical, símbolo independiente, versiones de un color, claro y oscuro, área de reserva y mínimos de reproducción. Una curva o gesto vinculado a ALR puede conectar delicadeza y seguridad sin acumular adornos. El símbolo se comprobará como favicon, icono con máscara, etiqueta, bordado y sello; esa comprobación visual no acredita disponibilidad de marca.
 
-La web presenta primero la esencia, luego las familias de rituales y después los conceptos de producto. La aplicación futura usará los mismos colores, tipos, iconos, fotografía y estados, adaptados a su navegación. Mantener una biblioteca común de decisiones visuales y de contenido, junto con componentes para categoría, producto, variante, bolsa, edición anual y ayuda. Las imágenes editoriales pueden sugerir tacto y atmósfera; las fotografías de venta deberán mostrar el producto real con proporción, color y detalles comprensibles.
+La web presenta primero la campaña, luego tres universos —ropa íntima, perfumes y brillo de labios— y después el catálogo conceptual; el relato de identidad aparece tras el catálogo. En escritorio, el texto de campaña queda a la izquierda de la fotografía; en móvil, la fotografía aparece arriba. La aplicación futura usará los mismos colores, tipos, iconos, fotografía y estados, adaptados a su navegación. Mantener una biblioteca común de decisiones visuales y de contenido, junto con componentes para categoría, producto, variante, bolsa, edición anual y ayuda. Las imágenes editoriales pueden sugerir tacto y atmósfera; las fotografías de venta deberán mostrar el producto real con proporción, color y detalles comprensibles.
 
 ### Entregables de identidad disponibles
 
@@ -121,15 +137,17 @@ Desde esta carpeta ejecutar `node preview.cjs` y abrir `http://127.0.0.1:4173`; 
 
 Si cambia el contenido de portada en `dist/i18n.js` o del estudio en `dist/brand.js`, ejecutar `node scripts/sync-english.cjs` para sincronizar ambos HTML iniciales en inglés con su render real. Admite `--home` y `--studio` para trabajar en una sola página. Este paso mantiene la primera presentación y el contenido sin JavaScript en el idioma principal. Ejecutarlo antes de calcular los hashes finales y renovar los parámetros de caché `v` de los recursos modificados; después realizar las comprobaciones del sitio y la bolsa.
 
-La cabecera concentra seis accesos: universo de marca, conceptos, perfumes, brillo, Édition 05 y estudio. Las tres familias de ropa mantienen accesos mediante fotografías, filtros y pie de página. La exploración puede compartirse por URL con categoría, búsqueda, talla, color, rango de precio y orden; bolsa, favoritos e idioma permanecen fuera del enlace. El historial recupera las vistas y el detalle propone una talla filtrada válida o la variante previa de la bolsa. Las acciones describen explícitamente una bolsa de prueba.
+La cabecera concentra seis accesos: Intimates, Fragrance, Lip gloss, Édition 05, Our world y Brand studio, con sus traducciones al seleccionar español. La categoría agregada `intimates` reúne nueve conceptos de ropa, conservando los IDs y categorías originales de cada prenda. Los accesos con `data-discover` limpian búsqueda y filtros para iniciar la exploración de un universo; las pestañas del catálogo preservan los filtros elegidos. La exploración puede compartirse por URL con categoría, búsqueda, talla, color, rango de precio y orden; bolsa, favoritos e idioma permanecen fuera del enlace. El historial recupera las vistas y el detalle propone una talla filtrada válida o la variante previa de la bolsa. Las acciones describen explícitamente una bolsa de prueba.
 
 Las fuentes WOFF2 se sirven desde `dist/assets/fonts/`, con licencias OFL y procedencia incluidas. `fonts.css` es común a portada y estudio; mantiene las familias de la identidad, evita la importación remota de tipografías y permite mostrar texto con alternativas del sistema mientras se cargan.
 
-## Verificación completada de identidad y catálogo
+## Verificación de identidad, catálogo y portada
 
-La portada y el estudio de identidad quedaron verificados en navegador a 320, 390, 768 y 1440 píxeles CSS, sin desbordamiento horizontal. Se preservó el zoom del navegador y se confirmaron las medidas reales de las vistas. La primera visita a `localhost`, sin preferencia guardada y con navegador en español, usó inglés. La preferencia española guardada en `127.0.0.1` se respetó. El cambio ES/EN persistió al navegar del estudio a la portada y volver.
+La nueva portada se verificó a 320 × 780 y 768 × 1024 en español, y a 390 × 844 y 1440 × 1000 en inglés. No presentó desbordamiento horizontal; imagen, titular y llamadas a la acción resultaron legibles. La acción principal llevó a los tres universos. Intimates mostró los nueve conceptos de ropa y conservó la categoría al recargar la URL.
 
-La expansión a 16 conceptos verificó proporciones corregidas de las fotografías, búsqueda por `50 ml`, limpieza del filtro de talla al cambiar de ropa a perfumes y selección automática del contenido único de belleza. La traducción de la bolsa conservó la presentación de 50 ml. La selección de un perfume de $64 y un brillo de $18 produjo un subtotal de $82 y una revisión traducida. Las prendas conservan su selección de talla; los productos de belleza no muestran la guía de tallas de ropa. También se verificaron favoritos, interés local y bloqueo de los productos de Édition 05, incluido su coffret, mientras las fechas siguen pendientes. No se enviaron correos ni notificaciones y no se habilitaron pedidos o cobros.
+Desde `intimates?q=ivory&sort=high`, con un concepto visible, el acceso Fragrance del menú móvil limpió búsqueda y orden y mostró tres conceptos. Atrás restauró exactamente la búsqueda `ivory`, el orden de precio descendente y el único resultado anterior. Al descubrir una familia, el foco pasó al contador de resultados.
+
+Las revisiones anteriores de portada y estudio cubrieron 320, 390, 768 y 1440 píxeles CSS, sin desbordamiento horizontal, inglés en primera visita y preferencia ES/EN compartida. También verificaron búsqueda por `50 ml`, contenido único de belleza seleccionado automáticamente, conservación de 50 ml al traducir la bolsa, subtotal de muestra de $82 para perfume y brillo, talla filtrada propuesta en el detalle, compartir deshabilitado en favoritos y bloqueo del coffret con fechas pendientes. No se enviaron correos ni notificaciones y no se habilitaron pedidos o cobros.
 
 Las comprobaciones reproducibles se ejecutan sin dependencias:
 
@@ -138,8 +156,6 @@ node scripts/verify-site.cjs
 node scripts/verify-shopping.cjs
 ```
 
-`verify-site.cjs` valida estructura y referencias de activos de portada y estudio, fuentes WOFF2, los 16 conceptos, filtros, consultas y 154 claves estáticas de la portada en español e inglés. La revisión del estudio cubrió 76 campos localizados. Las pruebas del calendario anual cubren apertura y cierre, fechas inválidas, cambio de horario estacional y ventanas que cruzan el fin de año.
+`verify-site.cjs` valida estructura y referencias de activos de portada y estudio, fuentes WOFF2, los 16 conceptos, filtros, consultas y 153 claves estáticas de la portada en español e inglés. La revisión del estudio cubrió 76 campos localizados. Las pruebas del calendario anual cubren apertura y cierre, fechas inválidas, cambio de horario estacional y ventanas que cruzan el fin de año.
 
-`verify-shopping.cjs` pasa 26 regresiones con la aplicación completa y sus herramientas WebMCP en una VM, usando un DOM mínimo y reloj controlado. Conserva las diez comprobaciones de formatos, variantes, bolsa y calendario anual. Añade URL válidas e inválidas, recarga EN/ES, historial sin entradas por tecla, cierre de diálogo y foco al volver, copia y alternativa sin permiso, favoritos locales, recuperación de talla, búsqueda indexada bilingüe, composición de texto, teclado y movimiento reducido. Diseño, foco nativo y renderizado se revisan en navegador. Las herramientas WebMCP leen el catálogo y preparan una bolsa de muestra; no completan transacciones.
-
-En la revisión actual, ambas páginas se comprobaron a 320, 390, 768 y 1440 píxeles CSS sin desbordamiento horizontal. Compartir una vista de perfume y recargar recuperó categoría, búsqueda, precio y orden. Atrás cerró el detalle abierto y devolvió el foco a la búsqueda; Adelante restauró la categoría. Una talla XL filtrada se propuso en el detalle de ropa. Se verificaron la acción de compartir deshabilitada en favoritos y el coffret anual bloqueado con fechas por anunciar.
+`verify-shopping.cjs` pasa 32 regresiones con la aplicación completa y sus herramientas WebMCP en una VM, usando un DOM mínimo y reloj controlado. Cubre formatos, variantes, bolsa y calendario anual, URL válidas e inválidas, recarga EN/ES, historial sin entradas por tecla, cierre de diálogo y foco al volver, copia y alternativa sin permiso, favoritos locales, recuperación de talla, búsqueda indexada bilingüe, composición de texto, teclado, movimiento reducido y recorridos de descubrimiento. Diseño, foco nativo y renderizado se revisan en navegador. Las herramientas WebMCP leen el catálogo y preparan una bolsa de muestra; no completan transacciones.

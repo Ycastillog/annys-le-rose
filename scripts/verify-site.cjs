@@ -98,6 +98,9 @@ const searchText = product => ['es', 'en'].map(locale => [
 ].join(' ')).join(' ');
 const select = overrides => context.window.ALRcatalogQuery.select(products, {category:'all', query:'', favorites:new Set(), ...overrides}, searchText);
 assert.equal(select({}).length, 16);
+assert.equal(select({category:'intimates'}).length, 9, 'Intimates groups lingerie, essentials and lounge');
+assert.ok(select({category:'intimates'}).every(product => ['lingerie','essentials','lounge'].includes(product.category)), 'Intimates excludes beauty and fragrance');
+assert.equal(select({category:'intimates', size:'XS'}).length, 8, 'Intimates supports clothing size filters');
 assert.equal(select({color:'ivory', price:'under40', size:'XS'})[0].id, 'ivory-bralette', 'Combined color/price/size');
 assert.equal(select({color:'ivory', price:'over65'}).length, 0, 'No matching combination');
 assert.equal(select({size:'XS'}).length, 8, 'Size filter excludes the robe');

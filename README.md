@@ -4,13 +4,23 @@ Universo de marca en desarrollo para Annys Le´ Rose: lencería, descanso, perfu
 
 ## Dirección de marca
 
-La expresión editorial de trabajo es **“Your own kind of feminine.”** / **“Tu propia forma de ser femenina.”**. La voz es íntima, segura, cálida y concreta. Un rojo cereza vivo sobre marfil, serif editorial, tipografía funcional y un gesto ALR consistente conectan la web, la futura aplicación y las piezas físicas. Se busca una experiencia premium accesible; el precio y las cualidades del producto se validarán con muestras y costes reales.
+El lema de identidad es **“Your own kind of feminine.”** / **“Tu propia forma de ser femenina.”**. La voz es íntima, segura, cálida y concreta. Un rojo cereza vivo sobre marfil, serif editorial, tipografía funcional y un gesto ALR consistente conectan la web, la futura aplicación y las piezas físicas. Se busca una experiencia premium accesible; el precio y las cualidades del producto se validarán con muestras y costes reales.
 
 Los 16 conceptos actuales sirven para explorar esa dirección. La inclusión se trabaja desde lenguaje, representación y experiencia, sin prometer un rango de tallas, ajuste o fórmulas todavía no desarrollados. ALR Édition 05 propone una ceremonia anual de perfume y brillo durante cinco días; sus fechas siguen por anunciar.
 
 `PROCESO.md` documenta territorio, voz, sistema visual, lectura de fuentes oficiales, briefs futuros y decisiones abiertas. El proceso avanza de diseño de identidad y líneas a muestras, validación, comercio y aplicación, con entregables y puntos de control concretos. La disponibilidad comercial del nombre, el símbolo y los nombres de producto todavía debe revisarse.
 
 El estudio de identidad está en `dist/brand.html`, con estilos en `brand.css` y contenido bilingüe en `brand.js`. Comparte la preferencia de idioma con la página principal. Presenta símbolos, firmas, paleta, tipografías y una vista conceptual de aplicación; no existe una aplicación publicada ni funciones reales de app. Incluye referencias de las fuentes y sus licencias.
+
+## Portada y navegación
+
+La campaña de portada presenta **“Softness. With character.”** / **“Suavidad. Con carácter.”**. Es un titular de campaña distinto del lema de identidad, que se conserva. El texto breve conecta encaje, perfume y brillo; «Find your ritual» / «Encuentra tu ritual» lleva a los tres universos, y «Explore the concepts» / «Explora los conceptos» abre el catálogo conceptual.
+
+`dist/assets/campaign-hero.jpg` es una imagen original generada con image_gen integrado: 1536 × 1024 píxeles y 174413 bytes. Representa dos mujeres adultas de distintas complexiones con pijamas rojo cereza y marfil. Ilustra una campaña conceptual; no es una fotografía de mercancía disponible. En escritorio acompaña el texto desde la derecha; en móvil se presenta arriba.
+
+Tres universos —Intimates, Fragrance y Lip gloss— preceden al catálogo; el relato de identidad aparece después. La cabecera ofrece seis accesos: Intimates, Fragrance, Lip gloss, Édition 05, Our world y Brand studio, traducidos al elegir español. La categoría agregada `intimates` reúne los nueve conceptos de ropa y conserva las categorías e IDs de cada prenda. Los accesos de descubrimiento con `data-discover` limpian búsqueda y filtros para explorar una familia desde el inicio; las pestañas del catálogo conservan los filtros elegidos.
+
+La dirección de portada toma observaciones cualitativas de fuentes oficiales: fotografía protagonista, mensaje breve, llamada a la acción y acceso posterior a categorías en [SKIMS](https://skims.com/en-do) y [Agent Provocateur](https://www.agentprovocateur.com/int_en/); titulares sensoriales breves en [Rhode](https://www.rhodeskin.com/). Son referencias de jerarquía y lenguaje, no un ranking ni una evaluación de conversión. La composición, fotografía y textos de ALR son propios.
 
 ## Ejecutar localmente
 
@@ -34,6 +44,7 @@ Abrir http://127.0.0.1:4173 y http://127.0.0.1:4173/brand.html para el estudio. 
 - `dist/app.js`: búsqueda, filtros y demás interacciones de la tienda.
 - `dist/i18n.js`: traducciones de español e inglés y preferencia de idioma.
 - `dist/assets/`: fotografías conceptuales generadas con IA.
+- `dist/assets/campaign-hero.jpg`: fotografía original de campaña para la portada.
 - `dist/assets/brand/`: siete SVG de identidad y `tokens.json`, referencia de paleta, tipografías y firma para web y futura app.
 - `scripts/sync-english.cjs`: sincronización del HTML inicial de portada y estudio con su contenido inglés.
 - `scripts/verify-site.cjs`: comprobación de estructura, catálogo, traducciones, filtros y calendario anual.
@@ -98,12 +109,10 @@ git push origin <commit-devuelto>:gh-pages
 
 GitHub Pages sirve la raíz de `gh-pages`. No publicar la raíz de `main`, que contiene documentación y utilidades de desarrollo.
 
-La página principal y el estudio de identidad quedaron verificados a 320, 390, 768 y 1440 píxeles CSS, sin desbordamiento horizontal. Se conservó el zoom del navegador y se confirmaron las medidas reales de cada vista. En una primera visita a `localhost`, sin idioma guardado y con navegador en español, se abrió inglés; la preferencia española guardada en `127.0.0.1` se respetó. La elección ES/EN persistió al ir y volver entre estudio y portada.
+`verify-site.cjs` valida estructura y activos de portada y estudio, fuentes WOFF2, los 16 conceptos, consultas del catálogo y 153 claves de traducción de la portada. La revisión del estudio cubrió 76 campos localizados. También se comprueba el calendario anual, límites de apertura y cierre, cambio de horario estacional y cruce de fin de año. `verify-shopping.cjs` pasa 32 regresiones con la aplicación y herramientas WebMCP reales en una VM, DOM mínimo y reloj controlado. Incluye bolsa y ventana anual, URL válidas e inválidas, recarga, historial, copia y su alternativa, favoritos locales, selección recuperada, búsqueda bilingüe, composición de texto, teclado, movimiento reducido y recorridos de descubrimiento. Diseño, foco nativo y renderizado se revisan en navegador.
 
-La expansión de belleza también verificó fotografías con proporciones corregidas, búsqueda de `50 ml`, limpieza del filtro de talla al pasar a perfumes y selección automática del contenido único. La bolsa mantuvo el formato de 50 ml al traducirse, sin perder la selección. Perfume de $64 más brillo de $18 produjo un subtotal de muestra de $82 y una revisión traducida. Se verificaron favoritos, interés local y bloqueo de la edición anual y su coffret mientras las fechas están pendientes. Guardar interés no envía correos ni notificaciones.
+La nueva portada se comprobó en navegador a 320 × 780 y 768 × 1024 en español, y a 390 × 844 y 1440 × 1000 en inglés: sin desbordamiento horizontal, con imagen, titular y llamadas a la acción legibles. La acción principal llegó a los tres universos. Intimates mostró nueve conceptos y mantuvo la categoría al recargar la URL. Desde `intimates?q=ivory&sort=high`, con un resultado, Fragrance en el menú móvil limpió búsqueda y orden y mostró tres conceptos; Atrás restauró `ivory`, el orden descendente y el único resultado. El descubrimiento devolvió el foco al contador de resultados.
 
-`verify-site.cjs` valida estructura y activos de portada y estudio, fuentes WOFF2, los 16 conceptos, consultas del catálogo y 154 claves de traducción de la portada. La revisión del estudio cubrió 76 campos localizados. También se comprueba el calendario anual, límites de apertura y cierre, cambio de horario estacional y cruce de fin de año. `verify-shopping.cjs` pasa 26 regresiones con la aplicación y herramientas WebMCP reales en una VM, DOM mínimo y reloj controlado. Incluye las diez comprobaciones de bolsa y ventana anual, más URL válidas e inválidas, recarga, historial, copia y su alternativa, favoritos locales, selección recuperada, búsqueda bilingüe, composición de texto, teclado y movimiento reducido. Diseño, foco nativo y renderizado se revisan en navegador.
-
-La última revisión en navegador comprobó ambas páginas sin desbordamiento a 320, 390, 768 y 1440 píxeles CSS. Se verificó la búsqueda de `50 ml`, compartir un perfume filtrado y restaurar búsqueda/precio/orden al recargar; Atrás cerró un detalle abierto, devolvió el foco al catálogo y Adelante recuperó la categoría. La talla XL filtrada se propuso en el detalle de ropa. El coffret anual permaneció bloqueado con fechas pendientes y la vista de favoritos deshabilitó compartir. Inglés y español conservaron los mismos formatos y controles.
+Las revisiones anteriores de portada y estudio cubrieron 320, 390, 768 y 1440 píxeles CSS, idioma inicial inglés y preferencia ES/EN compartida. También verificaron formatos de belleza conservados al traducir, subtotal de muestra de $82 para perfume y brillo, talla filtrada propuesta en el detalle, compartir deshabilitado en favoritos y bloqueo del coffret anual con fechas pendientes. No se habilitaron cobros ni avisos por correo.
 
 CSS y JavaScript llevan una versión de caché en el HTML; al modificarlos se debe renovar su parámetro `v`.

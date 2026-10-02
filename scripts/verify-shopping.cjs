@@ -25,8 +25,9 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
   const schedule = {startMonthDay:announced ? '10-01' : null, durationDays:5, timeZone:'America/Santo_Domingo'};
 
   class Element {
-    constructor(id = '') {
+    constructor(id = '', tagName = 'DIV') {
       this.id = id;
+      this.tagName = tagName;
       this.dataset = {};
       this.open = false;
       this.hidden = false;
@@ -172,11 +173,12 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     emit:(id, type, extra) => element(id).dispatch(type, extra),
     cart:() => JSON.parse(run('JSON.stringify(cart)')),
     storedCart:() => JSON.parse(storage.get('alr-cart')),
-    click({id = '', dataset = {}}) {
-      const button = new Element(id);
+    click({id = '', dataset = {}, tagName = dataset.discover !== undefined ? 'A' : 'BUTTON', eventProperties = {}}) {
+      const button = new Element(id, tagName);
       button.dataset = dataset;
-      const event = {target:{closest:() => button}};
+      const event = {target:{closest:() => button}, preventDefault() { this.defaultPrevented = true; }, ...eventProperties};
       for (const callback of documentListeners.get('click') || []) callback(event);
+      return event;
     }
   };
 }
@@ -502,6 +504,102 @@ test('Search is bounded and Escape clears both inputs and the linked query witho
   assert.equal(shop.element('catalog-search').value, '');
   assert.equal(new URL(shop.url()).searchParams.has('q'), false);
   assert.equal(shop.history.length, 1);
+});
+
+test('Intimates groups all nine clothing concepts while retaining their original categories', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=intimates'});
+  const ids = [...shop.element('product-grid').innerHTML.matchAll(/data-product-id="([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(ids, ['cherry-body','ivory-bralette','blush-robe','rose','noir','lune','rose-bra','noir-brief','lune-top']);
+  assert.equal(shop.view().category, 'intimates');
+  assert.equal(shop.element('filter-size').disabled, false);
+  assert.deepEqual([...new Set(shop.readCatalog().filter(product => ids.includes(product.id)).map(product => product.category))], ['lingerie','essentials','lounge']);
+  shop.element('filter-size').value = 'XS';
+  shop.emit('filter-size', 'change');
+  assert.ok(!shop.element('product-grid').innerHTML.includes('data-product="blush-robe"'));
+  assert.equal([...shop.element('product-grid').innerHTML.matchAll(/data-product-id=/g)].length, 8);
+});
+
+test('An intimates link shares and restores the same filtered clothing view', async () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=intimates&size=M&color=cherry&sort=low#coleccion'});
+  await shop.run('shareCatalogView()');
+  assert.deepEqual(shop.copiedLinks, ['https://example.test/annys-le-rose/?category=intimates&size=M&color=cherry&sort=low#coleccion']);
+  const restored = createHarness({href:shop.copiedLinks[0], language:'en'});
+  assert.deepEqual(restored.view(), shop.view());
+  const ids = markup => [...markup.matchAll(/data-product-id="([^"]+)"/g)].map(match => match[1]);
+  assert.deepEqual(ids(restored.element('product-grid').innerHTML), ids(shop.element('product-grid').innerHTML));
+  assert.equal(ids(restored.element('product-grid').innerHTML).length, 3);
+});
+
+test('Editorial discovery clears previous filters and preserves that view for Back', () => {
+  const href = 'https://example.test/annys-le-rose/?category=lingerie&q=rose&size=M&color=cherry&price=from40to65&sort=high#coleccion';
+  for (const category of ['all','intimates','fragrance','beauty']) {
+    const shop = createHarness({href, reduceMotion:true});
+    const before = shop.view();
+    shop.element('navigation').classList.add('open');
+    shop.element('search-bar').hidden = false;
+    const click = shop.click({dataset:{discover:category}});
+    assert.equal(click.defaultPrevented, true);
+    assert.deepEqual(shop.view(), {category, query:'', sort:'featured', size:'', color:'', price:''});
+    assert.equal(shop.element('search').value, '');
+    assert.equal(shop.element('catalog-search').value, '');
+    assert.equal(shop.element('sort').value, 'featured');
+    assert.equal(shop.element('search-bar').hidden, true);
+    assert.equal(shop.element('navigation').classList.contains('open'), false);
+    assert.equal(shop.focused(), 'results-count');
+    assert.equal(shop.element('coleccion').lastScrollOptions.behavior, 'auto');
+    assert.equal(shop.history.length, 2);
+    shop.history.go(-1);
+    assert.deepEqual(shop.view(), before);
+    assert.equal(shop.element('catalog-search').value, 'rose');
+    shop.history.go(1);
+    assert.equal(shop.view().category, category);
+    assert.equal(shop.view().query, '');
+  }
+});
+
+test('Catalog tabs preserve filters while supporting the aggregate intimates category', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=lingerie&q=rose&size=M&color=cherry&price=from40to65&sort=high#coleccion'});
+  const before = shop.view();
+  shop.click({dataset:{filter:'intimates'}});
+  assert.deepEqual(shop.view(), {...before, category:'intimates'});
+  assert.ok(shop.element('product-grid').innerHTML.includes('data-product="rose"'));
+  shop.click({dataset:{filter:'fragrance'}});
+  assert.deepEqual(shop.view(), {...before, category:'fragrance', size:''});
+});
+
+test('Editorial entrances reject arbitrary destinations and category aliases produce stable URLs', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=lingerie&q=rose&size=M#coleccion'});
+  const before = shop.view();
+  for (const invalid of ['exclusive','favorites','https://example.test/other','intimates&cart=secret','']) {
+    const click = shop.click({dataset:{discover:invalid}});
+    assert.equal(click.defaultPrevented, true);
+    assert.deepEqual(shop.view(), before);
+    assert.equal(shop.history.length, 1);
+  }
+  shop.click({dataset:{filter:'Íntimos'}});
+  assert.equal(shop.view().category, 'intimates');
+  assert.equal(new URL(shop.url()).searchParams.get('category'), 'intimates');
+  shop.click({dataset:{filter:'Intimates'}});
+  assert.equal(shop.history.length, 2);
+  assert.equal(new URL(shop.url()).searchParams.get('category'), 'intimates');
+  expectError(() => shop.stage(exclusiveSelection), 'errors.editionClosed');
+});
+
+test('Modified discovery link clicks preserve native navigation and the current catalog view', () => {
+  const shop = createHarness({href:'https://example.test/annys-le-rose/?category=lingerie&q=rose&size=M&sort=high#coleccion'});
+  const before = shop.view();
+  const href = shop.url();
+  for (const eventProperties of [{ctrlKey:true},{metaKey:true},{shiftKey:true},{altKey:true},{button:1},{button:2}]) {
+    const click = shop.click({dataset:{discover:'fragrance'}, tagName:'A', eventProperties});
+    assert.notEqual(click.defaultPrevented, true);
+    assert.deepEqual(shop.view(), before);
+    assert.equal(shop.url(), href);
+    assert.equal(shop.history.length, 1);
+    assert.equal(shop.element('coleccion').lastScrollOptions, undefined);
+  }
+  const normalClick = shop.click({dataset:{discover:'fragrance'}, tagName:'A', eventProperties:{button:0}});
+  assert.equal(normalClick.defaultPrevented, true);
+  assert.deepEqual(shop.view(), {category:'fragrance', query:'', sort:'featured', size:'', color:'', price:''});
 });
 
 (async () => {

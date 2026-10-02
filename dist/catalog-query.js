@@ -8,8 +8,11 @@ window.ALRcatalogQuery = Object.freeze({
   createIndex(products, searchText) {
     return new Map(products.map(product => [product.id, this.normalize(searchText(product))]));
   },
+  isIntimate(product) {
+    return ['lingerie', 'essentials', 'lounge'].includes(product.category);
+  },
   sanitizeView(state = {}, products = []) {
-    const categories = new Set(['all', 'exclusive', ...products.map(product => product.category)]);
+    const categories = new Set(['all', 'intimates', 'exclusive', ...products.map(product => product.category)]);
     const sizes = new Set(products.filter(product => !product.variantKind || product.variantKind === 'size').flatMap(product => product.sizes));
     const colors = new Set(products.flatMap(product => product.colors.map(color => color.id)));
     const category = categories.has(state.category) ? state.category : 'all';
@@ -44,7 +47,8 @@ window.ALRcatalogQuery = Object.freeze({
     const result = products.filter(product => {
       if (state.category === 'favorites' && !state.favorites.has(product.id)) return false;
       if (state.category === 'exclusive' && !product.exclusive) return false;
-      if (state.category && !['all', 'favorites', 'exclusive'].includes(state.category) && product.category !== state.category) return false;
+      if (state.category === 'intimates' && !this.isIntimate(product)) return false;
+      if (state.category && !['all', 'intimates', 'favorites', 'exclusive'].includes(state.category) && product.category !== state.category) return false;
       if (state.size && !product.sizes.includes(state.size)) return false;
       if (state.color && !product.colors.some(color => color.id === state.color)) return false;
       if (state.price === 'under40' && product.price >= 40) return false;
