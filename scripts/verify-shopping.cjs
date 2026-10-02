@@ -11,11 +11,11 @@ const sources = Object.fromEntries(['catalog.js', 'catalog-query.js', 'edition.j
 
 // A small DOM surface lets the real application register and run its handlers.
 // Templates are kept as strings; layout, native focus and rendering belong to browser QA.
-function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCart = []} = {}) {
+function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCart = [], language = 'es'} = {}) {
   const documentListeners = new Map();
   const registeredTools = new Map();
   const elements = new Map();
-  const storage = new Map([['alr-cart', JSON.stringify(savedCart)]]);
+  const storage = new Map([['alr-cart', JSON.stringify(savedCart)], ['alr-language', language]]);
   let clock = new Date(now);
   const schedule = {startMonthDay:announced ? '10-01' : null, durationDays:5, timeZone:'America/Santo_Domingo'};
 
