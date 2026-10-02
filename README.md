@@ -16,14 +16,18 @@ Abrir http://127.0.0.1:4173. No se requiere instalar dependencias.
 
 - `dist/index.html`: estructura de la tienda.
 - `dist/styles.css`: diseño y estilos adaptables.
-- `dist/app.js`: catálogo de muestra e interacciones.
+- `dist/catalog.js`: nueve conceptos de producto, precios de muestra, colores y tallas.
+- `dist/catalog-query.js`: búsqueda bilingüe y filtros combinados del catálogo.
+- `dist/app.js`: búsqueda, filtros y demás interacciones de la tienda.
 - `dist/i18n.js`: traducciones de español e inglés y preferencia de idioma.
 - `dist/assets/`: fotografías conceptuales generadas con IA.
 - `PROCESO.md`: proceso de lanzamiento comercial y futura aplicación.
 
 ## Estado
 
-La marca todavía no tiene un catálogo real. Precios, medidas y fotografías son ejemplos. La bolsa y los favoritos usan almacenamiento local del navegador; no existen pagos, pedidos, cuentas o inventario reales.
+La marca todavía no tiene un catálogo real. El catálogo de muestra reúne nueve conceptos: dos conjuntos de encaje, un set de satén, un body rojo, un bralette marfil, una bata rosa y tres piezas individuales de los conjuntos. Precios en USD, medidas y fotografías son ejemplos. Los filtros permiten explorar por colección, talla, color y precio de muestra. La bolsa y los favoritos usan almacenamiento local del navegador; no existen pagos, pedidos, cuentas o inventario reales.
+
+Los productos se editan en `dist/catalog.js`; sus nombres y descripciones se mantienen en `dist/i18n.js` para conservar ambos idiomas. Cada producto tiene un ID estable, una categoría, precio, imagen, colores y tallas. Los filtros por talla muestran las opciones propuestas para el concepto, no disponibilidad de stock. Al incorporar productos reales se deben confirmar precios, tallaje, composición e imágenes antes de habilitar ventas.
 
 ## Alojamiento independiente
 
@@ -39,6 +43,7 @@ Antes de habilitar ventas se deben conectar catálogo e inventario reales, pago 
 
 ```sh
 node --check dist/app.js
+node --check dist/catalog.js
 node --check dist/i18n.js
 node scripts/verify-site.cjs
 ```
@@ -52,4 +57,4 @@ git push origin <commit-devuelto>:gh-pages
 
 GitHub Pages sirve la raíz de `gh-pages`. No publicar la raíz de `main`, que contiene documentación y utilidades de desarrollo.
 
-La revisión de esta versión incluyó 320, 390, 768 y 1440 px, catálogo y mensajes en ES/EN, búsqueda con acentos y términos de ambos idiomas, conservación de talla al regresar de la guía, bolsa conservada al cambiar idioma, favoritos, estados vacíos y límite de 10 unidades con error visible dentro del diálogo. CSS y JavaScript llevan una versión de caché en el HTML para que los cambios lleguen juntos. Al modificar esos archivos se debe renovar su parámetro `v`.
+La revisión del catálogo incluyó 320, 390, 768 y 1440 px, filtros combinados de talla/color/precio, búsqueda con varias palabras y acentos en ambos idiomas, orden por precio, reinicio, imágenes cargadas y selección de la bata con talla M en la bolsa. Al cambiar el idioma se mantienen filtros y bolsa. Se verificaron favoritos sin resultados y el foco de teclado al quitar una pieza. La versión anterior también validó el regreso desde la guía y el límite de 10 unidades. `verify-site.cjs` comprueba datos, fotos, traducciones y consultas del catálogo. CSS y JavaScript llevan una versión de caché en el HTML; al modificarlos se debe renovar su parámetro `v`.

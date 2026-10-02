@@ -7,9 +7,11 @@
   <meta name="description" data-i18n-content="meta.description" content="Explora la colección conceptual de lencería, esenciales y ropa de descanso de Annys Le´ Rose. Una experiencia femenina, íntima y hecha para ti.">
   <meta name="theme-color" content="#bc1534">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23bc1534'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Georgia' font-size='23' fill='white'%3EALR%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=088724cf29">
-  <script src="i18n.js?v=c7b700395c" defer></script>
-  <script src="app.js?v=670cb1d5b0" defer></script>
+  <link rel="stylesheet" href="styles.css?v=f444c1f5d6">
+  <script src="i18n.js?v=eb62b4c901" defer></script>
+  <script src="catalog.js?v=67cb81da80" defer></script>
+  <script src="catalog-query.js?v=9468d89f44" defer></script>
+  <script src="app.js?v=da6453ddf6" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content" data-i18n="skip.main">Ir al contenido</a>
@@ -87,8 +89,17 @@
 
     <section class="collection section" id="coleccion" aria-labelledby="collection-title">
       <div class="section-heading">
-        <div><p class="eyebrow" data-i18n="collection.eyebrow">TU NUEVO RITUAL</p><h2 id="collection-title" data-i18n-html="collection.title">Más cerca de <em>ti.</em></h2></div>
+        <div><p class="eyebrow" data-i18n="collection.eyebrow">CATÁLOGO DE MUESTRA</p><h2 id="collection-title" data-i18n-html="collection.title">Tu próximo <em>favorito.</em></h2></div>
         <p data-i18n="collection.copy">Piezas para cada versión de ti. Desde lo cotidiano hasta lo inolvidable.</p>
+      </div>
+      <div class="catalog-search-row">
+        <label for="catalog-search" data-i18n="catalog.searchLabel">Encuentra tu pieza</label>
+        <div class="catalog-search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+          <input id="catalog-search" type="search" autocomplete="off" maxlength="160" placeholder="Busca por prenda, colección o color" data-i18n-placeholder="catalog.searchPlaceholder" aria-describedby="catalog-search-hint">
+          <button id="catalog-search-clear" class="icon-button" type="button" aria-label="Borrar búsqueda" data-i18n-aria-label="catalog.clearSearch" hidden>×</button>
+        </div>
+        <span id="catalog-search-hint" class="sr-only" data-i18n="catalog.searchHint">Busca por prenda, colección o color</span>
       </div>
       <div class="catalog-controls">
         <div class="tabs" role="group" aria-label="Filtrar colección" data-i18n-aria-label="filter.label">
@@ -100,7 +111,18 @@
         </div>
         <label class="sort" for="sort"><span data-i18n="sort.label">Ordenar por</span><select id="sort" aria-label="Ordenar por" data-i18n-aria-label="sort.label"><option value="featured" data-i18n="sort.featured">Destacados</option><option value="low" data-i18n="sort.low">Precio: menor a mayor</option><option value="high" data-i18n="sort.high">Precio: mayor a menor</option></select></label>
       </div>
+      <details class="catalog-filters">
+        <summary><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></svg><span data-i18n="catalog.filters">Filtros</span><span id="filter-count" hidden></span></summary>
+        <div class="filter-fields">
+          <label class="filter-field" for="filter-size"><span data-i18n="catalog.size">Talla</span><select id="filter-size"><option value="" data-i18n="catalog.allSizes">Todas las tallas</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
+          <label class="filter-field" for="filter-color"><span data-i18n="catalog.color">Color</span><select id="filter-color"><option value="" data-i18n="catalog.allColors">Todos los colores</option><option value="cherry" data-i18n="color.cherry">Rojo cereza</option><option value="black" data-i18n="color.black">Negro</option><option value="blush" data-i18n="color.blush">Rosa suave</option><option value="ivory" data-i18n="color.ivory">Marfil</option></select></label>
+          <label class="filter-field" for="filter-price"><span data-i18n="catalog.price">Precio de muestra · USD</span><select id="filter-price"><option value="" data-i18n="catalog.allPrices">Todos los precios</option><option value="under40" data-i18n="catalog.under40">Menos de $40</option><option value="from40to65" data-i18n="catalog.from40to65">$40 a $65</option><option value="over65" data-i18n="catalog.over65">Más de $65</option></select></label>
+          <button type="button" id="clear-filters" class="button secondary" data-i18n="catalog.clearFilters">Limpiar filtros</button>
+        </div>
+      </details>
+      <div class="active-filters" id="active-filters" hidden></div>
       <div class="catalog-meta"><span id="results-count" role="status" aria-live="polite"></span><span id="catalog-note" data-i18n="catalog.demo">Colección conceptual · USD</span></div>
+      <p class="small-note" data-i18n="catalog.sampleNote">Diseños, imágenes y precios de muestra. Aún no disponibles para compra.</p>
       <div id="product-grid" class="product-grid" aria-describedby="catalog-note"></div>
       <div class="empty-state" id="catalog-empty" hidden><h3 data-i18n="catalog.emptyTitle">Aún no hay piezas aquí.</h3><p id="empty-text" data-i18n="catalog.emptyCopy">Prueba otra búsqueda o colección.</p><button type="button" class="button" id="reset-filter" data-i18n="catalog.reset">Ver toda la colección</button></div>
     </section>
