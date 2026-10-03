@@ -22,9 +22,9 @@
     {id:'rose', category:'lingerie', price:58, image:'assets/editorial.jpg', position:'78% center', colors:[colors.cherry]},
     {id:'noir', category:'lingerie', price:62, image:'assets/noir.jpg', position:'center', colors:[colors.black]},
     {id:'lune', category:'lounge', price:72, image:'assets/lune.jpg', position:'center', colors:[colors.blush]},
-    {id:'rose-bra', category:'essentials', price:38, image:'assets/editorial.jpg', position:'80% 35%', colors:[colors.cherry]},
-    {id:'noir-brief', category:'essentials', price:24, image:'assets/noir.jpg', position:'center bottom', colors:[colors.black]},
-    {id:'lune-top', category:'lounge', price:44, image:'assets/lune.jpg', position:'center top', colors:[colors.blush]},
+    {id:'rose-bra', category:'essentials', price:38, image:'assets/rose-bra-single.jpg', position:'center', colors:[colors.cherry]},
+    {id:'noir-brief', category:'essentials', price:24, image:'assets/noir-brief-single.jpg', position:'center', colors:[colors.black]},
+    {id:'lune-top', category:'lounge', price:44, image:'assets/lune-top-single.jpg', position:'center', colors:[colors.blush]},
     {id:'edition-perfume', category:'fragrance', price:112, image:'assets/edition-perfume.jpg', position:'center', colors:[colors.cherry], sizes:['50 ml'], variantKind:'volume', exclusive:true},
     {id:'edition-gloss', category:'beauty', price:28, image:'assets/edition-gloss.jpg', position:'center', colors:[colors.cherry], sizes:['6 ml'], variantKind:'volume', exclusive:true},
     {id:'edition-coffret', category:'beauty', price:138, image:'assets/edition-coffret.jpg', position:'center', colors:[colors.cherry], sizes:['Set'], variantKind:'set', exclusive:true}

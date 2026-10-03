@@ -1,14 +1,15 @@
 'use strict';
 
 // Keep first paint and no-JavaScript copy aligned with the actual English render.
-// Run without arguments for both pages, or use --home / --studio for one page.
+// Run without arguments for all pages, or target one page with its flag.
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const dist = path.resolve(__dirname, '..', 'dist');
 const requestedPages = process.argv.slice(2);
-if (requestedPages.some(argument => !['--home', '--studio'].includes(argument))) throw new Error('Use --home, --studio, or no arguments.');
-const pages = requestedPages.length ? requestedPages.map(argument => argument === '--studio' ? 'brand.html' : 'index.html') : ['index.html', 'brand.html'];
+const pageFlags = {'--home':'index.html', '--catalog':'catalog.html', '--studio':'brand.html'};
+if (requestedPages.some(argument => !Object.hasOwn(pageFlags, argument))) throw new Error('Use --home, --catalog, --studio, or no arguments.');
+const pages = requestedPages.length ? requestedPages.map(argument => pageFlags[argument]) : Object.values(pageFlags);
 const context = {
   window:{},
   document:{documentElement:{}, querySelector:() => null, querySelectorAll:() => []},
@@ -98,6 +99,10 @@ for (const page of new Set(pages)) {
   const file = path.join(dist, page);
   let html = fs.readFileSync(file, 'utf8');
   html = synchronizeGlobal(html);
+  if (page === 'catalog.html') {
+    html = html.replace(/(<h1 id="collection-title"[^>]*>)[\s\S]*?(<\/h1>)/, (_, start, end) => start + escape(translate('catalogPage.title.all')) + end);
+    html = html.replace(/(<p id="collection-copy"[^>]*>)[\s\S]*?(<\/p>)/, (_, start, end) => start + escape(translate('catalogPage.copy.all').replace('{count}', '16')) + end);
+  }
   if (page === 'brand.html') html = synchronizeStudio(html);
   html = html.replace(/<html\b[^>]*>/, tag => setAttribute(tag, 'lang', 'en'));
   fs.writeFileSync(file, html);

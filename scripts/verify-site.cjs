@@ -4,15 +4,26 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..', 'dist');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-for (const filename of ['index.html', 'brand.html']) {
+const catalogHTML = fs.readFileSync(path.join(root, 'catalog.html'), 'utf8');
+for (const filename of ['index.html', 'catalog.html', 'brand.html']) {
   const markup = fs.readFileSync(path.join(root, filename), 'utf8');
   const ids = [...markup.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate HTML IDs in ${filename}`);
+  assert.equal((markup.match(/<h1\b/g) || []).length, 1, `One main heading in ${filename}`);
   for (const match of markup.matchAll(/\b(?:src|href)="([^"#]+)"/g)) {
     if (/^(?:https?:|data:)/.test(match[1])) continue;
     const assetPath = path.resolve(root, match[1].split(/[?#]/)[0]);
     assert.ok(assetPath.startsWith(root + path.sep), 'Asset must stay inside dist');
     assert.ok(fs.existsSync(assetPath), `Missing local asset in ${filename}: ${match[1]}`);
+  }
+  for (const [, href] of markup.matchAll(/\bhref="([^\"]+)"/g)) {
+    if (/^(?:https?:|data:)/.test(href)) continue;
+    const [destination, fragment] = href.split('#');
+    if (!fragment) continue;
+    const targetFile = destination.split('?')[0] || filename;
+    if (!targetFile.endsWith('.html')) continue;
+    const targetMarkup = fs.readFileSync(path.join(root, targetFile), 'utf8');
+    assert.ok(targetMarkup.includes(`id="${fragment}"`), `Broken section link in ${filename}: ${href}`);
   }
 }
 for (const script of ['app.js', 'i18n.js', 'catalog.js', 'catalog-query.js', 'edition.js', 'brand.js']) new vm.Script(fs.readFileSync(path.join(root, script), 'utf8'), {filename: script});
@@ -58,7 +69,7 @@ assert.equal(bootLanguage(firstVisit.saved()).i18n.language, 'en', 'Chosen Engli
 assert.equal(bootLanguage('invalid').i18n.language, 'en', 'Invalid stored language falls back to English');
 assert.equal(firstVisit.i18n.t('language.label', {}, 'invalid'), 'Language', 'Unknown translation locale falls back to English');
 assert.ok(html.includes('<html lang="en">'), 'HTML fallback is English');
-const keys = [...html.matchAll(/\bdata-i18n(?:-html|-aria-label|-placeholder|-alt|-title|-content)?="([^"]+)"/g)].map(match => match[1]);
+const keys = [...(html + catalogHTML).matchAll(/\bdata-i18n(?:-html|-aria-label|-placeholder|-alt|-title|-content)?="([^"]+)"/g)].map(match => match[1]);
 assert.ok(keys.length > 25, 'Static interface must be localized');
 assert.ok(html.indexOf('src="i18n.js') >= 0 && html.indexOf('src="i18n.js') < html.indexOf('src="app.js'), 'Localization must load before the application');
 assert.ok(html.indexOf('src="catalog.js') >= 0 && html.indexOf('src="catalog.js') < html.indexOf('src="app.js'), 'Catalog must load before the application');
@@ -67,6 +78,12 @@ assert.ok(html.indexOf('src="edition.js') >= 0 && html.indexOf('src="edition.js'
 const {products} = context.window.ALRcatalog;
 assert.equal(products.length, 16, 'Sixteen sample concepts');
 assert.equal(new Set(products.map(product => product.id)).size, products.length, 'Unique product IDs');
+assert.equal(new Set(products.map(product => product.image)).size, products.length, 'Each concept has a distinct product photograph');
+assert.ok(html.includes('data-page="home"') && catalogHTML.includes('data-page="catalog"'), 'Separate home and catalog modes');
+assert.ok(!html.includes('id="catalog-search"') && catalogHTML.includes('id="catalog-search"'), 'Full search and filters belong to the catalog');
+assert.ok(html.includes('id="edicion"') && !catalogHTML.includes('id="edicion"'), 'Annual story belongs to home');
+assert.ok(!html.includes('id="rituales"') && !html.includes('id="esencia"'), 'Home keeps a single identity story');
+assert.ok(catalogHTML.includes('data-clothing-filters'), 'Clothing subcategories have their own group');
 for (const product of products) {
   assert.ok(fs.existsSync(path.join(root, product.image)), `Missing product photo: ${product.image}`);
   assert.ok(Number.isFinite(product.price) && product.price > 0, 'Valid sample price');
@@ -140,4 +157,4 @@ assert.equal(edition.getWindow(new Date(), {...schedule,startMonthDay:'02-29'}).
 for (const language of ['es','en']) {
   for (const key of ['edition.pending','edition.unavailable','edition.previewOnly','errors.editionClosed','product.tone','product.volume','product.setValue']) assert.notEqual(context.window.ALRi18n.t(key, {}, language), key, `Dynamic translation: ${key}`);
 }
-console.log(`Verified brand studio assets, English-first persistence, 16 concepts, ES/EN, beauty filters, five-day annual boundaries and ${new Set(keys).size} homepage localization keys.`);
+console.log(`Verified home, catalog and studio assets/anchors, English-first persistence, 16 distinct concept photos, ES/EN, five-day boundaries and ${new Set(keys).size} storefront localization keys.`);

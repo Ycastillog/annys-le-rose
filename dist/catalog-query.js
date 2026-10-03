@@ -11,6 +11,9 @@ window.ALRcatalogQuery = Object.freeze({
   isIntimate(product) {
     return ['lingerie', 'essentials', 'lounge'].includes(product.category);
   },
+  isClothingCategory(category) {
+    return ['intimates', 'lingerie', 'essentials', 'lounge'].includes(category);
+  },
   sanitizeView(state = {}, products = []) {
     const categories = new Set(['all', 'intimates', 'exclusive', ...products.map(product => product.category)]);
     const sizes = new Set(products.filter(product => !product.variantKind || product.variantKind === 'size').flatMap(product => product.sizes));
