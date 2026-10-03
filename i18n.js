@@ -244,7 +244,7 @@
     'meta.title':['Annys Le´ Rose — Tu propia forma de ser femenina','Annys Le´ Rose — Your own kind of feminine'],
     'meta.description':['Conoce el universo de Annys Le´ Rose: una marca de ropa íntima, perfumes y belleza en creación. Explora su identidad y 16 conceptos en desarrollo.','Meet the Annys Le´ Rose world: an intimate clothing, fragrance and beauty brand taking shape. Explore its identity and 16 concepts in development.'],
     'skip.main':['Ir al contenido','Skip to content'],
-    'site.noScript':['Esta vista previa necesita JavaScript para los filtros del catálogo, el cambio de idioma y la bolsa de prueba. Puedes seguir explorando la historia de la marca y el estudio de marca.','This preview needs JavaScript for catalog filters, language changes and the sample bag. You can still explore our brand story and the brand studio.'],
+    'site.noScript':['Los resultados y filtros del catálogo, el cambio de idioma, los favoritos, la bolsa de prueba y el interés en Édition 05 necesitan JavaScript. Puedes seguir leyendo nuestra historia y visitar el estudio de marca. Las compras no están habilitadas.','Catalog results and filters, language changes, favorites, the sample bag and Édition 05 interest need JavaScript. You can still read our story and visit the brand studio. Shopping is not enabled.'],
     'announcement.copy':['Cinco días. Una vez al año.','Five days. Once a year.'],
     'announcement.link':['Édition 05 · Fechas por anunciar','Édition 05 · Dates to be announced'],
     'home.label':['Annys Le Rose, inicio','Annys Le Rose, home'],
@@ -254,6 +254,7 @@
     'cart.open':['Abrir bolsa de prueba','Open sample bag'],
     'nav.label':['Colecciones y marca','Collections and brand'],
     'nav.new':['Conceptos','Concepts'],
+    'nav.catalog':['Los conceptos','The concepts'],
     'nav.studio':['Estudio de marca','Brand studio'],
     'nav.intimates':['Ropa íntima','Intimates'],
     'nav.lingerie':['Lencería','Lingerie'],
@@ -273,15 +274,15 @@
     'hero.imageAlt':['Dos mujeres adultas de distintas complexiones con ropa de descanso en rojo cereza y marfil, fotografía editorial conceptual de Annys Le´ Rose.','Two adult women with different body types wearing cherry-red and ivory sleepwear, conceptual Annys Le´ Rose editorial photography.'],
     'hero.caption':['Annys Le´ Rose · Concepto de campaña','Annys Le´ Rose · Campaign concept'],
     'identity.nav':['Nuestro universo','Our world'],
-    'identity.eyebrow':['EL UNIVERSO DE ANNYS LE´ ROSE','THE ANNYS LE´ ROSE WORLD'],
-    'identity.title':['Una forma de sentir<br><em>antes de una colección.</em>','A feeling<br><em>before a collection.</em>'],
-    'identity.copy':['Annys Le´ Rose nace de la libertad de sentirte femenina a tu manera. Un universo de ropa íntima, perfumes y belleza que toma forma con calidez y carácter.','Annys Le´ Rose begins with the freedom to feel feminine your own way. An intimate world of clothing, fragrance and beauty, taking shape with warmth and character.'],
-    'identity.value1Title':['Tu feminidad, tus palabras','Your femininity, your words'],
-    'identity.value1Copy':['Suave, atrevida, serena o expresiva. Hay espacio para cada versión de ti.','Soft, bold, quiet or expressive. There is room for every side of you.'],
-    'identity.value2Title':['Rituales que se sienten tuyos','Rituals that feel personal'],
-    'identity.value2Copy':['Encaje, perfume y un toque de brillo. Gestos cotidianos que eliges según cómo quieres sentirte.','Lace, scent and a touch of gloss. Everyday gestures, chosen for how you want to feel.'],
-    'identity.value3Title':['Una identidad con intención','An identity with intention'],
-    'identity.value3Copy':['Un rojo vivo, una rosa suave, un detalle cuidado. Expresión con calidez y muchas formas de belleza.','A vivid red, a soft rose, a considered detail. Expression with warmth and many ways to be beautiful.'],
+    'identity.eyebrow':['NUESTRO UNIVERSO, EN DETALLE','OUR WORLD, IN DETAIL'],
+    'identity.title':['Un universo en rojo cereza.<br><em>Un ritual muy tuyo.</em>','A world in cherry red.<br><em>A ritual of your own.</em>'],
+    'identity.copy':['Estamos creando un universo para ropa íntima, perfumes y brillo de labios. El rojo cereza, el marfil cálido y el símbolo ALR conectan sus conceptos, con espacio para tu propia expresión.','We are shaping one world for intimates, fragrance and lip gloss. Cherry red, warm ivory and the ALR mark connect the concepts, leaving room for your own expression.'],
+    'identity.value1Title':['Rojo cereza. Marfil cálido.','Cherry red. Warm ivory.'],
+    'identity.value1Copy':['La paleta une un rojo expresivo y un marfil sereno en la web, el símbolo ALR y los conceptos de empaque.','Our palette pairs expressive red with quiet ivory across the website, ALR symbol and packaging concepts.'],
+    'identity.value2Title':['Tres rituales, un universo.','Three rituals, one world.'],
+    'identity.value2Copy':['Prendas para tu momento, un aroma personal y un toque de brillo elegido por ti, unidos por los mismos colores y la misma voz.','Layers for your mood, a personal scent and a finishing touch of gloss, connected by the same colors and voice.'],
+    'identity.value3Title':['Cinco días. Una vez al año.','Five days. Once a year.'],
+    'identity.value3Copy':['Édition 05 propone un ritual anual de perfume y brillo. Las fechas siguen por anunciar; por ahora, puedes explorar sus conceptos.','Édition 05 is our proposed annual scent-and-gloss ritual. Dates remain to be announced; for now, its concepts can be explored.'],
     'identity.signature':['Tu propia forma de ser femenina.','Your own kind of feminine.'],
     'identity.studioLink':['Explora el estudio de marca','Explore the brand studio'],
     'strip.softness':['Viste lo que sientes','Wear your mood'],
@@ -316,6 +317,34 @@
     'collection.eyebrow':['EL UNIVERSO EN DESARROLLO','OUR WORLD IN DEVELOPMENT'],
     'collection.title':['Ideas que toman<br><em>forma.</em>','Ideas taking<br><em>shape.</em>'],
     'collection.copy':['16 conceptos de lencería, descanso, perfumes y brillo de labios para explorar la dirección de la marca. Incluye ALR Édition 05, nuestra propuesta de ritual anual de cinco días.','16 lingerie, sleepwear, fragrance and lip gloss concepts exploring the brand’s direction. Includes ALR Édition 05, our proposed annual five-day ritual.'],
+    'featured.eyebrow':['UNA PRIMERA MIRADA','A FIRST LOOK'],
+    'featured.title':['Encuentra un momento.<br><em>Hazlo tuyo.</em>','Find a feeling.<br><em>Make it yours.</em>'],
+    'featured.copy':['Seis conceptos de ropa íntima, perfume y brillo. Explora un momento y descubre los 16.','Six concepts in intimates, fragrance and lip gloss. Explore a mood, then discover all 16.'],
+    'featured.cta':['Explora los 16 conceptos','Explore all 16 concepts'],
+    'catalog.backHome':['Volver a nuestro universo','Back to our world'],
+    'catalog.metaTitle':['Catálogo conceptual — Annys Le´ Rose','Concept catalog — Annys Le´ Rose'],
+    'catalog.metaDescription':['Explora 16 conceptos de ropa íntima, perfumes y brillo de Annys Le´ Rose. Filtra tu vista y crea una selección de prueba. Aún no disponibles para compra.','Explore 16 concepts in intimates, fragrance and lip gloss by Annys Le´ Rose. Filter your view and build a sample selection. Products are not available for purchase.'],
+    'catalog.clothingCategories':['Categorías de ropa','Clothing categories'],
+    'catalog.colorTone':['Tono','Shade'],
+    'catalog.colorPackaging':['Color del frasco','Bottle color'],
+    'catalogPage.title.all':['Todos los conceptos','All concepts'],
+    'catalogPage.copy.all':['{count} conceptos de encaje, perfume y brillo. Explora un ritual que sientas tuyo.','{count} concepts in lace, scent and gloss. Explore a ritual that feels like you.'],
+    'catalogPage.title.intimates':['Ropa íntima','Intimates'],
+    'catalogPage.copy.intimates':['{count} conceptos de ropa para el día a día y los momentos de descanso. Elige lo que sientas tuyo.','{count} clothing concepts for everyday layers and moments of rest. Choose the mood that feels like you.'],
+    'catalogPage.title.lingerie':['Lencería','Lingerie'],
+    'catalogPage.copy.lingerie':['{count} conceptos de encaje en rojo cereza y negro. Líneas suaves, expresadas a tu manera.','{count} lace concepts in cherry red and black. Soft lines, expressed your way.'],
+    'catalogPage.title.essentials':['Esenciales','Essentials'],
+    'catalogPage.copy.essentials':['{count} conceptos de capas cotidianas en encaje y marfil. Pequeños detalles para tu propio ritmo.','{count} everyday layer concepts in lace and ivory. Little details for your own rhythm.'],
+    'catalogPage.title.lounge':['Descanso','Sleep & lounge'],
+    'catalogPage.copy.lounge':['{count} conceptos de satén para momentos de descanso. Conjunto, camisola y bata para explorar a tu ritmo.','{count} satin concepts for moments of rest. A set, camisole and robe to explore at your pace.'],
+    'catalogPage.title.fragrance':['Perfumes','Fragrance'],
+    'catalogPage.copy.fragrance':['{count} conceptos de perfume: Rose Veil, Ambre Doux y Édition 05. Explora un aroma que sientas tuyo.','{count} fragrance concepts: Rose Veil, Ambre Doux and Édition 05. Explore a scent direction that feels personal.'],
+    'catalogPage.title.beauty':['Brillo de labios','Lip gloss'],
+    'catalogPage.copy.beauty':['{count} conceptos de brillo y cofre, incluida Édition 05. Un toque de color para tu momento.','{count} gloss and coffret concepts, including Édition 05. A touch of color for your own mood.'],
+    'catalogPage.title.exclusive':['ALR Édition 05','ALR Édition 05'],
+    'catalogPage.copy.exclusive':['{count} conceptos para un ritual anual de perfume y brillo durante cinco días. Fechas por anunciar.','{count} concepts for a five-day annual scent-and-gloss ritual. Dates to be announced.'],
+    'catalogPage.title.favorites':['Mis favoritos','My favorites'],
+    'catalogPage.copy.favorites':['Tu selección de conceptos ({count}) se recuerda en este navegador. Vuelve a explorarla a tu ritmo.','Your concept selection ({count}) stays in this browser. Explore it again at your own pace.'],
     'filter.label':['Filtrar colección','Filter collection'],
     'filter.all':['Todo','All concepts'],
     'filter.intimates':['Ropa íntima','Intimates'],
@@ -340,7 +369,7 @@
     'toast.favoriteRemoved':['Eliminado de tus favoritos.','Removed from favorites.'],
     'toast.linkCopied':['Enlace de vista copiado.','View link copied.'],
     'toast.linkCopyUnavailable':['Copia el enlace de esta vista desde la barra de direcciones.','Copy this view’s link from your address bar.'],
-    'catalog.filters':['Filtros','Filters'],
+    'catalog.filters':['Filtrar y ordenar','Filter & sort'],
     'catalog.filterCountOne':['1 activo','1 active'],
     'catalog.size':['Talla (ropa)','Size (clothing)'],
     'catalog.color':['Color','Color'],
@@ -493,10 +522,21 @@
     dictionaries.en[key] = english;
   });
 
-  let storedLanguage;
-  try { storedLanguage = localStorage.getItem('alr-language'); } catch {}
+  const isLanguage = value => ['es', 'en'].includes(value);
+
+  function readSavedLanguage() {
+    try {
+      const value = localStorage.getItem('alr-language');
+      return isLanguage(value) ? value : null;
+    } catch {
+      // An unavailable store is different from an intentionally cleared choice.
+      return undefined;
+    }
+  }
+
+  let lastSavedLanguage = readSavedLanguage();
   // English is the brand's initial language; an explicit saved choice always wins.
-  let language = ['es', 'en'].includes(storedLanguage) ? storedLanguage : 'en';
+  let language = lastSavedLanguage || 'en';
   const listeners = new Set();
 
   function t(key, variables = {}, locale = language) {
@@ -506,10 +546,6 @@
 
   function applyStatic() {
     document.documentElement.lang = language;
-    document.title = t('meta.title');
-    document.querySelector('meta[name="description"]')?.setAttribute('content', t('meta.description'));
-    document.querySelector('meta[property="og:title"]')?.setAttribute('content', t('meta.title'));
-    document.querySelector('meta[property="og:description"]')?.setAttribute('content', t('meta.description'));
     document.querySelectorAll('[data-i18n]').forEach(element => { element.textContent = t(element.dataset.i18n); });
     // Only keys from these developer-owned dictionaries may contain markup.
     document.querySelectorAll('[data-i18n-html]').forEach(element => { element.innerHTML = t(element.dataset.i18nHtml); });
@@ -518,16 +554,50 @@
         element.setAttribute(attribute, t(element.getAttribute(`data-i18n-${attribute}`)));
       });
     }
+    const catalogPage = document.body?.dataset?.page === 'catalog';
+    const title = t(catalogPage ? 'catalog.metaTitle' : 'meta.title');
+    const description = t(catalogPage ? 'catalog.metaDescription' : 'meta.description');
+    document.title = title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    syncLanguageSelect();
+  }
+
+  function syncLanguageSelect() {
     const select = document.querySelector('#language-select');
-    if (select) select.value = language;
+    if (select && select.value !== language) select.value = language;
+  }
+
+  function renderLanguage(nextLanguage) {
+    if (nextLanguage === language) {
+      syncLanguageSelect();
+      return;
+    }
+    language = nextLanguage;
+    applyStatic();
+    listeners.forEach(callback => callback(language));
   }
 
   function setLanguage(nextLanguage) {
-    if (!['es', 'en'].includes(nextLanguage) || nextLanguage === language) return;
-    language = nextLanguage;
-    try { localStorage.setItem('alr-language', language); } catch {}
-    applyStatic();
-    listeners.forEach(callback => callback(language));
+    if (!isLanguage(nextLanguage)) return;
+    // This API represents an explicit choice, even if the rendered language is
+    // unchanged. Restoration never calls it or saves a restored control value.
+    try {
+      localStorage.setItem('alr-language', nextLanguage);
+      lastSavedLanguage = nextLanguage;
+    } catch {}
+    renderLanguage(nextLanguage);
+  }
+
+  function reconcileLanguage() {
+    const savedLanguage = readSavedLanguage();
+    const changed = savedLanguage !== undefined && savedLanguage !== lastSavedLanguage;
+    if (savedLanguage !== undefined) lastSavedLanguage = savedLanguage;
+    // A different persisted choice may come from the brand studio while this
+    // page is frozen. An unchanged store must not undo a choice whose save failed.
+    if (changed && savedLanguage) renderLanguage(savedLanguage);
+    else syncLanguageSelect();
   }
 
   window.ALRi18n = Object.freeze({
@@ -538,5 +608,10 @@
     subscribe(callback) { listeners.add(callback); return () => listeners.delete(callback); }
   });
   document.querySelector('#language-select')?.addEventListener('change', event => setLanguage(event.target.value));
+  // History traversal may restore form values after its lifecycle events. Wait
+  // until that task finishes, then derive the control from the effective locale.
+  for (const event of ['pageshow', 'popstate']) {
+    window.addEventListener?.(event, () => setTimeout(reconcileLanguage, 0));
+  }
   applyStatic();
 })();
