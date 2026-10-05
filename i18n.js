@@ -108,7 +108,7 @@
       'shipping.copy': 'Las zonas de entrega, tarifas, plazos y condiciones de devolución se publicarán antes de activar las ventas. No se ha definido aún una política comercial.',
       'privacy.title': 'Tu privacidad',
       'privacy.intro': 'Esta versión conserva el idioma, favoritos, bolsa e interés en Édition 05 únicamente en el almacenamiento local de tu navegador. No solicita cuentas, direcciones ni datos de pago.',
-      'privacy.copy': 'Las tipografías pueden cargarse desde proveedores externos. Al habilitar la tienda real se publicará la política de privacidad correspondiente a sus servicios y operaciones.',
+      'privacy.copy': 'Las tipografías se sirven desde este mismo sitio. Al habilitar la tienda real se publicará la política de privacidad correspondiente a sus servicios y operaciones.',
       'privacy.clear': 'Borrar bolsa, favoritos e interés guardado',
       'toast.added': 'Una nueva favorita en tu bolsa.',
       'toast.removed': 'Pieza eliminada de tu bolsa.',
@@ -226,7 +226,7 @@
       'shipping.copy': 'Delivery areas, fees, timing and return conditions will be published before sales are enabled. A commercial policy has not been defined yet.',
       'privacy.title': 'Your privacy',
       'privacy.intro': 'This version saves language, favorites, your bag and interest in Édition 05 only in your browser’s local storage. It does not request accounts, addresses or payment information.',
-      'privacy.copy': 'Fonts may load from external providers. When the real store is enabled, a privacy policy covering its services and operations will be published.',
+      'privacy.copy': 'Fonts are served from this site. When the real store is enabled, a privacy policy covering its services and operations will be published.',
       'privacy.clear': 'Clear my bag, favorites and saved interest',
       'toast.added': 'A new favorite in your bag.',
       'toast.removed': 'Piece removed from your bag.',
@@ -274,17 +274,17 @@
     'hero.imageAlt':['Dos mujeres adultas de distintas complexiones con ropa de descanso en rojo cereza y marfil, fotografía editorial conceptual de Annys Le´ Rose.','Two adult women with different body types wearing cherry-red and ivory sleepwear, conceptual Annys Le´ Rose editorial photography.'],
     'hero.caption':['Annys Le´ Rose · Concepto de campaña','Annys Le´ Rose · Campaign concept'],
     'identity.nav':['Nuestro universo','Our world'],
-    'identity.eyebrow':['NUESTRO UNIVERSO, EN DETALLE','OUR WORLD, IN DETAIL'],
-    'identity.title':['Un universo en rojo cereza.<br><em>Un ritual muy tuyo.</em>','A world in cherry red.<br><em>A ritual of your own.</em>'],
-    'identity.copy':['Estamos creando un universo para ropa íntima, perfumes y brillo de labios. El rojo cereza, el marfil cálido y el símbolo ALR conectan sus conceptos, con espacio para tu propia expresión.','We are shaping one world for intimates, fragrance and lip gloss. Cherry red, warm ivory and the ALR mark connect the concepts, leaving room for your own expression.'],
-    'identity.value1Title':['Rojo cereza. Marfil cálido.','Cherry red. Warm ivory.'],
-    'identity.value1Copy':['La paleta une un rojo expresivo y un marfil sereno en la web, el símbolo ALR y los conceptos de empaque.','Our palette pairs expressive red with quiet ivory across the website, ALR symbol and packaging concepts.'],
-    'identity.value2Title':['Tres rituales, un universo.','Three rituals, one world.'],
-    'identity.value2Copy':['Prendas para tu momento, un aroma personal y un toque de brillo elegido por ti, unidos por los mismos colores y la misma voz.','Layers for your mood, a personal scent and a finishing touch of gloss, connected by the same colors and voice.'],
+    'identity.eyebrow':['UN MOMENTO PARA TI','A MOMENT FOR YOURSELF'],
+    'identity.title':['Tu feminidad.<br><em>A tu manera.</em>','Your femininity.<br><em>On your terms.</em>'],
+    'identity.copy':['Una mañana tranquila, arreglarte para ti, un detalle que eliges llevar cerca. Annys Le´ Rose toma forma alrededor de esos momentos propios.','A quiet morning, getting ready for yourself, a detail you choose to keep close. Annys Le´ Rose is taking shape around those personal moments.'],
+    'identity.value1Title':['Espacio para ser tú.','Room to be yourself.'],
+    'identity.value1Copy':['Suave, atrevida, serena o expresiva. Tu forma de sentirte femenina no necesita cumplir un ideal.','Soft, bold, quiet or expressive. Your way of feeling feminine does not need to fit an ideal.'],
+    'identity.value2Title':['Empieza por lo íntimo.','Begin with intimates.'],
+    'identity.value2Copy':['La ropa íntima es el centro. El perfume y un toque de brillo acompañan una selección pensada para elegir a tu manera.','Intimates are at the heart. Scent and a touch of gloss accompany a considered selection to explore on your terms.'],
     'identity.value3Title':['Cinco días. Una vez al año.','Five days. Once a year.'],
     'identity.value3Copy':['Édition 05 propone un ritual anual de perfume y brillo. Las fechas siguen por anunciar; por ahora, puedes explorar sus conceptos.','Édition 05 is our proposed annual scent-and-gloss ritual. Dates remain to be announced; for now, its concepts can be explored.'],
     'identity.signature':['Tu propia forma de ser femenina.','Your own kind of feminine.'],
-    'identity.studioLink':['Explora el estudio de marca','Explore the brand studio'],
+    'identity.studioLink':['Conoce nuestra identidad en desarrollo','Explore our identity in development'],
     'strip.softness':['Viste lo que sientes','Wear your mood'],
     'strip.details':['Haz tuyo el perfume','Make scent personal'],
     'strip.confidence':['Añade tu toque','Add your touch'],
@@ -317,10 +317,24 @@
     'collection.eyebrow':['EL UNIVERSO EN DESARROLLO','OUR WORLD IN DEVELOPMENT'],
     'collection.title':['Ideas que toman<br><em>forma.</em>','Ideas taking<br><em>shape.</em>'],
     'collection.copy':['16 conceptos de lencería, descanso, perfumes y brillo de labios para explorar la dirección de la marca. Incluye ALR Édition 05, nuestra propuesta de ritual anual de cinco días.','16 lingerie, sleepwear, fragrance and lip gloss concepts exploring the brand’s direction. Includes ALR Édition 05, our proposed annual five-day ritual.'],
-    'featured.eyebrow':['UNA PRIMERA MIRADA','A FIRST LOOK'],
-    'featured.title':['Encuentra un momento.<br><em>Hazlo tuyo.</em>','Find a feeling.<br><em>Make it yours.</em>'],
-    'featured.copy':['Seis conceptos de ropa íntima, perfume y brillo. Explora un momento y descubre los 16.','Six concepts in intimates, fragrance and lip gloss. Explore a mood, then discover all 16.'],
-    'featured.cta':['Explora los 16 conceptos','Explore all 16 concepts'],
+    'featured.eyebrow':['LA PRIMERA CÁPSULA PROPUESTA','THE PROPOSED FIRST CAPSULE'],
+    'featured.title':['Un momento<br><em>para ti.</em>','A moment<br><em>of your own.</em>'],
+    'featured.copy':['Cuatro prendas íntimas, un perfume y un toque de brillo. Seis conceptos propuestos para nuestro primer capítulo, por validar con opiniones y muestras físicas.','Four intimate layers, a scent and a touch of gloss. Six concepts proposed for our first chapter, to be refined through feedback and physical samples.'],
+    'featured.cta':['Conoce la cápsula propuesta','Meet the proposed capsule'],
+    'catalog.selectedColor':['{color} (filtro seleccionado)','{color} (selected filter)'],
+    'productPage.metaTitle':['{name} · Concepto — Annys Le´ Rose','{name} · Concept — Annys Le´ Rose'],
+    'productPage.back':['Volver al catálogo','Back to the catalog'],
+    'productPage.enlarge':['Ampliar la imagen conceptual de {name}','Enlarge the concept image of {name}'],
+    'productPage.enlargeShort':['Ampliar imagen','Enlarge image'],
+    'productPage.imageNote':['Imagen conceptual. Es la única vista disponible de esta propuesta.','Concept image. This is the only available view of this proposal.'],
+    'productPage.development':['Concepto en desarrollo. El diseño, tallaje o formato y precio son orientativos; todavía no está disponible para comprar.','Concept in development. Design, sizing or format and price are illustrative; not available for purchase yet.'],
+    'productPage.viewFull':['Ver ficha completa','View full concept'],
+    'productPage.save':['Guardar en favoritos','Save to favorites'],
+    'productPage.saved':['Guardado en favoritos','Saved to favorites'],
+    'productPage.share':['Copiar enlace del concepto','Copy concept link'],
+    'productPage.closeImage':['Cerrar imagen ampliada','Close enlarged image'],
+    'productPage.editionLink':['Conoce la edición anual de cinco días','Discover the annual five-day edition'],
+    'productPage.noScript':['Puedes leer esta ficha sin JavaScript. Actívalo para cambiar el idioma, elegir una talla o formato y guardar favoritos o una bolsa de prueba. Las compras no están habilitadas.','You can read this concept without JavaScript. Enable it to change language, choose a size or format and save favorites or a sample bag. Shopping is not enabled.'],
     'catalog.backHome':['Volver a nuestro universo','Back to our world'],
     'catalog.metaTitle':['Catálogo conceptual — Annys Le´ Rose','Concept catalog — Annys Le´ Rose'],
     'catalog.metaDescription':['Explora 16 conceptos de ropa íntima, perfumes y brillo de Annys Le´ Rose. Filtra tu vista y crea una selección de prueba. Aún no disponibles para compra.','Explore 16 concepts in intimates, fragrance and lip gloss by Annys Le´ Rose. Filter your view and build a sample selection. Products are not available for purchase.'],
@@ -555,8 +569,10 @@
       });
     }
     const catalogPage = document.body?.dataset?.page === 'catalog';
-    const title = t(catalogPage ? 'catalog.metaTitle' : 'meta.title');
-    const description = t(catalogPage ? 'catalog.metaDescription' : 'meta.description');
+    const productId = document.body?.dataset?.page === 'product' ? document.body.dataset.productId : null;
+    const productPage = productId && Object.hasOwn(dictionaries.en, `products.${productId}.name`);
+    const title = productPage ? t('productPage.metaTitle', {name:t(`products.${productId}.name`)}) : t(catalogPage ? 'catalog.metaTitle' : 'meta.title');
+    const description = productPage ? `${t(`products.${productId}.description`)} ${t('productPage.development')}` : t(catalogPage ? 'catalog.metaDescription' : 'meta.description');
     document.title = title;
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
@@ -613,5 +629,11 @@
   for (const event of ['pageshow', 'popstate']) {
     window.addEventListener?.(event, () => setTimeout(reconcileLanguage, 0));
   }
+  // A concept can be opened in another tab. Adopt its explicit saved choice
+  // without saving again or trusting a restored form control.
+  window.addEventListener?.('storage', event => {
+    if (event.key === 'alr-language' || event.key === null) reconcileLanguage();
+  });
+  window.addEventListener?.('focus', reconcileLanguage);
   applyStatic();
 })();
