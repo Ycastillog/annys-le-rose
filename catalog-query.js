@@ -48,6 +48,40 @@ window.ALRcatalogQuery = Object.freeze({
     if (view.sort !== 'featured') params.set('sort', view.sort);
     return params.toString();
   },
+  catalogURL(state = {}, products = []) {
+    // Favorites are a local view, never an encoded list of saved product IDs.
+    const favoriteView = state.category === 'favorites';
+    const search = this.encodeView(state, products);
+    return `catalog.html${search ? `?${search}` : ''}#${favoriteView ? 'favorites' : 'coleccion'}`;
+  },
+  catalogReturnURL(value, products = []) {
+    // Only this exact relative page can be used as a return destination. Read
+    // and re-encode its known filters instead of trusting an arbitrary URL.
+    if (typeof value !== 'string' || value.length > 2048 || /[\u0000-\u001f\u007f]/.test(value) || !/^catalog\.html(?:\?[^#]*)?(?:#(?:coleccion|favorites))?$/.test(value)) return '';
+    const [location, fragment] = value.split('#');
+    const state = this.readView(location.slice('catalog.html'.length), products);
+    if (fragment === 'favorites') state.category = 'favorites';
+    return this.catalogURL(state, products);
+  },
+  productURL(product, {returnURL = '', selectedSize = '', selectedColor = ''} = {}, products = []) {
+    const params = new URLSearchParams();
+    const backURL = this.catalogReturnURL(returnURL, products);
+    if (backURL) params.set('return', backURL);
+    if (product.sizes.includes(selectedSize)) params.set('variant_size', selectedSize);
+    if (product.colors.some(color => color.name === selectedColor)) params.set('variant_color', selectedColor);
+    const search = params.toString();
+    return `product-${product.id}.html${search ? `?${search}` : ''}`;
+  },
+  readProductContext(search, product, products = []) {
+    const params = new URLSearchParams(typeof search === 'string' ? search : '');
+    const size = params.get('variant_size');
+    const color = params.get('variant_color');
+    return {
+      backURL:this.catalogReturnURL(params.get('return'), products),
+      selectedSize:product.sizes.includes(size) ? size : '',
+      selectedColor:product.colors.some(choice => choice.name === color) ? color : ''
+    };
+  },
   select(products, state, searchText) {
     const query = this.normalize(state.query || '');
     const terms = query.split(/\s+/).filter(Boolean);

@@ -17,6 +17,7 @@ const edition = window.ALRedition;
 const productById = new Map(products.map(product => [product.id, product]));
 const pageProduct = isProductPage ? productById.get(document.body.dataset.productId) : null;
 const productView = window.ALRproductView;
+const productContext = pageProduct ? catalogQuery.readProductContext(window.location?.search || '', pageProduct, products) : null;
 const productPageURL = product => new URL(productView.path(product), window.location.href);
 const productText = (product, field) => t(`products.${product.id}.${field}`);
 const colorName = color => t(`color.${color.id}`);
@@ -167,7 +168,7 @@ function focusReference(element = document.activeElement) {
   if (!(element instanceof HTMLElement)) return null;
   let selector = element.id ? `#${CSS.escape(element.id)}` : null;
   if (!selector) {
-    for (const attribute of ['data-favorite', 'data-product', 'data-size', 'data-color', 'data-guide', 'data-info', 'data-quantity', 'data-remove', 'data-share-product', 'data-zoom']) {
+    for (const attribute of ['data-favorite', 'data-product', 'data-product-link', 'data-size', 'data-color', 'data-guide', 'data-info', 'data-quantity', 'data-remove', 'data-share-product', 'data-zoom']) {
       if (!element.hasAttribute(attribute)) continue;
       selector = `[${attribute}="${CSS.escape(element.getAttribute(attribute))}"]`;
       if (attribute === 'data-quantity') selector += `[data-delta="${CSS.escape(element.dataset.delta)}"]`;
@@ -203,17 +204,18 @@ function renderProducts() {
   $('#product-grid').innerHTML = list.map(product => {
     const name = productText(product, 'name');
     const favorite = favorites.has(product.id);
+    const fullURL = productNavigationURL(product, isCatalogPage ? {size:filters.size, color:product.colors.find(color => color.id === filters.color)?.name || ''} : {});
     return `<article class="product-card">
       <div class="product-image" data-product-id="${product.id}">
-        <a class="product-open" href="${productView.path(product)}" aria-label="${text('product.view', {name})}"><img src="${product.image}" style="object-position:${product.position}" alt="${text('product.image', {name})}" loading="lazy" decoding="async" width="1024" height="1280"></a>
+        <a class="product-open" href="${escapeHTML(fullURL)}" data-product-link="image:${product.id}" aria-label="${text('product.view', {name})}"><img src="${product.image}" style="object-position:${product.position}" alt="${text('product.image', {name})}" loading="lazy" decoding="async" width="1024" height="1280"></a>
         <span class="product-badge">${escapeHTML(productText(product, 'badge'))}</span>
         <button class="favorite-button" data-favorite="${product.id}" aria-label="${text(favorite ? 'product.removeFavorite' : 'product.addFavorite', {name})}" aria-pressed="${favorite}"><span aria-hidden="true">${favorite ? '♥' : '♡'}</span></button>
         <button class="quick-view" data-product="${product.id}">${text(product.exclusive ? 'product.previewEdition' : variantKind(product) === 'size' ? 'product.chooseSize' : 'product.discoverBeauty')}</button>
       </div>
-      <div class="product-title-row"><h3><a class="product-title-button" href="${productView.path(product)}">${escapeHTML(name)}</a></h3><span><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</span></div>
+      <div class="product-title-row"><h3><a class="product-title-button" href="${escapeHTML(fullURL)}" data-product-link="title:${product.id}">${escapeHTML(name)}</a></h3><span><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</span></div>
       <p class="product-description">${text(productCategoryKey(product))} · ${escapeHTML(product.sizes.length === 1 ? variantText(product, product.sizes[0]) : `${product.sizes[0]}–${product.sizes.at(-1)}`)}</p>
       <div class="swatches">${product.colors.map(color => `<span class="swatch" style="--swatch:${color.hex}" aria-hidden="true"></span>`).join('')}<span>${escapeHTML(colorName(product.colors[0]))}</span></div>
-      <p class="product-sample-label">${text('catalog.sampleBadge')}</p>
+      ${isCatalogPage ? '' : `<p class="product-sample-label">${text('catalog.sampleBadge')}</p>`}
       ${product.exclusive ? `<p class="product-exclusive-status">${text(edition.canSelect(product) ? 'edition.windowOpen' : 'edition.previewBadge')}</p>` : ''}
     </article>`;
   }).join('');
@@ -241,10 +243,14 @@ function renderFilters() {
   if (filters.size) chips.push({key:'size', label:`${t('catalog.size')}: ${filters.size}`});
   if (filters.color) chips.push({key:'color', label:t(`color.${filters.color}`)});
   if (filters.price) chips.push({key:'price', label:t(`catalog.${filters.price}`)});
-  const count = Object.values(filters).filter(Boolean).length;
+  if (sort !== 'featured') chips.push({key:'sort', label:t('catalog.sortChip', {sort:t(`sort.${sort}`)})});
+  const count = Object.values(filters).filter(Boolean).length + (sort !== 'featured' ? 1 : 0);
   if ($('#filter-count')) {
     $('#filter-count').hidden = count === 0;
-    $('#filter-count').textContent = t(count === 1 ? 'catalog.filterCountOne' : 'catalog.filterCount', {count});
+    const description = t(count === 1 ? 'catalog.filterCountOne' : 'catalog.filterCount', {count});
+    $('#filter-count').textContent = String(count);
+    $('#filter-count').setAttribute('aria-label', description);
+    $('#filter-count').setAttribute('title', description);
   }
   const colorControl = $('#filter-color');
   if (colorControl) {
@@ -284,7 +290,17 @@ function catalogPageURL(view, hash = 'coleccion') {
 }
 
 function catalogViewURL() {
-  return catalogPageURL(category === 'favorites' ? {} : {category, query, sort, ...filters}, category === 'favorites' ? 'favorites' : 'coleccion');
+  return catalogPageURL({category, query, sort, ...filters}, category === 'favorites' ? 'favorites' : 'coleccion');
+}
+
+function productNavigationURL(product, {size = '', color = ''} = {}) {
+  const returnURL = isCatalogPage ? catalogQuery.catalogURL({category, query, sort, ...filters}, products) : productContext?.backURL || '';
+  return catalogQuery.productURL(product, {returnURL, selectedSize:size, selectedColor:color}, products);
+}
+
+function updateFullProductLink() {
+  if (!activeProduct || isProductPage) return;
+  $(`[data-product-link="full:${activeProduct.id}"]`)?.setAttribute('href', productNavigationURL(activeProduct, {size:selectedSize, color:selectedColor}));
 }
 
 function syncCatalogURL(mode = 'replace') {
@@ -345,7 +361,7 @@ function scrollToCatalog() {
 
 function finishSearch() {
   $('#search-bar').hidden = true;
-  $('#search-toggle').setAttribute('aria-expanded', 'false');
+  if (!isCatalogPage) $('#search-toggle').setAttribute('aria-expanded', 'false');
   if (!isCatalogPage) {
     window.location.assign(catalogPageURL({query}).href);
     return;
@@ -360,6 +376,25 @@ function resetCatalog() {
   sort = 'featured';
   Object.keys(filters).forEach(key => { filters[key] = ''; });
   setQuery('');
+}
+
+function clearRefinements() {
+  sort = 'featured';
+  Object.keys(filters).forEach(key => { filters[key] = ''; });
+  syncCatalogControls();
+  renderProducts();
+  syncCatalogURL();
+}
+
+function showCatalogResults() {
+  const panel = $('.catalog-filters');
+  if (panel) panel.open = false;
+  const results = $('#results-count');
+  if (!results) return;
+  results.setAttribute('tabindex', '-1');
+  results.focus({preventScroll:true});
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  results.scrollIntoView({behavior:reduceMotion ? 'auto' : 'smooth', block:'start'});
 }
 
 function renderEdition() {
@@ -455,6 +490,7 @@ function renderProductDetail() {
   target.innerHTML = productView.render(activeProduct, {
     t, language:i18n.language, page:isProductPage,
     selectedSize, selectedColor, favorite:favorites.has(activeProduct.id),
+    fullURL:productNavigationURL(activeProduct, {size:selectedSize, color:selectedColor}),
     allowed:edition.canSelect(activeProduct), unavailableKey:unavailableAction()
   });
   if (isProductPage) $('#concept-image-dialog')?.setAttribute('aria-label', t('productPage.enlarge', {name:productText(activeProduct, 'name')}));
@@ -464,8 +500,10 @@ function renderProductDetail() {
 function selectProduct(product) {
   activeProduct = product;
   const previous = rememberedChoices.get(product.id);
-  selectedSize = previous?.size || (variantKind(product) === 'size' && product.sizes.includes(filters.size) ? filters.size : variantKind(product) !== 'size' && product.sizes.length === 1 ? product.sizes[0] : '');
-  selectedColor = previous?.color || product.colors[0].name;
+  // An explicit choice on the preceding quick view wins on this page only;
+  // a bare product link still restores the visitor's saved bag variant.
+  selectedSize = (isProductPage ? productContext?.selectedSize : '') || previous?.size || (variantKind(product) === 'size' && product.sizes.includes(filters.size) ? filters.size : variantKind(product) !== 'size' && product.sizes.length === 1 ? product.sizes[0] : '');
+  selectedColor = (isProductPage ? productContext?.selectedColor : '') || previous?.color || product.colors[0].name;
 }
 
 async function shareProduct(id) {
@@ -571,6 +609,7 @@ function updateSize() {
   $('#add-cart').disabled = !edition.canSelect(activeProduct);
   $('#add-cart').textContent = t(edition.canSelect(activeProduct) ? 'product.addBag' : unavailableAction());
   rememberedChoices.set(activeProduct.id, {size:selectedSize, color:selectedColor});
+  updateFullProductLink();
 }
 
 document.addEventListener('click', event => {
@@ -587,6 +626,7 @@ document.addEventListener('click', event => {
     const key = button.dataset.clearFilter;
     if (key === 'query') setQuery('');
     else if (key === 'category') setCategory('all');
+    else if (key === 'sort') { sort = 'featured'; syncCatalogControls(); renderProducts(); syncCatalogURL(); }
     else if (Object.hasOwn(filters, key)) { filters[key] = ''; renderProducts(); syncCatalogURL(); }
     $('#catalog-search')?.focus({preventScroll:true});
     return;
@@ -624,6 +664,7 @@ document.addEventListener('click', event => {
       choice.setAttribute('aria-pressed', String(selected));
     });
     rememberedChoices.set(activeProduct.id, {size:selectedSize, color:selectedColor});
+    updateFullProductLink();
     return;
   }
   if (button.id === 'add-cart') {
@@ -697,6 +738,15 @@ $('#favorites-toggle').addEventListener('click', () => {
 });
 $('#sort')?.addEventListener('change', event => { sort = event.target.value; renderProducts(); syncCatalogURL(); });
 $('#search-toggle').addEventListener('click', () => {
+  if (isCatalogPage) {
+    closeNavigation();
+    $('#search-bar').hidden = true;
+    const search = $('#catalog-search');
+    search?.focus({preventScroll:true});
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    search?.scrollIntoView({behavior:reduceMotion ? 'auto' : 'smooth', block:'center'});
+    return;
+  }
   const hidden = !$('#search-bar').hidden;
   $('#search-bar').hidden = hidden;
   $('#search-toggle').setAttribute('aria-expanded', String(!hidden));
@@ -704,7 +754,7 @@ $('#search-toggle').addEventListener('click', () => {
 });
 $('#search-close').addEventListener('click', () => {
   $('#search-bar').hidden = true;
-  $('#search-toggle').setAttribute('aria-expanded', 'false');
+  if (!isCatalogPage) $('#search-toggle').setAttribute('aria-expanded', 'false');
   $('#search-toggle').focus({preventScroll:true});
 });
 $('#search').addEventListener('input', event => { if (!event.isComposing) setQuery(event.target.value); });
@@ -725,7 +775,8 @@ $('#catalog-search-clear')?.addEventListener('click', () => { setQuery(''); $('#
 for (const key of Object.keys(filters)) {
   $(`#filter-${key}`)?.addEventListener('change', event => { filters[key] = event.target.value; renderProducts(); syncCatalogURL(); });
 }
-$('#clear-filters')?.addEventListener('click', resetCatalog);
+$('#clear-filters')?.addEventListener('click', clearRefinements);
+$('#apply-filters')?.addEventListener('click', showCatalogResults);
 $('#reset-filter')?.addEventListener('click', () => { resetCatalog(); $('#catalog-search')?.focus({preventScroll:true}); });
 $('#menu-toggle').addEventListener('click', () => {
   const open = $('#navigation').classList.toggle('open');
@@ -799,7 +850,11 @@ if (!isCatalogPage && !isProductPage && window.location) {
 }
 renderProducts();
 renderEdition();
-if (pageProduct) { selectProduct(pageProduct); renderProductDetail(); }
+if (pageProduct) {
+  if (productContext.backURL) $('.concept-back')?.setAttribute('href', productContext.backURL);
+  selectProduct(pageProduct);
+  renderProductDetail();
+}
 updateCounts();
 if (Array.isArray(savedCart) && savedCart.length !== cart.length) persist(['cart']);
 setInterval(() => { if (!document.hidden) refreshEditionWindow(); }, 60000);
