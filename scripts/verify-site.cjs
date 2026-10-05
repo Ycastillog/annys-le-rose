@@ -11,6 +11,9 @@ for (const filename of pages) {
   const ids = [...markup.matchAll(/(?<![\w-])id="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate HTML IDs in ${filename}`);
   assert.equal((markup.match(/<h1\b/g) || []).length, 1, `One main heading in ${filename}`);
+  for (const [, controls] of markup.matchAll(/\baria-controls="([^"]+)"/g)) {
+    for (const id of controls.split(/\s+/)) assert.ok(ids.includes(id), `Missing controlled element in ${filename}: ${id}`);
+  }
   for (const match of markup.matchAll(/\b(?:src|href)="([^"#]+)"/g)) {
     if (/^(?:https?:|data:)/.test(match[1])) continue;
     const assetPath = path.resolve(root, match[1].split(/[?#]/)[0]);

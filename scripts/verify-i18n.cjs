@@ -253,6 +253,7 @@ test('New home and category copy resolves in both languages; campaign and motto 
     'featured.eyebrow', 'featured.title', 'featured.copy', 'featured.cta',
     'catalog.backHome', 'catalog.metaTitle', 'catalog.metaDescription', 'nav.catalog',
     'catalog.clothingCategories', 'catalog.colorTone', 'catalog.colorPackaging',
+    'catalog.showResults', 'catalog.sortChip', 'catalog.filters',
     'identity.title', 'identity.copy', 'site.noScript'
   ];
   for (let value = 1; value <= 3; value++) keys.push(`identity.value${value}Title`, `identity.value${value}Copy`);
@@ -267,7 +268,8 @@ test('New home and category copy resolves in both languages; campaign and motto 
       const copy = harness.i18n.t(`catalogPage.copy.${category}`, {count}, locale);
       assert.equal(/<[^>]+>/.test(title), false, 'Category headings use plain text');
       assert.equal(copy.includes('{count}'), false, 'Family total is interpolated');
-      assert.ok(copy.includes(String(count)), `${locale}/${category} includes its unfiltered family total`);
+      if (category !== 'all') assert.ok(copy.includes(String(count)), `${locale}/${category} includes its unfiltered family total`);
+      assert.ok(harness.i18n.t(count === 1 ? 'catalog.piece' : 'catalog.pieces', {count}, locale).includes(String(count)), 'Result count remains separate from the editorial introduction');
     }
   }
   assert.equal(harness.i18n.t('hero.title', {}, 'en'), 'Softness.<br><em>With character.</em>');

@@ -21,13 +21,13 @@
   <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts.css?v=f212715fea">
-  <link rel="stylesheet" href="styles.css?v=cf840a26bd">
-  <script src="i18n.js?v=ff750c5fb3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=570e33b16b">
+  <script src="i18n.js?v=d02dbb9144" defer></script>
   <script src="catalog.js?v=b629b019e2" defer></script>
-  <script src="catalog-query.js?v=16d5b5da8e" defer></script>
+  <script src="catalog-query.js?v=a4ec0cdde8" defer></script>
   <script src="edition.js?v=e14353736e" defer></script>
-  <script src="product-view.js?v=f122cffeca" defer></script>
-  <script src="app.js?v=9948b886af" defer></script>
+  <script src="product-view.js?v=638c6d9ac8" defer></script>
+  <script src="app.js?v=5322eea9f5" defer></script>
 </head>
 <body data-page="catalog">
   <a class="skip-link" href="#main-content" data-i18n="skip.main">Skip to content</a>
@@ -48,7 +48,7 @@
       </div>
       <a class="wordmark brand-signature" href="index.html" aria-label="Annys Le Rose, home" data-i18n-aria-label="home.label"><img class="brand-symbol" src="assets/brand/symbol.svg" alt="" aria-hidden="true" width="64" height="64"><span class="brand-wordmark">Annys Le´ Rose<small data-i18n="brand.descriptor">INTIMATES · FRAGRANCE · BEAUTY</small></span></a>
       <div class="header-actions">
-        <button type="button" class="icon-button" id="search-toggle" aria-label="Search clothing, fragrance and lip gloss" data-i18n-aria-label="search.open" aria-expanded="false" aria-controls="search-bar"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+        <button type="button" class="icon-button" id="search-toggle" aria-label="Search clothing, fragrance and lip gloss" data-i18n-aria-label="search.open" aria-controls="catalog-search"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
         <button type="button" class="icon-button" id="favorites-toggle" aria-label="View favorites" data-i18n-aria-label="favorites.open"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.6c-2-2-5.3-1.7-7.1.4L12 7l-1.7-2C8.5 2.9 5.2 2.6 3.2 4.6c-2.3 2.3-1.7 5.7.4 7.8L12 21l8.4-8.6c2.1-2.1 2.7-5.5.4-7.8Z"/></svg><span id="favorite-count" class="count" hidden>0</span></button>
         <button type="button" class="icon-button" id="cart-toggle" aria-label="Open sample bag" data-i18n-aria-label="cart.open"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg><span id="cart-count" class="count" hidden>0</span></button>
       </div>
@@ -72,49 +72,49 @@
   <main id="main-content" tabindex="-1">
     <noscript><p class="small-note section" data-i18n="site.noScript">Catalog results and filters, language changes, favorites, the sample bag and Édition 05 interest need JavaScript. You can still read our story and visit the brand studio. Shopping is not enabled.</p></noscript>
     <section class="collection catalog-page section" id="coleccion" aria-labelledby="collection-title">
-      <a class="catalog-back underlined" href="index.html" data-i18n="catalog.backHome">Back to our world</a>
       <div class="section-heading">
         <div><p class="eyebrow" data-i18n="collection.eyebrow">OUR WORLD IN DEVELOPMENT</p><h1 id="collection-title">All concepts</h1></div>
-        <p id="collection-copy">16 concepts in lace, scent and gloss. Explore a ritual that feels like you.</p>
-      </div>
-      <div class="catalog-search-row">
-        <label for="catalog-search" data-i18n="catalog.searchLabel">Search the catalog</label>
-        <div class="catalog-search-field">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-          <input id="catalog-search" type="search" autocomplete="off" maxlength="120" placeholder="Search lace, fragrance or lip gloss…" data-i18n-placeholder="catalog.searchPlaceholder" aria-describedby="catalog-search-hint">
-          <button id="catalog-search-clear" class="icon-button" type="button" aria-label="Clear search" data-i18n-aria-label="catalog.clearSearch" hidden>×</button>
-        </div>
-        <span id="catalog-search-hint" class="sr-only" data-i18n="catalog.searchHint">Search by product, collection or color</span>
+        <p id="collection-copy">Lace, scent and gloss. Find your own expression.</p>
       </div>
       <div class="catalog-controls">
         <div class="tabs" role="group" aria-label="Filter collection" data-i18n-aria-label="filter.label">
-          <button type="button" class="active" data-filter="Todo" aria-pressed="true" data-i18n="filter.all">All concepts</button>
+          <button type="button" class="active" data-filter="Todo" aria-pressed="true" data-i18n="filter.all">All</button>
           <button type="button" data-filter="intimates" aria-pressed="false" data-i18n="filter.intimates">Intimates</button>
           <button type="button" data-filter="fragrance" aria-pressed="false" data-i18n="filter.fragrance">Fragrance</button>
           <button type="button" data-filter="beauty" aria-pressed="false" data-i18n="filter.beauty">Lip gloss</button>
           <button type="button" data-filter="exclusive" aria-pressed="false" data-i18n="filter.exclusive">Édition 05</button>
-          <button type="button" data-filter="Favoritos" aria-pressed="false" data-i18n="filter.favorites">My favorites</button>
+          <button type="button" data-filter="Favoritos" aria-pressed="false" data-i18n="filter.favorites">Favorites</button>
         </div>
-        
       </div>
       <div class="clothing-filters" data-clothing-filters role="group" aria-label="Clothing categories" data-i18n-aria-label="catalog.clothingCategories" hidden>
         <button type="button" data-filter="Lencería" aria-pressed="false" data-i18n="filter.lingerie">Lingerie</button>
         <button type="button" data-filter="Esenciales" aria-pressed="false" data-i18n="filter.essentials">Essentials</button>
         <button type="button" data-filter="Descanso" aria-pressed="false" data-i18n="filter.lounge">Sleep &amp; lounge</button>
       </div>
-      <details class="catalog-filters">
-        <summary><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></svg><span data-i18n="catalog.filters">Filter &amp; sort</span><span id="filter-count" hidden></span></summary>
-        <div class="filter-fields">
-          <label class="sort" for="sort"><span data-i18n="sort.label">Sort by</span><select id="sort" aria-label="Sort by" data-i18n-aria-label="sort.label"><option value="featured" data-i18n="sort.featured">Featured</option><option value="low" data-i18n="sort.low">Price: low to high</option><option value="high" data-i18n="sort.high">Price: high to low</option></select></label>
-          <label class="filter-field" for="filter-size"><span data-i18n="catalog.size">Size (clothing)</span><select id="filter-size"><option value="" data-i18n="catalog.allSizes">All sizes</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
-          <label class="filter-field" for="filter-color"><span id="filter-color-label" data-i18n="catalog.color">Color</span><select id="filter-color"><option value="" data-i18n="catalog.allColors">All colors</option><option value="cherry" data-i18n="color.cherry">Cherry red</option><option value="black" data-i18n="color.black">Black</option><option value="blush" data-i18n="color.blush">Soft pink</option><option value="ivory" data-i18n="color.ivory">Ivory</option><option value="amber" data-i18n="color.amber">Amber</option></select></label>
-          <label class="filter-field" for="filter-price"><span data-i18n="catalog.price">Sample price</span><select id="filter-price"><option value="" data-i18n="catalog.allPrices">All prices</option><option value="under40" data-i18n="catalog.under40">Under $40</option><option value="from40to65" data-i18n="catalog.from40to65">From $40 to $65</option><option value="over65" data-i18n="catalog.over65">Over $65</option></select></label>
-          <button type="button" id="clear-filters" class="button secondary" data-i18n="catalog.clearFilters">Clear filters</button>
+      <div class="catalog-workbench">
+        <div class="catalog-search-row">
+          <label class="sr-only" for="catalog-search" data-i18n="catalog.searchLabel">Search the catalog</label>
+          <div class="catalog-search-field">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+            <input id="catalog-search" type="search" autocomplete="off" maxlength="120" placeholder="Search concepts…" data-i18n-placeholder="catalog.searchPlaceholder" aria-describedby="catalog-search-hint">
+            <button id="catalog-search-clear" class="icon-button" type="button" aria-label="Clear search" data-i18n-aria-label="catalog.clearSearch" hidden>×</button>
+          </div>
+          <span id="catalog-search-hint" class="sr-only" data-i18n="catalog.searchHint">Search by product, collection or color</span>
         </div>
-      </details>
+        <details class="catalog-filters">
+          <summary><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></svg><span data-i18n="catalog.filters">Filters</span><span id="filter-count" hidden></span></summary>
+          <div class="filter-fields">
+            <label class="sort" for="sort"><span data-i18n="sort.label">Sort by</span><select id="sort" aria-label="Sort by" data-i18n-aria-label="sort.label"><option value="featured" data-i18n="sort.featured">Featured</option><option value="low" data-i18n="sort.low">Price: low to high</option><option value="high" data-i18n="sort.high">Price: high to low</option></select></label>
+            <label class="filter-field" for="filter-size"><span data-i18n="catalog.size">Size (clothing)</span><select id="filter-size"><option value="" data-i18n="catalog.allSizes">All sizes</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label>
+            <label class="filter-field" for="filter-color"><span id="filter-color-label" data-i18n="catalog.color">Color</span><select id="filter-color"><option value="" data-i18n="catalog.allColors">All colors</option><option value="cherry" data-i18n="color.cherry">Cherry red</option><option value="black" data-i18n="color.black">Black</option><option value="blush" data-i18n="color.blush">Soft pink</option><option value="ivory" data-i18n="color.ivory">Ivory</option><option value="amber" data-i18n="color.amber">Amber</option></select></label>
+            <label class="filter-field" for="filter-price"><span data-i18n="catalog.price">Sample price</span><select id="filter-price"><option value="" data-i18n="catalog.allPrices">All prices</option><option value="under40" data-i18n="catalog.under40">Under $40</option><option value="from40to65" data-i18n="catalog.from40to65">From $40 to $65</option><option value="over65" data-i18n="catalog.over65">Over $65</option></select></label>
+            <div class="filter-actions"><button type="button" id="clear-filters" class="button secondary" data-i18n="catalog.clearFilters">Clear filters</button><button type="button" id="apply-filters" class="button" data-i18n="catalog.showResults">View results</button></div>
+          </div>
+        </details>
+      </div>
       <div class="active-filters" id="active-filters" hidden></div>
-      <div class="catalog-meta"><span id="results-count" role="status" aria-live="polite"></span><span id="catalog-note" data-i18n="catalog.demo">Sample catalog · Prices in USD</span><button type="button" id="catalog-share" class="text-button" data-i18n="catalog.share">Copy view link</button></div>
-      <p class="small-note" data-i18n="catalog.sampleNote">Designs, images and prices are samples. Not available for purchase yet.</p>
+      <div class="catalog-meta"><div class="catalog-result-summary"><span id="results-count" role="status" aria-live="polite" tabindex="-1"></span><span id="catalog-note" data-i18n="catalog.demo">Sample prices in USD</span></div><button type="button" id="catalog-share" class="text-button" data-i18n="catalog.share">Copy link</button></div>
+      <p class="small-note catalog-disclaimer" data-i18n="catalog.sampleNote">Concept designs, images and prices. Not available for purchase.</p>
       <div id="product-grid" class="product-grid" aria-describedby="catalog-note"></div>
       <div class="empty-state" id="catalog-empty" hidden><h3 data-i18n="catalog.emptyTitle">No matching concepts.</h3><p id="empty-text" data-i18n="catalog.emptyCopy">Try another search or adjust the filters.</p><button type="button" class="button" id="reset-filter" data-i18n="catalog.reset">View all concepts</button></div>
     </section>

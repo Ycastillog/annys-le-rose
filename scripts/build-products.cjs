@@ -19,6 +19,10 @@ const copy = (key, variables) => escape(t(key, variables));
 let template = fs.readFileSync(path.join(root, 'catalog.html'), 'utf8');
 if (!template.includes('product-view.js')) template = template.replace(/(<script src="app\.js[^>]+>)/, '<script src="product-view.js" defer></script>\n  $1');
 template = template.replace('</head>', '  <link rel="stylesheet" href="product.css">\n</head>');
+// The catalog search icon focuses its inline field; product pages use the
+// expandable shared search panel instead.
+template = template.replace(/(<button\b[^>]*\bid="search-toggle"[^>]*)(>)/, (_, attributes, close) =>
+  attributes.replace(/\saria-(?:controls|expanded)="[^"]*"/g, '') + ' aria-controls="search-bar" aria-expanded="false"' + close);
 for (const product of products) {
   const name = t(`products.${product.id}.name`);
   const title = t('productPage.metaTitle', {name});

@@ -8,10 +8,10 @@ const root = path.resolve(__dirname, '..', 'dist');
 const context = vm.createContext({
   window:{addEventListener() {}},
   document:{documentElement:{}, body:{dataset:{}}, querySelector:() => null, querySelectorAll:() => []},
-  localStorage:{getItem:() => null}, setTimeout, Intl
+  localStorage:{getItem:() => null}, setTimeout, Intl, URLSearchParams
 });
-for (const file of ['catalog.js','i18n.js','product-view.js']) vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context);
-const {ALRcatalog:{products}, ALRi18n:{t}, ALRproductView:view} = context.window;
+for (const file of ['catalog.js','catalog-query.js','i18n.js','product-view.js']) vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context);
+const {ALRcatalog:{products}, ALRi18n:{t}, ALRproductView:view, ALRcatalogQuery:query} = context.window;
 const escape = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[character]));
 const titles = new Set();
 for (const product of products) {
@@ -46,4 +46,38 @@ for (const product of products) {
   }
 }
 assert.equal(titles.size, 16);
+
+// Exercise the URL contract used by cards, quick view and the visible return
+// link. A copied concept still has its clean permanent URL via view.path().
+const garment = products.find(product => product.id === 'ivory-bralette');
+const state = {category:'intimates', query:'ivory lace', size:'M', color:'ivory', price:'under40', sort:'high'};
+const returnURL = query.catalogURL(state, products);
+assert.equal(returnURL, 'catalog.html?category=intimates&q=ivory+lace&size=M&color=ivory&price=under40&sort=high#coleccion');
+const selectedColor = garment.colors[0].name;
+const fullURL = query.productURL(garment, {returnURL, selectedSize:'M', selectedColor}, products);
+const restored = query.readProductContext(fullURL.slice(fullURL.indexOf('?')), garment, products);
+assert.equal(restored.backURL, returnURL, 'full detail retains the exact search and refinements');
+assert.equal(restored.selectedSize, 'M', 'valid proposed clothing size survives navigation');
+assert.equal(restored.selectedColor, selectedColor, 'valid internal color survives navigation');
+assert.equal(view.path(garment), 'product-ivory-bralette.html', 'canonical and share destination stays clean');
+assert.equal(query.productURL(garment, {}, products), view.path(garment), 'direct links need no browsing context');
+assert.ok(view.render(garment, {t, fullURL}).includes(`href="${escape(fullURL)}" data-product-link="full:${garment.id}"`), 'quick view passes context through an escaped stable link');
+
+const favoritesURL = query.catalogURL({...state, category:'favorites', favorites:new Set(['rose','noir'])}, products);
+assert.ok(favoritesURL.endsWith('#favorites'));
+assert.ok(!favoritesURL.includes('rose') && !favoritesURL.includes('noir'), 'favorite product IDs never leave local storage');
+assert.equal(query.catalogReturnURL(favoritesURL, products), favoritesURL, 'local favorites view retains its refinements');
+
+for (const unsafe of ['https://example.com/catalog.html', '//example.com/catalog.html', '/catalog.html', '../catalog.html', 'catalog.html/other', 'catalog.html#other', 'javascript:alert(1)', 'catalog.html?next=x\n#coleccion']) {
+  assert.equal(query.catalogReturnURL(unsafe, products), '', `reject unsafe or ambiguous return destination: ${unsafe}`);
+}
+assert.equal(query.catalogReturnURL('catalog.html?category=unknown&size=99&color=bad&price=free&sort=random&redirect=https%3A%2F%2Fexample.com#coleccion', products), 'catalog.html#coleccion', 'unknown keys and invalid filters cannot become navigation state');
+const invalid = query.readProductContext('?return=https%3A%2F%2Fexample.com&variant_size=99&variant_color=Unknown', garment, products);
+assert.equal(invalid.backURL, '');
+assert.equal(invalid.selectedSize, '');
+assert.equal(invalid.selectedColor, '');
+const fragrance = products.find(product => product.id === 'perfume-rose');
+const fragranceURL = query.productURL(fragrance, {returnURL:'catalog.html?category=fragrance', selectedSize:'50 ml', selectedColor:fragrance.colors[0].name}, products);
+assert.equal(query.readProductContext(fragranceURL.slice(fragranceURL.indexOf('?')), fragrance, products).selectedSize, '50 ml', 'beauty formats use the same validated navigation contract');
 console.log(`Verified ${titles.size} static product pages: unique metadata, readable concept content, image enlargement, English/Spanish copy and annual selection gate.`);
+console.log('Verified product navigation context: filtered return views, local favorites, clothing and beauty variants, stable clean URLs and rejected unsafe destinations.');

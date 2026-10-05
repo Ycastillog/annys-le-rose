@@ -66,7 +66,7 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
       return this.attributes.get(name) ?? null;
     }
     hasAttribute(name) { return this.getAttribute(name) !== null; }
-    contains(element) { return element === this; }
+    contains(element) { return element === this || element?.parentElement === this; }
     focus() { document.activeElement = this; }
     scrollIntoView(options) { this.lastScrollOptions = options; }
     dispatch(type, extra = {}) {
@@ -524,7 +524,7 @@ test('Enter moves focus to results, closes header search and honors reduced moti
   assert.equal(shop.focused(), 'results-count');
   assert.equal(shop.element('results-count').getAttribute('tabindex'), '-1');
   assert.equal(shop.element('search-bar').hidden, true);
-  assert.equal(shop.element('search-toggle').getAttribute('aria-expanded'), 'false');
+  assert.equal(shop.element('search-toggle').getAttribute('aria-expanded'), null);
   assert.equal(shop.element('coleccion').lastScrollOptions.behavior, 'auto');
 });
 
@@ -931,12 +931,12 @@ test('Product-page beauty formats and annual edition gates match the quick view 
   assert.equal(exclusive.run('currentToastKey'), 'errors.editionClosed');
 });
 
-test('Full concept links and copied URLs contain only the product path', async () => {
+test('Full concept navigation preserves context while copied URLs contain only the product path', async () => {
   const catalog = createHarness({page:'catalog'});
-  assert.ok(catalog.element('product-grid').innerHTML.includes('class="product-open" href="product-cherry-body.html"'));
-  assert.ok(catalog.element('product-grid').innerHTML.includes('class="product-title-button" href="product-cherry-body.html"'));
+  assert.ok(catalog.element('product-grid').innerHTML.includes('class="product-open" href="product-cherry-body.html?return=catalog.html%23coleccion"'));
+  assert.ok(catalog.element('product-grid').innerHTML.includes('class="product-title-button" href="product-cherry-body.html?return=catalog.html%23coleccion"'));
   catalog.run("openProduct('rose-bra')");
-  assert.ok(catalog.element('product-detail').innerHTML.includes('href="product-rose-bra.html"'));
+  assert.ok(catalog.element('product-detail').innerHTML.includes('href="product-rose-bra.html?return=catalog.html%23coleccion&amp;variant_color=Rojo+cereza"'));
   const page = createHarness({page:'product', productId:'rose-bra', href:'https://example.test/annys-le-rose/product-rose-bra.html?utm_source=friend#image'});
   await page.run("shareProduct('rose-bra')");
   assert.deepEqual(page.copiedLinks, ['https://example.test/annys-le-rose/product-rose-bra.html']);
@@ -1100,6 +1100,157 @@ test('Blocked storage during tab synchronization retains memory and focus; a rem
   assert.deepEqual(page.cart(), []);
   assert.equal(page.element('favorite-count').textContent, 0);
   assert.equal(page.focused(), 'search');
+});
+
+test('Clear filters keeps the current collection and search while resetting refinements and sorting', () => {
+  const shop = createHarness({page:'catalog', href:'https://example.test/annys-le-rose/catalog.html?category=fragrance&q=50+ml&color=ivory&price=from40to65&sort=high'});
+  shop.emit('clear-filters', 'click');
+  assert.deepEqual(shop.view(), {category:'fragrance', query:'50 ml', sort:'featured', size:'', color:'', price:''});
+  assert.equal(shop.element('catalog-search').value, '50 ml');
+  assert.equal(shop.element('sort').value, 'featured');
+  assert.equal([...shop.element('product-grid').innerHTML.matchAll(/data-product-id=/g)].length, 3);
+  assert.equal(shop.url(), 'https://example.test/annys-le-rose/catalog.html?category=fragrance&q=50+ml#coleccion');
+});
+
+test('Clear filters keeps favorites scoped, while View all explicitly resets the entire catalog', () => {
+  const shop = createHarness({page:'catalog', href:'https://example.test/annys-le-rose/catalog.html?q=rose&size=M&sort=low#favorites', savedFavorites:['rose','noir']});
+  shop.emit('clear-filters', 'click');
+  assert.deepEqual(shop.view(), {category:'favorites', query:'rose', sort:'featured', size:'', color:'', price:''});
+  assert.ok(shop.element('product-grid').innerHTML.includes('data-product-id="rose"'));
+  assert.ok(!shop.element('product-grid').innerHTML.includes('data-product-id="noir"'));
+  shop.emit('reset-filter', 'click');
+  assert.deepEqual(shop.view(), {category:'all', query:'', sort:'featured', size:'', color:'', price:''});
+  assert.equal([...shop.element('product-grid').innerHTML.matchAll(/data-product-id=/g)].length, 16);
+});
+
+test('Nondefault sorting remains visible and removable without clearing other active filters', () => {
+  const shop = createHarness({page:'catalog', language:'en', href:'https://example.test/annys-le-rose/catalog.html?category=intimates&q=rose&size=M&sort=high'});
+  assert.ok(shop.element('active-filters').innerHTML.includes('data-clear-filter="sort"'));
+  assert.ok(shop.element('active-filters').innerHTML.includes('Sort: Price: high to low'));
+  assert.equal(shop.element('filter-count').hidden, false);
+  assert.equal(shop.element('filter-count').textContent, '2');
+  assert.equal(shop.element('filter-count').getAttribute('aria-label'), '2 active');
+  shop.run("i18n.setLanguage('es')");
+  assert.ok(shop.element('active-filters').innerHTML.includes('Orden: Precio: mayor a menor'));
+  shop.click({dataset:{clearFilter:'sort'}});
+  assert.deepEqual(shop.view(), {category:'intimates', query:'rose', sort:'featured', size:'M', color:'', price:''});
+  assert.equal(shop.element('sort').value, 'featured');
+  assert.ok(!shop.element('active-filters').innerHTML.includes('data-clear-filter="sort"'));
+  assert.ok(!shop.url().includes('sort='));
+});
+
+test('View results closes the filter panel and moves focus and scroll to the results', () => {
+  for (const reduceMotion of [true, false]) {
+    const shop = createHarness({page:'catalog', reduceMotion, href:'https://example.test/annys-le-rose/catalog.html?category=beauty&price=under40'});
+    const before = shop.view();
+    shop.element('.catalog-filters').open = true;
+    shop.emit('apply-filters', 'click');
+    assert.equal(shop.element('.catalog-filters').open, false);
+    assert.equal(shop.focused(), 'results-count');
+    assert.equal(shop.element('results-count').getAttribute('tabindex'), '-1');
+    assert.equal(shop.element('results-count').lastScrollOptions.behavior, reduceMotion ? 'auto' : 'smooth');
+    assert.equal(shop.element('results-count').lastScrollOptions.block, 'start');
+    assert.deepEqual(shop.view(), before);
+  }
+});
+
+test('Catalog search shortcut focuses the existing search without opening a duplicate field', () => {
+  const shop = createHarness({page:'catalog', reduceMotion:true, href:'https://example.test/annys-le-rose/catalog.html?category=intimates&q=rose&size=M'});
+  const before = shop.view();
+  shop.element('navigation').classList.add('open');
+  shop.emit('search-toggle', 'click');
+  assert.equal(shop.focused(), 'catalog-search');
+  assert.equal(shop.element('search-bar').hidden, true);
+  assert.equal(shop.element('navigation').classList.contains('open'), false);
+  assert.equal(shop.element('catalog-search').lastScrollOptions.behavior, 'auto');
+  assert.equal(shop.element('catalog-search').lastScrollOptions.block, 'center');
+  assert.equal(shop.element('search-toggle').getAttribute('aria-expanded'), null);
+  assert.deepEqual(shop.view(), before);
+});
+
+test('Home and product pages retain their expandable header search', () => {
+  for (const page of ['home','product']) {
+    const shop = createHarness({page});
+    shop.element('search-bar').hidden = true;
+    shop.emit('search-toggle', 'click');
+    assert.equal(shop.element('search-bar').hidden, false);
+    assert.equal(shop.element('search-toggle').getAttribute('aria-expanded'), 'true');
+    assert.equal(shop.focused(), 'search');
+    shop.emit('search-close', 'click');
+    assert.equal(shop.element('search-bar').hidden, true);
+    assert.equal(shop.element('search-toggle').getAttribute('aria-expanded'), 'false');
+    assert.equal(shop.focused(), 'search-toggle');
+  }
+});
+
+test('A filtered catalog product link restores its exact view and a valid selected variant', async () => {
+  const catalog = createHarness({page:'catalog', href:'https://example.test/annys-le-rose/catalog.html?category=intimates&q=rose&size=M&color=cherry&price=under40&sort=high&token=private'});
+  const html = catalog.element('product-grid').innerHTML;
+  const link = html.match(/href="([^"]+)" data-product-link="image:rose-bra"/)[1].replaceAll('&amp;', '&');
+  const title = html.match(/href="([^"]+)" data-product-link="title:rose-bra"/)[1].replaceAll('&amp;', '&');
+  assert.equal(title, link);
+  assert.ok(!link.includes('private'));
+  const page = createHarness({page:'product', productId:'rose-bra', href:new URL(link, 'https://example.test/annys-le-rose/').href, sharedStorage:catalog.storage});
+  assert.equal(page.run('selectedSize'), 'M');
+  assert.equal(page.run('selectedColor'), 'Rojo cereza');
+  const returned = createHarness({page:'catalog', href:new URL(page.element('.concept-back').getAttribute('href'), 'https://example.test/annys-le-rose/').href, sharedStorage:page.storage});
+  assert.deepEqual(returned.view(), catalog.view());
+  await page.run("shareProduct('rose-bra')");
+  assert.deepEqual(page.copiedLinks, ['https://example.test/annys-le-rose/product-rose-bra.html']);
+});
+
+test('Changing size in quick view updates the full-page link and preserves that explicit choice over an older bag variant', () => {
+  const catalog = createHarness({page:'catalog', href:'https://example.test/annys-le-rose/catalog.html?category=essentials&size=M', savedCart:[{id:'rose-bra', size:'XS', color:'Rojo cereza', quantity:1}]});
+  catalog.run("openProduct('rose-bra')");
+  assert.equal(catalog.run('selectedSize'), 'XS');
+  catalog.click({dataset:{size:'L'}});
+  const link = catalog.element('[data-product-link="full:rose-bra"]').getAttribute('href');
+  assert.equal(new URL(link, 'https://example.test/').searchParams.get('variant_size'), 'L');
+  const page = createHarness({page:'product', productId:'rose-bra', href:new URL(link, 'https://example.test/annys-le-rose/').href, sharedStorage:catalog.storage});
+  assert.equal(page.run('selectedSize'), 'L');
+  assert.equal(page.cart()[0].size, 'XS');
+  page.run("i18n.setLanguage('en')");
+  assert.equal(page.run('selectedSize'), 'L');
+  assert.ok(page.element('product-page-detail').innerHTML.includes('data-size="L" aria-pressed="true"'));
+});
+
+test('A concept opened from filtered favorites returns to those local favorites without encoding saved IDs', () => {
+  const catalog = createHarness({page:'catalog', href:'https://example.test/annys-le-rose/catalog.html?q=rose&size=M&sort=low#favorites', savedFavorites:['rose-bra','noir']});
+  const link = catalog.element('product-grid').innerHTML.match(/href="([^"]+)" data-product-link="image:rose-bra"/)[1].replaceAll('&amp;', '&');
+  const page = createHarness({page:'product', productId:'rose-bra', href:new URL(link, 'https://example.test/annys-le-rose/').href, sharedStorage:catalog.storage});
+  assert.equal(page.element('.concept-back').getAttribute('href'), 'catalog.html?q=rose&size=M&sort=low#favorites');
+  const returned = createHarness({page:'catalog', href:new URL(page.element('.concept-back').getAttribute('href'), 'https://example.test/annys-le-rose/').href, sharedStorage:page.storage});
+  assert.deepEqual(returned.view(), catalog.view());
+  assert.ok(!page.element('.concept-back').getAttribute('href').includes('noir'));
+  assert.equal([...returned.element('product-grid').innerHTML.matchAll(/data-product-id=/g)].length, 1);
+  returned.element('sort').value = 'high';
+  returned.emit('sort', 'change');
+  assert.equal(returned.url(), 'https://example.test/annys-le-rose/catalog.html?q=rose&size=M&sort=high#favorites');
+  assert.equal(returned.element('catalog-share').disabled, true);
+  const refreshed = createHarness({page:'catalog', href:returned.url(), sharedStorage:returned.storage});
+  assert.deepEqual(refreshed.view(), returned.view());
+});
+
+test('Malformed product navigation context cannot redirect the back link or select an invalid variant', () => {
+  const page = createHarness({page:'product', productId:'rose-bra', href:'https://example.test/annys-le-rose/product-rose-bra.html?return=https%3A%2F%2Fexample.com&variant_size=999&variant_color=unknown'});
+  assert.equal(page.element('.concept-back').getAttribute('href'), null);
+  assert.equal(page.run('selectedSize'), '');
+  assert.equal(page.run('selectedColor'), 'Rojo cereza');
+  assert.equal(page.navigations.length, 0);
+});
+
+test('Catalog link focus survives grid replacement on a language change', () => {
+  const catalog = createHarness({page:'catalog', language:'en'});
+  const anchor = catalog.element('focused-card-image');
+  anchor.id = '';
+  anchor.tagName = 'A';
+  anchor.dataset.productLink = 'image:rose-bra';
+  anchor.parentElement = catalog.element('product-grid');
+  anchor.focus();
+  // The old anchor becomes detached when the browser replaces the grid HTML.
+  anchor.isConnected = false;
+  catalog.run("i18n.setLanguage('es')");
+  assert.equal(catalog.focused(), '[data-product-link="image:rose-bra"]');
 });
 
 (async () => {
