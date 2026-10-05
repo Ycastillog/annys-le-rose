@@ -7,8 +7,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 const dist = path.resolve(__dirname, '..', 'dist');
 const requestedPages = process.argv.slice(2);
-const pageFlags = {'--home':'index.html', '--catalog':'catalog.html', '--studio':'brand.html'};
-if (requestedPages.some(argument => !Object.hasOwn(pageFlags, argument))) throw new Error('Use --home, --catalog, --studio, or no arguments.');
+const pageFlags = {'--home':'index.html', '--catalog':'catalog.html', '--studio':'brand.html', '--capsule':'capsule.html'};
+if (requestedPages.some(argument => !Object.hasOwn(pageFlags, argument))) throw new Error('Use --home, --catalog, --studio, --capsule, or no arguments.');
 const pages = requestedPages.length ? requestedPages.map(argument => pageFlags[argument]) : Object.values(pageFlags);
 const context = {
   window:{},
@@ -45,11 +45,11 @@ function synchronizeGlobal(html) {
   });
 }
 
-function captureStudioEnglish(html) {
+function capturePageEnglish(html, namespace) {
   const translations = new Map();
   const fields = ['i18n', 'html', 'alt', 'aria'];
-  const nodes = Object.fromEntries(fields.map(field => [field, [...html.matchAll(new RegExp(`\\bdata-brand-${field}="([^"]+)"`, 'g'))].map(([, key]) => {
-    const datasetKey = `brand${field[0].toUpperCase()}${field.slice(1)}`;
+  const nodes = Object.fromEntries(fields.map(field => [field, [...html.matchAll(new RegExp(`\\bdata-${namespace}-${field}="([^"]+)"`, 'g'))].map(([, key]) => {
+    const datasetKey = `${namespace}${field[0].toUpperCase()}${field.slice(1)}`;
     return {
       dataset:{[datasetKey]:key},
       set textContent(value) { translations.set(key, value); },
@@ -61,7 +61,7 @@ function captureStudioEnglish(html) {
   const document = {
     set title(value) { translations.set('metaTitle', value); },
     querySelectorAll(selector) {
-      return nodes[fields.find(field => selector === `[data-brand-${field}]`)] || [];
+      return nodes[fields.find(field => selector === `[data-${namespace}-${field}]`)] || [];
     },
     querySelector(selector) {
       if (selector === 'meta[name="description"]' || selector === 'meta[property="og:description"]') return metadata('metaDescription');
@@ -70,20 +70,20 @@ function captureStudioEnglish(html) {
     }
   };
   // Capture the real render rather than duplicating or parsing the copy object.
-  vm.runInNewContext(fs.readFileSync(path.join(dist, 'brand.js'), 'utf8'), {window:{ALRi18n:{language:'en', subscribe() {}}}, document}, {filename:'brand.js'});
+  vm.runInNewContext(fs.readFileSync(path.join(dist, `${namespace}.js`), 'utf8'), {window:{ALRi18n:{language:'en', subscribe() {}}}, document}, {filename:`${namespace}.js`});
   return key => {
     const value = translations.get(key);
-    if (!value || value === key) throw new Error(`Missing English studio copy: ${key}`);
+    if (!value || value === key) throw new Error(`Missing English ${namespace} copy: ${key}`);
     return value;
   };
 }
 
-function synchronizeStudio(html) {
-  const studio = captureStudioEnglish(html);
-  html = replaceContent(html, 'data-brand-i18n', studio);
-  html = replaceContent(html, 'data-brand-html', studio, true);
-  html = html.replace(/<[a-z][^>]*\bdata-brand-(?:alt|aria)="[^"]+"[^>]*>/g, tag => {
-    for (const [, field, key] of tag.matchAll(/\bdata-brand-(alt|aria)="([^"]+)"/g)) tag = setAttribute(tag, field === 'aria' ? 'aria-label' : 'alt', studio(key));
+function synchronizeEditorial(html, namespace) {
+  const studio = capturePageEnglish(html, namespace);
+  html = replaceContent(html, `data-${namespace}-i18n`, studio);
+  html = replaceContent(html, `data-${namespace}-html`, studio, true);
+  html = html.replace(new RegExp(`<[^>]+\\bdata-${namespace}-(?:alt|aria)="[^"]+"[^>]*>`, 'g'), tag => {
+    for (const [, field, key] of tag.matchAll(new RegExp(`\\bdata-${namespace}-(alt|aria)="([^"]+)"`, 'g'))) tag = setAttribute(tag, field === 'aria' ? 'aria-label' : 'alt', studio(key));
     return tag;
   });
   html = html.replace(/<title\b[^>]*>[\s\S]*?<\/title>/, `<title>${escape(studio('metaTitle'))}</title>`);
@@ -103,7 +103,7 @@ for (const page of new Set(pages)) {
     html = html.replace(/(<h1 id="collection-title"[^>]*>)[\s\S]*?(<\/h1>)/, (_, start, end) => start + escape(translate('catalogPage.title.all')) + end);
     html = html.replace(/(<p id="collection-copy"[^>]*>)[\s\S]*?(<\/p>)/, (_, start, end) => start + escape(translate('catalogPage.copy.all').replace('{count}', '16')) + end);
   }
-  if (page === 'brand.html') html = synchronizeStudio(html);
+  if (page === 'brand.html' || page === 'capsule.html') html = synchronizeEditorial(html, page.replace('.html', ''));
   html = html.replace(/<html\b[^>]*>/, tag => setAttribute(tag, 'lang', 'en'));
   fs.writeFileSync(file, html);
   console.log(`Synchronized ${page} with its English runtime copy.`);

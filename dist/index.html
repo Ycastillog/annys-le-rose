@@ -21,12 +21,13 @@
   <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts.css?v=f212715fea">
-  <link rel="stylesheet" href="styles.css?v=8287fbd937">
-  <script src="i18n.js?v=1336792d62" defer></script>
+  <link rel="stylesheet" href="styles.css?v=cf840a26bd">
+  <script src="i18n.js?v=ff750c5fb3" defer></script>
   <script src="catalog.js?v=b629b019e2" defer></script>
-  <script src="catalog-query.js?v=877f496f42" defer></script>
+  <script src="catalog-query.js?v=16d5b5da8e" defer></script>
   <script src="edition.js?v=e14353736e" defer></script>
-  <script src="app.js?v=b2420a4d22" defer></script>
+  <script src="product-view.js?v=f122cffeca" defer></script>
+  <script src="app.js?v=9948b886af" defer></script>
 </head>
 <body data-page="home">
   <a class="skip-link" href="#main-content" data-i18n="skip.main">Skip to content</a>
@@ -104,12 +105,12 @@
 
     <section class="collection featured-collection section" id="coleccion" aria-labelledby="featured-title">
       <div class="section-heading">
-        <div><p class="eyebrow" data-i18n="featured.eyebrow">A FIRST LOOK</p><h2 id="featured-title" data-i18n-html="featured.title">Find a feeling.<br><em>Make it yours.</em></h2></div>
-        <p data-i18n="featured.copy">Six concepts in intimates, fragrance and lip gloss. Explore a mood, then discover all 16.</p>
+        <div><p class="eyebrow" data-i18n="featured.eyebrow">THE PROPOSED FIRST CAPSULE</p><h2 id="featured-title" data-i18n-html="featured.title">A moment<br><em>of your own.</em></h2></div>
+        <p data-i18n="featured.copy">Four intimate layers, a scent and a touch of gloss. Six concepts proposed for our first chapter, to be refined through feedback and physical samples.</p>
       </div>
       <p class="small-note" id="catalog-note" data-i18n="catalog.sampleNote">Designs, images and prices are samples. Not available for purchase yet.</p>
       <div id="product-grid" class="product-grid" aria-describedby="catalog-note"></div>
-      <div class="featured-actions"><a class="button secondary" href="catalog.html" data-discover="all" data-i18n="featured.cta">Explore all 16 concepts</a></div>
+      <div class="featured-actions"><a class="button" href="capsule.html" data-i18n="featured.cta">Meet the proposed capsule</a><a class="text-button" href="catalog.html" data-i18n="hero.secondary">Explore the concepts</a></div>
     </section>
 
     <section class="edition edition-feature section" id="edicion" aria-labelledby="edition-title">
@@ -130,22 +131,22 @@
     <section class="identity-story identity-concentrated section" id="identidad" aria-labelledby="identity-title">
       <figure class="identity-symbol"><img src="assets/brand/symbol.svg" alt="" aria-hidden="true" width="256" height="256"><figcaption data-i18n="identity.signature">Your own kind of feminine.</figcaption></figure>
       <div class="identity-copy">
-        <p class="eyebrow" data-i18n="identity.eyebrow">OUR WORLD, IN DETAIL</p>
-        <h2 id="identity-title" data-i18n-html="identity.title">A world in cherry red.<br><em>A ritual of your own.</em></h2>
-        <p data-i18n="identity.copy">We are shaping one world for intimates, fragrance and lip gloss. Cherry red, warm ivory and the ALR mark connect the concepts, leaving room for your own expression.</p>
+        <p class="eyebrow" data-i18n="identity.eyebrow">A MOMENT FOR YOURSELF</p>
+        <h2 id="identity-title" data-i18n-html="identity.title">Your femininity.<br><em>On your terms.</em></h2>
+        <p data-i18n="identity.copy">A quiet morning, getting ready for yourself, a detail you choose to keep close. Annys Le´ Rose is taking shape around those personal moments.</p>
         <ul class="identity-values">
-          <li><h3 data-i18n="identity.value1Title">Cherry red. Warm ivory.</h3><p data-i18n="identity.value1Copy">Our palette pairs expressive red with quiet ivory across the website, ALR symbol and packaging concepts.</p></li>
-          <li><h3 data-i18n="identity.value2Title">Three rituals, one world.</h3><p data-i18n="identity.value2Copy">Layers for your mood, a personal scent and a finishing touch of gloss, connected by the same colors and voice.</p></li>
+          <li><h3 data-i18n="identity.value1Title">Room to be yourself.</h3><p data-i18n="identity.value1Copy">Soft, bold, quiet or expressive. Your way of feeling feminine does not need to fit an ideal.</p></li>
+          <li><h3 data-i18n="identity.value2Title">Begin with intimates.</h3><p data-i18n="identity.value2Copy">Intimates are at the heart. Scent and a touch of gloss accompany a considered selection to explore on your terms.</p></li>
           <li><h3 data-i18n="identity.value3Title">Five days. Once a year.</h3><p data-i18n="identity.value3Copy">Édition 05 is our proposed annual scent-and-gloss ritual. Dates remain to be announced; for now, its concepts can be explored.</p></li>
         </ul>
-        <a class="identity-link underlined" href="brand.html" data-i18n="identity.studioLink">Explore the brand studio</a>
+        <a class="identity-link underlined" href="brand.html" data-i18n="identity.studioLink">Explore our identity in development</a>
       </div>
     </section>
 
   </main>
 
   <footer>
-    <div class="footer-brand"><a href="#inicio" class="wordmark brand-signature" aria-label="Annys Le Rose, home" data-i18n-aria-label="home.label"><img class="brand-symbol" src="assets/brand/symbol-light.svg" alt="" aria-hidden="true" width="64" height="64"><span class="brand-wordmark">Annys Le´ Rose</span></a><p data-i18n="hero.tagline">Your own kind of feminine.</p><a href="brand.html" class="underlined" data-i18n="identity.studioLink">Explore the brand studio</a></div>
+    <div class="footer-brand"><a href="#inicio" class="wordmark brand-signature" aria-label="Annys Le Rose, home" data-i18n-aria-label="home.label"><img class="brand-symbol" src="assets/brand/symbol-light.svg" alt="" aria-hidden="true" width="64" height="64"><span class="brand-wordmark">Annys Le´ Rose</span></a><p data-i18n="hero.tagline">Your own kind of feminine.</p><a href="brand.html" class="underlined" data-i18n="identity.studioLink">Explore our identity in development</a><a href="capsule.html" class="underlined" data-i18n="featured.cta">Meet the proposed capsule</a></div>
     <div class="footer-links"><h3 data-i18n="footer.explore">Explore</h3><a href="catalog.html?category=lingerie#coleccion" data-discover="lingerie" data-i18n="nav.lingerie">Lingerie</a><a href="catalog.html?category=essentials#coleccion" data-discover="essentials" data-i18n="nav.essentials">Essentials</a><a href="catalog.html?category=lounge#coleccion" data-discover="lounge" data-i18n="nav.lounge">Sleep &amp; lounge</a><a href="catalog.html?category=fragrance#coleccion" data-discover="fragrance" data-i18n="nav.fragrance">Fragrance</a><a href="catalog.html?category=beauty#coleccion" data-discover="beauty" data-i18n="nav.beauty">Lip gloss</a><a href="#edicion" data-i18n="nav.exclusive">Édition 05</a></div>
     <div class="footer-links"><h3 data-i18n="footer.support">Here for you</h3><button type="button" data-info="sizes" data-i18n="footer.sizes">Size guide</button><button type="button" data-info="shipping" data-i18n="footer.shipping">Shipping &amp; returns</button><button type="button" data-info="privacy" data-i18n="footer.privacy">Privacy</button></div>
     <div class="footer-note"><p data-i18n="footer.note">Your own kind of feminine.</p><small data-i18n="footer.demo">Brand in development · Concept catalog. Shopping and payments are not enabled yet.</small></div>

@@ -226,6 +226,9 @@ em { color: var(--red); font-family: var(--serif); font-weight: 400; }
 .product-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-top: .9rem; }
 .product-title-row h3 { min-width: 0; font-size: 1rem; font-weight: 500; line-height: 1.55; }
 .product-title-row h3 button, .product-title-button { min-height: 44px; padding: 0; text-align: left; }
+.product-title-button { display: inline-flex; align-items: center; }
+.product-title-button:hover { color: var(--red); }
+.concept-full-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 1rem; }
 .product-title-row h3 button:hover { color: var(--red); }
 .product-title-row > span { padding-top: .1rem; font-size: .875rem; line-height: 1.6; white-space: nowrap; }
 .product-description { margin-top: .15rem; color: var(--muted); font-size: .875rem; line-height: 1.65; }
@@ -274,6 +277,7 @@ footer a:not(.wordmark), footer button { display: flex; align-items: center; min
 footer a:hover, footer button:hover { color: white; text-decoration: underline; text-underline-offset: .3em; }
 footer :is(a, button).underlined { color: #f9eeeb; }
 footer :is(a, button).underlined:hover { color: white; }
+.footer-brand > .underlined { display: flex; width: fit-content; }
 footer :where(a, button):focus-visible { outline-color: var(--ivory); }
 footer small { display: block; margin-top: .75rem; color: #e5ced4; font-size: .75rem; line-height: 1.8; }
 .footer-bottom { grid-column: 1/-1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1.5rem; padding: 1.4rem 0; border-top: 1px solid #ffffff26; color: #e5ced4; font-size: .75rem; }
@@ -586,7 +590,7 @@ th { color: var(--red-dark); font-weight: 600; }
 }
 /* A curated front page leads to the full, contextual catalog. */
 .featured-collection .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.featured-actions { display: flex; justify-content: center; margin-top: 2.5rem; }
+.featured-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem 2rem; margin-top: 2.5rem; }
 .product-image { aspect-ratio: 4/5; }
 .product-image img { object-fit: contain; }
 .detail-photo[src*="-single"] { object-fit: contain; background: #f2e9e0; }

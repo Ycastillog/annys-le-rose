@@ -5,9 +5,10 @@ const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..', 'dist');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const catalogHTML = fs.readFileSync(path.join(root, 'catalog.html'), 'utf8');
-for (const filename of ['index.html', 'catalog.html', 'brand.html']) {
+const pages = fs.readdirSync(root).filter(filename => filename.endsWith('.html'));
+for (const filename of pages) {
   const markup = fs.readFileSync(path.join(root, filename), 'utf8');
-  const ids = [...markup.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+  const ids = [...markup.matchAll(/(?<![\w-])id="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate HTML IDs in ${filename}`);
   assert.equal((markup.match(/<h1\b/g) || []).length, 1, `One main heading in ${filename}`);
   for (const match of markup.matchAll(/\b(?:src|href)="([^"#]+)"/g)) {
@@ -26,7 +27,7 @@ for (const filename of ['index.html', 'catalog.html', 'brand.html']) {
     assert.ok(targetMarkup.includes(`id="${fragment}"`), `Broken section link in ${filename}: ${href}`);
   }
 }
-for (const script of ['app.js', 'i18n.js', 'catalog.js', 'catalog-query.js', 'edition.js', 'brand.js']) new vm.Script(fs.readFileSync(path.join(root, script), 'utf8'), {filename: script});
+for (const script of fs.readdirSync(root).filter(filename => filename.endsWith('.js'))) new vm.Script(fs.readFileSync(path.join(root, script), 'utf8'), {filename: script});
 // A published stylesheet must not point to a font omitted from the static release.
 for (const match of fs.readFileSync(path.join(root, 'fonts.css'), 'utf8').matchAll(/url\(['"]?([^)'"\s]+)['"]?\)/g)) {
   const fontPath = path.resolve(root, match[1]);
@@ -69,7 +70,8 @@ assert.equal(bootLanguage(firstVisit.saved()).i18n.language, 'en', 'Chosen Engli
 assert.equal(bootLanguage('invalid').i18n.language, 'en', 'Invalid stored language falls back to English');
 assert.equal(firstVisit.i18n.t('language.label', {}, 'invalid'), 'Language', 'Unknown translation locale falls back to English');
 assert.ok(html.includes('<html lang="en">'), 'HTML fallback is English');
-const keys = [...(html + catalogHTML).matchAll(/\bdata-i18n(?:-html|-aria-label|-placeholder|-alt|-title|-content)?="([^"]+)"/g)].map(match => match[1]);
+const allMarkup = pages.map(page => fs.readFileSync(path.join(root, page), 'utf8')).join('\n');
+const keys = [...allMarkup.matchAll(/\bdata-i18n(?:-html|-aria-label|-placeholder|-alt|-title|-content)?="([^"]+)"/g)].map(match => match[1]);
 assert.ok(keys.length > 25, 'Static interface must be localized');
 assert.ok(html.indexOf('src="i18n.js') >= 0 && html.indexOf('src="i18n.js') < html.indexOf('src="app.js'), 'Localization must load before the application');
 assert.ok(html.indexOf('src="catalog.js') >= 0 && html.indexOf('src="catalog.js') < html.indexOf('src="app.js'), 'Catalog must load before the application');
@@ -157,4 +159,4 @@ assert.equal(edition.getWindow(new Date(), {...schedule,startMonthDay:'02-29'}).
 for (const language of ['es','en']) {
   for (const key of ['edition.pending','edition.unavailable','edition.previewOnly','errors.editionClosed','product.tone','product.volume','product.setValue']) assert.notEqual(context.window.ALRi18n.t(key, {}, language), key, `Dynamic translation: ${key}`);
 }
-console.log(`Verified home, catalog and studio assets/anchors, English-first persistence, 16 distinct concept photos, ES/EN, five-day boundaries and ${new Set(keys).size} storefront localization keys.`);
+console.log(`Verified ${pages.length} public pages, local assets/anchors, English-first persistence, 16 distinct concept photos, ES/EN, five-day boundaries and ${new Set(keys).size} storefront localization keys.`);

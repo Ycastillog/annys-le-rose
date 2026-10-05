@@ -6,12 +6,12 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
-const sources = Object.fromEntries(['catalog.js', 'catalog-query.js', 'edition.js', 'i18n.js', 'app.js']
+const sources = Object.fromEntries(['catalog.js', 'catalog-query.js', 'edition.js', 'i18n.js', 'product-view.js', 'app.js']
   .map(file => [file, fs.readFileSync(path.join(root, 'dist', file), 'utf8')]));
 
 // A small DOM surface lets the real application register and run its handlers.
 // Templates are kept as strings; layout, native focus and rendering belong to browser QA.
-function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCart = [], savedFavorites = [], language = 'es', href = 'https://example.test/annys-le-rose/catalog.html', clipboard = true, reduceMotion = false, deferredClose = false, page, sharedStorage, missingIds = []} = {}) {
+function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCart = [], savedFavorites = [], language = 'es', href = 'https://example.test/annys-le-rose/catalog.html', clipboard = true, reduceMotion = false, deferredClose = false, page, productId = 'rose-bra', sharedStorage, missingIds = []} = {}) {
   const documentListeners = new Map();
   const windowListeners = new Map();
   const registeredTools = new Map();
@@ -19,10 +19,12 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
   const storage = sharedStorage || new Map([['alr-cart', JSON.stringify(savedCart)], ['alr-favorites', JSON.stringify(savedFavorites)], ['alr-language', language]]);
   const absent = new Set(missingIds);
   let storageBlocked = false;
-  if (page === 'home') ['catalog-search','catalog-search-clear','sort','results-count','catalog-empty','empty-text','reset-filter','filter-count','filter-size','filter-color','filter-price','active-filters','catalog-share','clear-filters','collection-title','collection-copy'].forEach(id => absent.add(id));
-  if (page === 'catalog') ['edition-status','edition-window-dates','edition-interest','edition-interest-note'].forEach(id => absent.add(id));
+  if (page === 'home' || page === 'product') ['catalog-search','catalog-search-clear','sort','results-count','catalog-empty','empty-text','reset-filter','filter-count','filter-size','filter-color','filter-price','active-filters','catalog-share','clear-filters','collection-title','collection-copy'].forEach(id => absent.add(id));
+  if (page === 'product') absent.add('product-grid');
+  if (page === 'catalog' || page === 'product') ['edition-status','edition-window-dates','edition-interest','edition-interest-note'].forEach(id => absent.add(id));
   let clock = new Date(now);
   const copiedLinks = [];
+  const storageWrites = [];
   const navigations = [];
   const closeEvents = [];
   const historyEntries = [{url:new URL(href).href, state:null}];
@@ -92,7 +94,7 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     button.dataset.filter = filter;
     return button;
   });
-  const dialogs = ['product-dialog', 'cart-dialog', 'info-dialog'].map(element);
+  const dialogs = ['product-dialog', 'cart-dialog', 'info-dialog', ...(page === 'product' ? ['concept-image-dialog'] : [])].map(element);
   const document = {
     activeElement:null,
     hidden:false,
@@ -122,6 +124,7 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     }}
   };
   if (page) document.body.dataset.page = page;
+  if (page === 'product') document.body.dataset.productId = productId;
   function makeLocation(href) {
     const location = new URL(href);
     for (const method of ['assign','replace']) location[method] = url => { navigations.push({method, url:new URL(url, location.href).href}); };
@@ -161,7 +164,7 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     navigator:{language:'es', languages:['es'], clipboard:clipboard ? {writeText:async value => { copiedLinks.push(value); }} : undefined},
     localStorage:{
       getItem:key => { if (storageBlocked) throw new Error('Storage unavailable'); return storage.get(key) ?? null; },
-      setItem:(key, value) => { if (storageBlocked) throw new Error('Storage unavailable'); storage.set(key, String(value)); }
+      setItem:(key, value) => { if (storageBlocked) throw new Error('Storage unavailable'); storageWrites.push({key, value:String(value)}); storage.set(key, String(value)); }
     },
     HTMLElement:Element,
     CSS:{escape:value => String(value)},
@@ -171,7 +174,7 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     setTimeout:() => 0,
     clearTimeout() {}
   });
-  for (const file of ['catalog.js', 'catalog-query.js', 'edition.js', 'i18n.js']) {
+  for (const file of ['catalog.js', 'catalog-query.js', 'edition.js', 'i18n.js', 'product-view.js']) {
     vm.runInContext(sources[file], context, {filename:file});
   }
   // Use the actual calendar logic with a controlled clock and an optional announced date.
@@ -194,9 +197,11 @@ function createHarness({now = '2026-10-03T12:00:00Z', announced = false, savedCa
     url:() => context.window.location.href,
     history,
     storage,
+    storageWrites,
     navigations,
     blockStorage:blocked => { storageBlocked = blocked; },
     emitWindow:(type, extra = {}) => { for (const callback of windowListeners.get(type) || []) callback(extra); },
+    emitDocument:(type, extra = {}) => { for (const callback of documentListeners.get(type) || []) callback(extra); },
     toolNames:() => [...registeredTools.keys()],
     filterButton:filter => filterButtons.find(button => button.dataset.filter === filter),
     copiedLinks,
@@ -637,7 +642,7 @@ test('Modified discovery link clicks preserve native navigation and the current 
 test('Home boots without catalog controls and keeps six fixed highlights while searching', () => {
   const home = createHarness({page:'home', href:'https://example.test/annys-le-rose/index.html'});
   const ids = () => [...home.element('product-grid').innerHTML.matchAll(/data-product-id="([^"]+)"/g)].map(match => match[1]);
-  const expected = ['cherry-body','lune-top','perfume-rose','perfume-ambre','gloss-cherry','gloss-pearl'];
+  const expected = ['cherry-body','ivory-bralette','lune-top','blush-robe','perfume-rose','gloss-cherry'];
   assert.deepEqual(ids(), expected);
   home.element('search').value = '50 ml';
   home.emit('search', 'input');
@@ -863,6 +868,238 @@ test('WebMCP tools are released on departure and registered again after cached r
   assert.deepEqual(shop.toolNames(), ['read_sample_catalog','stage_sample_bag']);
   assert.equal(shop.readCatalog().length, 16);
   expectError(() => shop.stage(exclusiveSelection), 'errors.editionClosed');
+});
+
+test('Category color choices use only their family and retain an explicit incompatible linked filter', () => {
+  const catalog = createHarness({page:'catalog', language:'en', href:'https://example.test/annys-le-rose/catalog.html?category=beauty&color=amber'});
+  const colors = () => catalog.element('filter-color').innerHTML;
+  assert.ok(colors().includes('value="cherry"'));
+  assert.ok(colors().includes('value="blush"'));
+  assert.ok(!colors().includes('value="black"'));
+  assert.ok(!colors().includes('value="ivory"'));
+  assert.ok(colors().includes('Amber (selected filter)'));
+  assert.equal(catalog.element('filter-color').value, 'amber');
+  assert.ok(catalog.element('active-filters').innerHTML.includes('data-clear-filter="color"'));
+  assert.equal(catalog.element('catalog-empty').hidden, false);
+  catalog.click({dataset:{clearFilter:'color'}});
+  assert.equal(catalog.view().color, '');
+  assert.ok(!colors().includes('value="amber"'));
+  assert.equal(catalog.element('catalog-empty').hidden, true);
+});
+
+test('Changing category clears an incompatible color but retains compatible colors and supports Back', () => {
+  const catalog = createHarness({page:'catalog', href:'https://example.test/annys-le-rose/catalog.html?category=fragrance&color=amber'});
+  catalog.run("setCategory('beauty')");
+  assert.equal(catalog.view().color, '');
+  assert.ok(!catalog.url().includes('color='));
+  catalog.history.go(-1);
+  assert.equal(catalog.view().color, 'amber');
+  catalog.run("setCategory('all')");
+  assert.equal(catalog.view().color, 'amber');
+  catalog.run("setCategory('lingerie')");
+  assert.equal(catalog.view().color, '');
+  assert.ok(!catalog.element('filter-color').innerHTML.includes('value="amber"'));
+});
+
+test('Product pages use the shared selection logic and preserve variants across language changes', () => {
+  const page = createHarness({page:'product', productId:'rose-bra', language:'en', href:'https://example.test/annys-le-rose/product-rose-bra.html'});
+  assert.ok(page.element('product-page-detail').innerHTML.includes('<h1 id="product-title">Rose · Lace bra</h1>'));
+  assert.equal(page.element('product-dialog').open, false);
+  assert.equal(page.run('selectedSize'), '');
+  page.click({dataset:{size:'M'}});
+  page.click({id:'add-cart'});
+  assert.deepEqual(page.cart(), [{id:'rose-bra', size:'M', color:'Rojo cereza', quantity:1}]);
+  assert.equal(page.element('product-dialog').open, false);
+  page.run("i18n.setLanguage('es')");
+  assert.equal(page.run('selectedSize'), 'M');
+  assert.ok(page.element('product-page-detail').innerHTML.includes('Sujetador de encaje'));
+  assert.ok(page.run('document.title').includes('Sujetador de encaje'));
+  assert.ok(page.run('document.title').includes('Concepto'));
+  assert.ok(page.element('concept-image-dialog').getAttribute('aria-label').includes('Ampliar'));
+});
+
+test('Product-page beauty formats and annual edition gates match the quick view and shopping tool', () => {
+  const fragrance = createHarness({page:'product', productId:'perfume-rose'});
+  assert.equal(fragrance.run('selectedSize'), '50 ml');
+  fragrance.click({id:'add-cart'});
+  assert.equal(fragrance.cart()[0].size, '50 ml');
+  const exclusive = createHarness({page:'product', productId:'edition-coffret'});
+  assert.ok(exclusive.element('product-page-detail').innerHTML.includes('id="add-cart" disabled'));
+  assert.equal(exclusive.run('selectedSize'), 'Set');
+  exclusive.click({id:'add-cart'});
+  assert.equal(exclusive.cart().length, 0);
+  assert.equal(exclusive.run('currentToastKey'), 'errors.editionClosed');
+});
+
+test('Full concept links and copied URLs contain only the product path', async () => {
+  const catalog = createHarness({page:'catalog'});
+  assert.ok(catalog.element('product-grid').innerHTML.includes('class="product-open" href="product-cherry-body.html"'));
+  assert.ok(catalog.element('product-grid').innerHTML.includes('class="product-title-button" href="product-cherry-body.html"'));
+  catalog.run("openProduct('rose-bra')");
+  assert.ok(catalog.element('product-detail').innerHTML.includes('href="product-rose-bra.html"'));
+  const page = createHarness({page:'product', productId:'rose-bra', href:'https://example.test/annys-le-rose/product-rose-bra.html?utm_source=friend#image'});
+  await page.run("shareProduct('rose-bra')");
+  assert.deepEqual(page.copiedLinks, ['https://example.test/annys-le-rose/product-rose-bra.html']);
+  assert.equal(page.navigations.length, 0);
+  const blocked = createHarness({page:'product', clipboard:false});
+  await blocked.run("shareProduct('rose-bra')");
+  assert.equal(blocked.run('currentToastKey'), 'toast.linkCopyUnavailable');
+});
+
+test('Product-page size guidance returns to the page without opening a quick-view dialog', () => {
+  const page = createHarness({page:'product', productId:'rose-bra'});
+  page.click({dataset:{guide:''}});
+  assert.equal(page.element('info-dialog').open, true);
+  assert.equal(page.element('product-dialog').open, false);
+  page.click({id:'back-to-product'});
+  assert.equal(page.element('info-dialog').open, false);
+  assert.equal(page.element('product-dialog').open, false);
+  assert.equal(page.run("document.body.classList.contains('modal-open')"), false);
+  assert.equal(page.focused(), '[data-guide]');
+});
+
+test('Image enlargement uses an accessible dialog and preserves modified native image links', () => {
+  const page = createHarness({page:'product'});
+  const modified = page.click({dataset:{zoom:''}, tagName:'A', eventProperties:{ctrlKey:true}});
+  assert.notEqual(modified.defaultPrevented, true);
+  assert.equal(page.element('concept-image-dialog').open, false);
+  const normal = page.click({dataset:{zoom:''}, tagName:'A', eventProperties:{button:0}});
+  assert.equal(normal.defaultPrevented, true);
+  assert.equal(page.element('concept-image-dialog').open, true);
+  page.element('concept-image-dialog').close();
+  assert.equal(page.run("document.body.classList.contains('modal-open')"), false);
+});
+
+test('Cached product pages reconcile favorites and bag changes made on another page', () => {
+  const page = createHarness({page:'product', productId:'rose-bra', language:'en'});
+  page.click({dataset:{favorite:'rose-bra'}});
+  assert.ok(page.element('product-page-detail').innerHTML.includes('Saved to favorites'));
+  page.click({dataset:{size:'M'}});
+  page.click({id:'add-cart'});
+  const catalog = createHarness({page:'catalog', sharedStorage:page.storage});
+  catalog.click({dataset:{favorite:'rose-bra'}});
+  catalog.click({dataset:{remove:'0'}});
+  page.emitWindow('pageshow', {persisted:true});
+  assert.equal(page.cart().length, 0);
+  assert.equal(page.element('favorite-count').textContent, 0);
+  assert.ok(page.element('product-page-detail').innerHTML.includes('Save to favorites'));
+  page.click({dataset:{favorite:'rose-bra'}});
+  assert.deepEqual(page.storedCart(), []);
+});
+
+test('Product global search and favorites navigate to canonical catalog routes', () => {
+  const page = createHarness({page:'product', href:'https://example.test/annys-le-rose/product-rose-bra.html'});
+  page.element('search').value = '50 ml';
+  page.emit('search', 'input');
+  assert.ok(page.element('search-results-status').textContent.startsWith('4 '));
+  page.emit('search', 'keydown', {key:'Enter'});
+  assert.equal(page.navigations[0].url, 'https://example.test/annys-le-rose/catalog.html?q=50+ml#coleccion');
+  page.emit('favorites-toggle', 'click');
+  assert.equal(page.navigations[1].url, 'https://example.test/annys-le-rose/catalog.html#favorites');
+});
+
+test('An already-open catalog favorite cannot erase a bag or interest saved in another tab', () => {
+  const catalog = createHarness({page:'catalog', language:'en'});
+  const product = createHarness({page:'product', productId:'perfume-rose', sharedStorage:catalog.storage});
+  product.stage({id:'perfume-rose', size:'50 ml', color:'ivory'});
+  const home = createHarness({page:'home', sharedStorage:catalog.storage});
+  home.emit('edition-interest', 'click');
+  // No pageshow, focus or storage event has reached the older catalog yet.
+  catalog.click({dataset:{favorite:'rose-bra'}});
+  assert.deepEqual(catalog.storedCart(), product.cart());
+  assert.equal(catalog.storage.get('alr-edition-interest'), 'true');
+  assert.deepEqual(catalog.storageWrites.map(write => write.key), ['alr-favorites']);
+  assert.equal(catalog.element('cart-count').textContent, 1);
+  assert.equal(catalog.element('favorite-count').textContent, 1);
+});
+
+test('Mutations merge with the latest same-field data and preserve the visible favorite intention', () => {
+  const first = createHarness({page:'catalog'});
+  const second = createHarness({page:'product', productId:'perfume-rose', sharedStorage:first.storage});
+  second.stage({id:'perfume-rose', size:'50 ml', color:'ivory'});
+  first.stage({id:'gloss-cherry', size:'6 ml', color:'cherry'});
+  assert.deepEqual(first.cart().map(line => line.id), ['perfume-rose','gloss-cherry']);
+  second.click({dataset:{favorite:'rose-bra'}});
+  first.click({dataset:{favorite:'rose-bra'}});
+  // Both users clicked an unsaved heart: the second action should stay saved.
+  assert.deepEqual(JSON.parse(first.storage.get('alr-favorites')), ['rose-bra']);
+  second.click({dataset:{favorite:'noir'}});
+  first.click({dataset:{favorite:'lune-top'}});
+  assert.deepEqual(JSON.parse(first.storage.get('alr-favorites')), ['rose-bra','noir','lune-top']);
+  assert.equal(first.storedCart().length, 2);
+});
+
+test('Storage events update product selection UI without losing focus, chosen size or URL filters', () => {
+  const page = createHarness({page:'product', productId:'rose-bra', language:'en'});
+  page.click({dataset:{size:'M'}});
+  page.element('search').value = 'lace';
+  page.emit('search', 'input');
+  page.element('search').focus();
+  const before = page.view();
+  const other = createHarness({page:'catalog', sharedStorage:page.storage});
+  other.stage({id:'perfume-rose', size:'50 ml', color:'ivory'});
+  other.click({dataset:{favorite:'rose-bra'}});
+  page.emitWindow('storage', {key:'alr-cart'});
+  assert.deepEqual(page.cart(), other.cart());
+  assert.equal(page.element('favorite-count').textContent, 1);
+  assert.ok(page.element('product-page-detail').innerHTML.includes('Saved to favorites'));
+  assert.equal(page.run('selectedSize'), 'M');
+  assert.equal(page.focused(), 'search');
+  assert.deepEqual(page.view(), before);
+  other.click({dataset:{favorite:'rose-bra'}});
+  page.emitWindow('storage', {key:'alr-favorites'});
+  assert.ok(page.element('product-page-detail').innerHTML.includes('Save to favorites'));
+});
+
+test('Returning to a product tab adopts removals and cannot resurrect them on another action', () => {
+  const page = createHarness({page:'product', productId:'rose-bra', savedCart:[{id:'perfume-rose', size:'50 ml', color:'Marfil', quantity:1}], savedFavorites:['rose-bra']});
+  const other = createHarness({page:'catalog', sharedStorage:page.storage});
+  other.click({dataset:{remove:'0'}});
+  other.click({dataset:{favorite:'rose-bra'}});
+  page.emitWindow('focus');
+  assert.deepEqual(page.cart(), []);
+  assert.equal(page.element('favorite-count').textContent, 0);
+  page.click({dataset:{size:'M'}});
+  page.click({id:'add-cart'});
+  assert.deepEqual(page.storedCart().map(line => line.id), ['rose-bra']);
+  other.emitDocument('visibilitychange');
+  assert.deepEqual(other.cart(), page.cart());
+  assert.equal(other.element('cart-count').textContent, 1);
+  assert.deepEqual(JSON.parse(other.storage.get('alr-favorites')), []);
+});
+
+test('A stale quantity click follows its variant and never modifies a different remaining line', () => {
+  const savedCart = [{id:'perfume-rose', size:'50 ml', color:'Marfil', quantity:1}, {id:'gloss-cherry', size:'6 ml', color:'Rojo cereza', quantity:1}];
+  const removedTarget = createHarness({savedCart});
+  const shiftedTarget = createHarness({sharedStorage:removedTarget.storage});
+  const other = createHarness({sharedStorage:removedTarget.storage});
+  other.click({dataset:{remove:'0'}});
+  removedTarget.click({dataset:{quantity:'0', delta:'1'}});
+  assert.deepEqual(removedTarget.storedCart(), [{id:'gloss-cherry', size:'6 ml', color:'Rojo cereza', quantity:1}]);
+  shiftedTarget.click({dataset:{quantity:'1', delta:'1'}});
+  assert.deepEqual(shiftedTarget.storedCart(), [{id:'gloss-cherry', size:'6 ml', color:'Rojo cereza', quantity:2}]);
+});
+
+test('Blocked storage during tab synchronization retains memory and focus; a remote clear is adopted when readable', () => {
+  const page = createHarness({page:'product', productId:'rose-bra'});
+  page.click({dataset:{size:'M'}});
+  page.click({id:'add-cart'});
+  page.click({dataset:{favorite:'rose-bra'}});
+  page.element('search').focus();
+  const before = page.cart();
+  page.storage.clear();
+  page.blockStorage(true);
+  page.emitWindow('storage', {key:null});
+  page.emitWindow('focus');
+  page.emitDocument('visibilitychange');
+  assert.deepEqual(page.cart(), before);
+  assert.equal(page.element('favorite-count').textContent, 1);
+  assert.equal(page.focused(), 'search');
+  page.blockStorage(false);
+  page.emitWindow('storage', {key:null});
+  assert.deepEqual(page.cart(), []);
+  assert.equal(page.element('favorite-count').textContent, 0);
+  assert.equal(page.focused(), 'search');
 });
 
 (async () => {

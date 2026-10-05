@@ -14,6 +14,10 @@ window.ALRcatalogQuery = Object.freeze({
   isClothingCategory(category) {
     return ['intimates', 'lingerie', 'essentials', 'lounge'].includes(category);
   },
+  colorsForCategory(products, category, favorites = new Set()) {
+    const family = this.select(products, {category, favorites}, new Map());
+    return [...new Map(family.flatMap(product => product.colors.map(color => [color.id, color]))).values()];
+  },
   sanitizeView(state = {}, products = []) {
     const categories = new Set(['all', 'intimates', 'exclusive', ...products.map(product => product.category)]);
     const sizes = new Set(products.filter(product => !product.variantKind || product.variantKind === 'size').flatMap(product => product.sizes));

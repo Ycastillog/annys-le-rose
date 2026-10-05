@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "status": "working-direction-not-final",
+  "brand": "Annys Le´ Rose",
+  "referencePage": "../../brand.html",
+  "visualTokens": "tokens.json",
+  "languages": { "primary": "en", "supported": ["en", "es"] },
+  "purpose": {
+    "en": "Femininity as personal expression, through moments and details chosen for yourself.",
+    "es": "La feminidad como expresión propia, a través de momentos y detalles que eliges para ti."
+  },
+  "signature": { "en": "Your own kind of feminine.", "es": "Tu propia forma de ser femenina." },
+  "initialAudienceHypothesis": {
+    "en": "Adult women in the United States who enjoy feminine details on their own terms. Validate through conversations; this is not a fixed definition of who belongs.",
+    "es": "Mujeres adultas en Estados Unidos que disfrutan los detalles femeninos a su manera. Validar mediante conversaciones; no es una definición cerrada de quién pertenece."
+  },
+  "positioningHypothesis": {
+    "en": "A considered, premium feel at an accessible price. Validate with real samples, costs and customer feedback.",
+    "es": "Una experiencia cuidada y premium a un precio accesible. Validar con muestras reales, costos y opiniones de las clientas."
+  },
+  "productArchitecture": { "core": "intimates", "companions": ["fragrance", "lip gloss"], "proposedCapsule": "../../capsule.html" },
+  "logoWorkingRules": {
+    "colors": "Use one color, cherry on ivory or ivory on cherry; preserve asset proportions.",
+    "clearSpace": "At least one quarter of the symbol height around the symbol or full signature; keep type, trim and other artwork outside.",
+    "screenMinimumStartingPointsCssPx": { "symbol": 32, "fullSignatureWidth": 180, "favicon": [16, 32] },
+    "validation": "These are working guides. Test actual screen sizes. Print and embroidery require physical proofs; fine strokes may need a dedicated production version."
+  },
+  "colorRoles": {
+    "#BC1534": "Cherry: signature, key actions, occasional statement panels",
+    "#FFFCF7": "Warm ivory: primary canvas",
+    "#F5E5E3": "Blush: supporting background",
+    "#D69AA6": "Dusty rose: supporting accent",
+    "#E8C7B2": "Champagne: supporting accent",
+    "#38282D": "Deep ink: body text"
+  },
+  "typography": {
+    "Cormorant Garamond": "Expressive editorial headlines and signature",
+    "Manrope": "Body copy, product information, navigation and controls",
+    "hierarchy": "One expressive headline, then clear information. Spaced capitals only for short labels; keep essential details outside images."
+  },
+  "voice": {
+    "principles": ["Invite choice", "Make details clear", "Leave room for personal expression"],
+    "examples": [
+      { "en": "A moment, just yours.", "es": "Un momento, solo tuyo." },
+      { "en": "A first look at Rose. Materials and fit are still in development.", "es": "Un primer vistazo a Rose. Los materiales y el ajuste siguen en desarrollo." }
+    ],
+    "avoid": "Body-correction language, pressure to be desirable, and untested comfort or performance promises."
+  },
+  "photography": {
+    "direction": "Warm daylight, generous ivory space, a cherry accent. Show the whole item clearly before texture details. Unhurried, personal editorial imagery.",
+    "currentImages": "AI-generated concepts, not proof of physical products or materials.",
+    "beforeSales": "Photograph actual samples, construction and colors. On-person photography should represent adult women across body types without reshaping bodies."
+  },
+  "applications": {
+    "label": "Ivory ground, cherry signature. Separate readable care and size information.",
+    "box": "Cherry outside, ivory signature with clear space. Sample materials and finish.",
+    "bottle": "Uncluttered front with ALR symbol. Formula and container are not confirmed.",
+    "status": "Concept illustrations; not production files or photographs of manufactured goods."
+  },
+  "annualEdition": { "name": "ALR · Édition 05", "durationCalendarDays": 5, "datesAnnounced": false },
+  "nextValidation": ["Audience conversations", "Physical samples", "Fit and materials", "Costs and accessible pricing", "Packaging proofs"],
+  "futureApp": "Visual concept only; implementation follows the web and commercial operation."
+}

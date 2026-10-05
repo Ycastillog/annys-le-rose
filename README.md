@@ -14,11 +14,17 @@ El estudio de identidad está en `dist/brand.html`, con estilos en `brand.css` y
 
 ## Portada y navegación
 
+La siguiente dirección de trabajo se presenta como **“A moment of your own.”** / **“Un momento para ti.”** en `dist/capsule.html`: cuatro prendas (`cherry-body`, `ivory-bralette`, `lune-top`, `blush-robe`), Rose Veil y Cherry Kiss. Es una primera cápsula propuesta, pendiente de entrevistas y muestras físicas. La portada destaca esos seis conceptos y enlaza su relato. `docs/CAPSULA-V1.md` conserva las fichas de desarrollo y preguntas para proveedores. Édition 05 tiene una dirección creativa propuesta, “The cherry ritual”, con fechas todavía por anunciar.
+
+El estudio consolida una **identidad v1 de trabajo**, con propósito, público inicial propuesto, reglas de símbolo, color, tipografía, fotografía, voz y aplicaciones de etiqueta, caja y frasco. Sus reglas orientan el diseño; no acreditan productos, fórmulas, tallaje ni producción aprobados.
+
+Cada uno de los 16 conceptos dispone de una ficha `dist/product-<id>.html` con enlace permanente, metadatos específicos y contenido inicial en inglés. El idioma elegido se aplica al abrirla. La fotografía se puede ampliar; corresponde al mismo concepto, no a otro ángulo o a una muestra real. Catálogo y portada ofrecen enlaces directos y conservan un botón de vista rápida. Las fichas reutilizan la bolsa, los favoritos y las restricciones anuales de `app.js`.
+
 La campaña de portada presenta **“Softness. With character.”** / **“Suavidad. Con carácter.”**. Es un titular de campaña distinto del lema de identidad, que se conserva. El texto breve conecta encaje, perfume y brillo; «Find your ritual» / «Encuentra tu ritual» lleva a los tres universos, y «Explore the concepts» / «Explora los conceptos» abre el catálogo conceptual.
 
 `dist/assets/campaign-hero.jpg` es una imagen original generada con image_gen integrado: 1536 × 1024 píxeles y 174413 bytes. Representa dos mujeres adultas de distintas complexiones con pijamas rojo cereza y marfil. Ilustra una campaña conceptual; no es una fotografía de mercancía disponible. En escritorio acompaña el texto desde la derecha; en móvil se presenta arriba.
 
-La portada `dist/index.html` presenta la campaña, los tres universos —Intimates, Fragrance y Lip gloss—, seis conceptos destacados, Édition 05 y una única historia de marca. Los destacados introducen las familias sin desplegar los 16 conceptos en la página principal. El relato reúne identidad, rituales y esencia; el estudio sigue accesible desde el pie de página.
+La portada `dist/index.html` presenta la campaña, los tres universos —Intimates, Fragrance y Lip gloss—, los seis conceptos de la cápsula propuesta, Édition 05 y una única historia de marca. El relato introduce momentos propios, libertad de expresión y ropa íntima como centro de la selección. La cápsula y el estudio siguen accesibles desde el pie de página.
 
 El catálogo completo está en `dist/catalog.html`. Presenta los 16 conceptos con búsqueda, filtros, títulos y descripciones correspondientes a la categoría elegida. Las subcategorías Lingerie, Essentials y Sleep & lounge aparecen en el contexto de ropa; perfumes y brillos mantienen sus propios criterios. La categoría agregada `intimates` reúne los nueve conceptos de ropa y conserva las categorías e IDs de cada prenda.
 
@@ -48,6 +54,9 @@ Abrir http://127.0.0.1:4173 para la portada, http://127.0.0.1:4173/catalog.html 
 
 - `dist/index.html`: portada con campaña, tres universos, seis destacados, edición anual y una historia de marca.
 - `dist/catalog.html`: catálogo completo de 16 conceptos y controles de exploración contextual.
+- `dist/product-*.html`, `product-view.js`, `product.css`: 16 fichas estáticas, renderizador compartido con la vista rápida y estilos de detalle.
+- `dist/capsule.html`, `capsule.css`, `capsule.js`: primera cápsula propuesta con seis conceptos, en EN/ES.
+- `docs/CAPSULA-V1.md`: fichas de desarrollo, preguntas para proveedores y criterios de evaluación de la propuesta.
 - `dist/styles.css`: diseño y estilos adaptables.
 - `dist/fonts.css`, `dist/assets/fonts/`: fuentes WOFF2 locales, procedencia y licencias OFL.
 - `dist/brand.html`, `dist/brand.css`, `dist/brand.js`: estudio de identidad EN/ES con idioma compartido.
@@ -60,7 +69,10 @@ Abrir http://127.0.0.1:4173 para la portada, http://127.0.0.1:4173/catalog.html 
 - `dist/assets/campaign-hero.jpg`: fotografía original de campaña para la portada.
 - `dist/assets/rose-bra-single.jpg`, `noir-brief-single.jpg`, `lune-top-single.jpg`: imágenes conceptuales individuales; completan las 16 fotografías distintas del catálogo.
 - `dist/assets/brand/`: siete SVG de identidad y `tokens.json`, referencia de paleta, tipografías y firma para web y futura app.
-- `scripts/sync-english.cjs`: sincronización del HTML inicial de portada, catálogo y estudio con su contenido inglés.
+- `scripts/sync-english.cjs`: sincronización del HTML inicial de portada, catálogo, estudio y cápsula con su contenido inglés.
+- `scripts/build-products.cjs`: generación de las 16 fichas desde el catálogo y su renderizador común.
+- `scripts/prepare-site.cjs`: preparación conjunta de las 20 páginas y actualización de versiones de caché.
+- `scripts/verify-products.cjs`: comprobación de fichas, metadatos, contenido sin JavaScript y traducciones.
 - `scripts/verify-i18n.cjs`: comprobación de traducciones y reconciliación de idioma al restaurar páginas.
 - `scripts/verify-site.cjs`: comprobación de estructura, catálogo, traducciones, filtros y calendario anual.
 - `scripts/verify-shopping.cjs`: regresiones de bolsa y herramientas WebMCP con reloj controlado.
@@ -96,15 +108,15 @@ Antes de habilitar ventas se deben conectar catálogo e inventario reales, pago 
 
 ## Comprobación
 
-Si cambia el texto en `dist/i18n.js` o `dist/brand.js`, sincronizar los tres HTML en inglés:
+Antes de publicar, sincronizar las páginas editoriales en inglés, regenerar las 16 fichas y renovar los parámetros de caché de todos los HTML:
 
 ```sh
-node scripts/sync-english.cjs
+node scripts/prepare-site.cjs
 ```
 
-Se puede limitar la sincronización con `--home`, `--catalog` o `--studio`. Por ejemplo, `node scripts/sync-english.cjs --catalog` actualiza sólo el catálogo. Los textos, atributos accesibles y metadatos iniciales quedan alineados con el contenido que renderiza JavaScript.
+Para sincronizar sólo texto editorial, `sync-english.cjs` admite `--home`, `--catalog`, `--studio` y `--capsule`. `build-products.cjs` genera las fichas desde los datos, las traducciones y el renderizador compartido. No editar a mano los HTML `product-*.html`: los cambios pertenecen a su fuente o generador. `prepare-site.cjs` ejecuta ambos pasos en orden y calcula las versiones de CSS/JavaScript con saltos de línea normalizados, de modo reproducible en Windows y GitHub Pages.
 
-Ejecutar ese paso **antes** de calcular los hashes finales y actualizar los parámetros de caché `v` de los recursos modificados. Con los archivos finales, comprobar:
+Con los archivos finales, comprobar:
 
 ```sh
 node --check dist/app.js
@@ -113,6 +125,7 @@ node --check dist/i18n.js
 node --check dist/brand.js
 node scripts/verify-i18n.cjs
 node scripts/verify-site.cjs
+node scripts/verify-products.cjs
 node scripts/verify-shopping.cjs
 ```
 
@@ -136,3 +149,11 @@ La revisión final también comprobó la portada en español a 320, 390, 768 y 1
 Las cinco entrevistas de `PROCESO.md` siguen pendientes. No existen ventas, pedidos, cobros ni avisos por correo operativos.
 
 CSS y JavaScript llevan una versión de caché en el HTML; al modificarlos se debe renovar su parámetro `v`.
+
+### Identidad v1, cápsula y fichas — 4 de octubre de 2026
+
+La revisión de esta entrega pasa 61 regresiones de catálogo/bolsa y 15 de idioma. Se verifican las 20 páginas públicas, sus activos y anclas, 156 claves globales de traducción y las 16 fichas con metadatos específicos, contenido inicial legible y restricción anual. El estudio tiene 118 campos bilingües comprobados y la cápsula 59; estos conteos corresponden a campos de contenido, no a pruebas adicionales de comportamiento.
+
+En navegador se revisaron cápsula y estudio en español, y una ficha de ropa en inglés, a 320, 390, 768 y 1440 píxeles CSS. Se corrigió un desbordamiento de cuatro píxeles en la ficha a 320 y se confirmó su ausencia en español. También se verificaron la cápsula de escritorio en inglés, aplicaciones de etiqueta/caja/frasco, seis enlaces desde portada, búsqueda desde ficha, vista rápida hacia ficha, variante conservada desde bolsa, ampliación con Escape y retorno de foco, guía de tallas, formato de perfume, enlace compartible y bloqueo del coffret con fechas pendientes. Consola sin errores ni advertencias en esos recorridos.
+
+La prueba con dos pestañas confirmó que añadir perfume en una ficha y guardar un favorito en el catálogo conserva ambos cambios; eliminar la muestra en una pestaña vacía la bolsa de la otra. Cambiar a español también actualiza la página abierta en la otra pestaña. La aplicación escucha almacenamiento, foco y visibilidad y escribe sólo el campo modificado; las mutaciones leen el estado disponible antes de actuar. Si el almacenamiento falla, conserva la selección válida en memoria. Sigue siendo persistencia local, sin sincronización de cuentas o dispositivos.

@@ -7,13 +7,17 @@ const $$ = selector => [...document.querySelectorAll(selector)];
 const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[character]));
 const text = (key, variables) => escapeHTML(t(key, variables));
 const money = amount => new Intl.NumberFormat(i18n.language === 'en' ? 'en-US' : 'es-US', {style:'currency', currency:'USD'}).format(amount);
-const isCatalogPage = document.body.dataset?.page !== 'home';
-const featuredIds = ['cherry-body', 'lune-top', 'perfume-rose', 'perfume-ambre', 'gloss-cherry', 'gloss-pearl'];
+const isProductPage = document.body.dataset?.page === 'product';
+const isCatalogPage = !isProductPage && document.body.dataset?.page !== 'home';
+const featuredIds = ['cherry-body', 'ivory-bralette', 'lune-top', 'blush-robe', 'perfume-rose', 'gloss-cherry'];
 
 const {products} = window.ALRcatalog;
 const catalogQuery = window.ALRcatalogQuery;
 const edition = window.ALRedition;
 const productById = new Map(products.map(product => [product.id, product]));
+const pageProduct = isProductPage ? productById.get(document.body.dataset.productId) : null;
+const productView = window.ALRproductView;
+const productPageURL = product => new URL(productView.path(product), window.location.href);
 const productText = (product, field) => t(`products.${product.id}.${field}`);
 const colorName = color => t(`color.${color.id}`);
 const categoryAliases = {Todo:'all', 'Íntimos':'intimates', Intimates:'intimates', 'Lencería':'lingerie', Esenciales:'essentials', Descanso:'lounge', Perfumes:'fragrance', Brillos:'beauty', Exclusiva:'exclusive', Favoritos:'favorites'};
@@ -76,23 +80,32 @@ let currentToastKey = null;
 let editionInterest = readStorage('alr-edition-interest', false) === true;
 let lastEditionStatus = edition.getWindow().status;
 
-function persist() {
-  try {
-    localStorage.setItem('alr-favorites', JSON.stringify([...favorites]));
-    localStorage.setItem('alr-cart', JSON.stringify(cart));
-    localStorage.setItem('alr-edition-interest', JSON.stringify(editionInterest));
-  } catch { toast('toast.localOnly'); }
+function persist(fields) {
+  // Write only the user's changed field. A favorite must never overwrite a
+  // bag (or annual interest) last edited in another open tab.
+  const values = {favorites:['alr-favorites', [...favorites]], cart:['alr-cart', cart], interest:['alr-edition-interest', editionInterest]};
+  for (const field of fields) {
+    const [key, value] = values[field];
+    try { localStorage.setItem(key, JSON.stringify(value)); }
+    catch { toast('toast.localOnly'); }
+  }
   updateCounts();
 }
 
 function reconcileStoredSelections() {
   const focus = focusReference();
+  const previousState = JSON.stringify([cart, [...favorites], editionInterest]);
   const savedBag = readStoredValue('alr-cart');
   const savedLikes = readStoredValue('alr-favorites');
   const savedInterest = readStoredValue('alr-edition-interest');
-  // A restored document keeps its previous JavaScript heap. Read confirmed
-  // changes from the other page, but keep memory when storage is unavailable.
-  cart = validCartLines(savedBag.ok ? savedBag.value : cart);
+  // Restored pages and other open tabs can both hold an older JavaScript heap.
+  // Read confirmed changes, keeping in-memory choices when storage is blocked.
+  const sourceBag = savedBag.ok ? savedBag.value : cart;
+  const removedEdition = Array.isArray(sourceBag) && sourceBag.some(line => {
+    const product = productById.get(line?.id);
+    return product?.exclusive && !edition.canSelect(product);
+  });
+  cart = validCartLines(sourceBag);
   if (savedLikes.ok) {
     favorites.clear();
     if (Array.isArray(savedLikes.value)) savedLikes.value.filter(id => productById.has(id)).forEach(id => favorites.add(id));
@@ -102,6 +115,7 @@ function reconcileStoredSelections() {
   if (savedBag.ok && Array.isArray(savedBag.value) && cart.length !== savedBag.value.length) {
     try { localStorage.setItem('alr-cart', JSON.stringify(cart)); } catch { toast('toast.localOnly'); }
   }
+  if (previousState === JSON.stringify([cart, [...favorites], editionInterest]) && !removedEdition) return;
   updateCounts();
   renderProducts();
   renderCart();
@@ -110,6 +124,7 @@ function reconcileStoredSelections() {
   if ($('#info-dialog').open) renderInfo();
   refreshFeedback();
   restoreFocus(focus);
+  if (removedEdition) toast('edition.removedFromBag');
 }
 
 function updateCounts() {
@@ -152,7 +167,7 @@ function focusReference(element = document.activeElement) {
   if (!(element instanceof HTMLElement)) return null;
   let selector = element.id ? `#${CSS.escape(element.id)}` : null;
   if (!selector) {
-    for (const attribute of ['data-favorite', 'data-product', 'data-size', 'data-color', 'data-guide', 'data-info', 'data-quantity', 'data-remove']) {
+    for (const attribute of ['data-favorite', 'data-product', 'data-size', 'data-color', 'data-guide', 'data-info', 'data-quantity', 'data-remove', 'data-share-product', 'data-zoom']) {
       if (!element.hasAttribute(attribute)) continue;
       selector = `[${attribute}="${CSS.escape(element.getAttribute(attribute))}"]`;
       if (attribute === 'data-quantity') selector += `[data-delta="${CSS.escape(element.dataset.delta)}"]`;
@@ -168,9 +183,11 @@ function restoreFocus(reference, fallback = '#cart-toggle') {
 }
 
 function renderProducts() {
-  const focus = $('#product-grid').contains(document.activeElement) ? focusReference() : null;
   // The bilingual index stays valid when the display language changes.
   const results = catalogQuery.select(products, {category, query, sort, favorites, ...filters}, searchIndex);
+  if ($('#search-results-status')) $('#search-results-status').textContent = t(results.length === 1 ? 'catalog.piece' : 'catalog.pieces', {count:results.length});
+  if (!$('#product-grid')) return;
+  const focus = $('#product-grid').contains(document.activeElement) ? focusReference() : null;
   const list = isCatalogPage ? results : featuredIds.map(id => productById.get(id));
   if (isCatalogPage) {
     renderFilters();
@@ -188,12 +205,12 @@ function renderProducts() {
     const favorite = favorites.has(product.id);
     return `<article class="product-card">
       <div class="product-image" data-product-id="${product.id}">
-        <button class="product-open" data-product="${product.id}" aria-label="${text('product.view', {name})}"><img src="${product.image}" style="object-position:${product.position}" alt="${text('product.image', {name})}" loading="lazy" decoding="async" width="1024" height="1280"></button>
+        <a class="product-open" href="${productView.path(product)}" aria-label="${text('product.view', {name})}"><img src="${product.image}" style="object-position:${product.position}" alt="${text('product.image', {name})}" loading="lazy" decoding="async" width="1024" height="1280"></a>
         <span class="product-badge">${escapeHTML(productText(product, 'badge'))}</span>
         <button class="favorite-button" data-favorite="${product.id}" aria-label="${text(favorite ? 'product.removeFavorite' : 'product.addFavorite', {name})}" aria-pressed="${favorite}"><span aria-hidden="true">${favorite ? '♥' : '♡'}</span></button>
         <button class="quick-view" data-product="${product.id}">${text(product.exclusive ? 'product.previewEdition' : variantKind(product) === 'size' ? 'product.chooseSize' : 'product.discoverBeauty')}</button>
       </div>
-      <div class="product-title-row"><h3><button class="product-title-button" data-product="${product.id}">${escapeHTML(name)}</button></h3><span><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</span></div>
+      <div class="product-title-row"><h3><a class="product-title-button" href="${productView.path(product)}">${escapeHTML(name)}</a></h3><span><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</span></div>
       <p class="product-description">${text(productCategoryKey(product))} · ${escapeHTML(product.sizes.length === 1 ? variantText(product, product.sizes[0]) : `${product.sizes[0]}–${product.sizes.at(-1)}`)}</p>
       <div class="swatches">${product.colors.map(color => `<span class="swatch" style="--swatch:${color.hex}" aria-hidden="true"></span>`).join('')}<span>${escapeHTML(colorName(product.colors[0]))}</span></div>
       <p class="product-sample-label">${text('catalog.sampleBadge')}</p>
@@ -228,6 +245,14 @@ function renderFilters() {
   if ($('#filter-count')) {
     $('#filter-count').hidden = count === 0;
     $('#filter-count').textContent = t(count === 1 ? 'catalog.filterCountOne' : 'catalog.filterCount', {count});
+  }
+  const colorControl = $('#filter-color');
+  if (colorControl) {
+    const available = catalogQuery.colorsForCategory(products, category, favorites);
+    // A shared URL may contain a valid color outside this family. Keep that
+    // explicit filter visible and removable instead of silently broadening it.
+    const outside = filters.color && !available.some(color => color.id === filters.color);
+    colorControl.innerHTML = `<option value="">${text('catalog.allColors')}</option>` + available.map(color => `<option value="${color.id}">${escapeHTML(colorName(color))}</option>`).join('') + (outside ? `<option value="${filters.color}">${text('catalog.selectedColor', {color:t(`color.${filters.color}`)})}</option>` : '');
   }
   for (const key of Object.keys(filters)) {
     const control = $(`#filter-${key}`);
@@ -355,11 +380,12 @@ function renderEdition() {
 }
 
 function refreshEditionWindow() {
+  reconcileStoredSelections();
   const status = edition.getWindow().status;
   const before = cart.length;
   cart = cart.filter(line => edition.canSelect(productById.get(line.id)));
   const changed = status !== lastEditionStatus || cart.length !== before;
-  if (cart.length !== before) { persist(); toast('edition.removedFromBag'); }
+  if (cart.length !== before) { persist(['cart']); toast('edition.removedFromBag'); }
   if (changed) {
     const focus = focusReference();
     renderProducts();
@@ -387,6 +413,7 @@ function setCategory(value) {
   }
   category = next;
   if (['fragrance', 'beauty', 'exclusive'].includes(next)) filters.size = '';
+  if (filters.color && !catalogQuery.colorsForCategory(products, next, favorites).some(color => color.id === filters.color)) filters.color = '';
   renderProducts();
   closeNavigation();
   syncCatalogURL('push');
@@ -423,31 +450,38 @@ function openDialog(dialog, trigger = document.activeElement) {
 
 function renderProductDetail() {
   if (!activeProduct) return;
-  const product = activeProduct;
-  const name = productText(product, 'name');
-  const clothing = variantKind(product) === 'size';
-  const allowed = edition.canSelect(product);
-  const actionKey = !allowed ? unavailableAction() : selectedSize ? 'product.addBag' : clothing ? 'product.sizePrompt' : 'product.formatPrompt';
-  $('#product-detail').innerHTML = `<div class="detail-layout" data-product-id="${product.id}">
-    <img class="detail-photo" src="${product.image}" style="object-position:${product.position}" alt="${text('product.image', {name})}" width="1024" height="1280">
-    <div class="detail-copy"><p class="eyebrow">${text(productCategoryKey(product))}</p><h2 id="product-title">${escapeHTML(name)}</h2><div class="price"><span class="sr-only">${text('catalog.priceLabel')}: </span>${money(product.price)}</div><p>${escapeHTML(productText(product, 'description'))}</p>
-      ${product.exclusive ? `<p class="detail-exclusive-notice">${text(allowed ? 'edition.windowOpen' : 'edition.unavailable')}</p>` : ''}
-      <fieldset class="detail-field"><legend class="detail-label">${text(product.category === 'fragrance' || variantKind(product) === 'set' ? 'product.packaging' : clothing ? 'product.color' : 'product.tone')}</legend><div class="choices color-choices">${product.colors.map(color => `<button class="${selectedColor === color.name ? 'selected' : ''}" data-color="${color.name}" aria-pressed="${selectedColor === color.name}"><span class="swatch" style="--swatch:${color.hex}" aria-hidden="true"></span>${escapeHTML(colorName(color))}</button>`).join('')}</div></fieldset>
-      <fieldset class="detail-field"><legend class="detail-label">${escapeHTML(variantLabel(product))} <span id="size-selection" class="selection-hint" aria-live="polite">· ${escapeHTML(selectedSize ? variantText(product, selectedSize) : variantPrompt(product))}</span></legend><div class="choices">${product.sizes.map(size => `<button class="${selectedSize === size ? 'selected' : ''}" data-size="${size}" aria-pressed="${selectedSize === size}">${escapeHTML(variantText(product, size))}</button>`).join('')}</div></fieldset>
-      ${clothing ? `<button class="underlined" data-guide>${text('product.sizeGuide')}</button>` : ''}
-      <div class="detail-purchase-actions"><button class="button" id="add-cart" ${selectedSize && allowed ? '' : 'disabled'}>${text(actionKey)}</button><p id="product-feedback" class="small-note dialog-feedback" role="alert" aria-live="assertive" hidden></p><p class="small-note">${text('product.sample')}</p></div>
-      <details><summary>${text(clothing ? 'product.careTitle' : 'product.formulaTitle')}</summary><p>${escapeHTML(productText(product, 'fabric'))}</p><p>${text(clothing ? 'product.care' : 'product.beautyCare')}</p></details>
-    </div></div>`;
+  const target = isProductPage ? $('#product-page-detail') : $('#product-detail');
+  if (!target) return;
+  target.innerHTML = productView.render(activeProduct, {
+    t, language:i18n.language, page:isProductPage,
+    selectedSize, selectedColor, favorite:favorites.has(activeProduct.id),
+    allowed:edition.canSelect(activeProduct), unavailableKey:unavailableAction()
+  });
+  if (isProductPage) $('#concept-image-dialog')?.setAttribute('aria-label', t('productPage.enlarge', {name:productText(activeProduct, 'name')}));
   refreshFeedback();
+}
+
+function selectProduct(product) {
+  activeProduct = product;
+  const previous = rememberedChoices.get(product.id);
+  selectedSize = previous?.size || (variantKind(product) === 'size' && product.sizes.includes(filters.size) ? filters.size : variantKind(product) !== 'size' && product.sizes.length === 1 ? product.sizes[0] : '');
+  selectedColor = previous?.color || product.colors[0].name;
+}
+
+async function shareProduct(id) {
+  const product = productById.get(id);
+  if (!product) return;
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(productPageURL(product).href);
+    toast('toast.linkCopied');
+  } catch { toast('toast.linkCopyUnavailable'); }
 }
 
 function openProduct(id, trigger) {
   const product = productById.get(id);
   if (!product) return;
-  activeProduct = product;
-  const previous = rememberedChoices.get(id);
-  selectedSize = previous?.size || (variantKind(product) === 'size' && product.sizes.includes(filters.size) ? filters.size : variantKind(product) !== 'size' && product.sizes.length === 1 ? product.sizes[0] : '');
-  selectedColor = previous?.color || product.colors[0].name;
+  selectProduct(product);
   renderProductDetail();
   openDialog($('#product-dialog'), trigger);
 }
@@ -469,7 +503,7 @@ function addToCart(id, size, colorValue, quantity = 1) {
   if (existing) existing.quantity += quantity;
   else cart.push({id, size, color:color.name, quantity});
   rememberedChoices.set(id, {size, color:color.name});
-  persist();
+  persist(['cart']);
   renderCart();
   return {items:cart.reduce((total, line) => total + line.quantity, 0), subtotal:cartSubtotal()};
 }
@@ -557,12 +591,22 @@ document.addEventListener('click', event => {
     $('#catalog-search')?.focus({preventScroll:true});
     return;
   }
+  if (button.hasAttribute('data-zoom') && isProductPage) {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || (event.button !== undefined && event.button !== 0)) return;
+    event.preventDefault();
+    openDialog($('#concept-image-dialog'), button);
+    return;
+  }
+  if (button.dataset.shareProduct) { shareProduct(button.dataset.shareProduct); return; }
   if (button.dataset.product) { openProduct(button.dataset.product, button); return; }
   if (button.dataset.favorite) {
     const id = button.dataset.favorite;
-    favorites.has(id) ? favorites.delete(id) : favorites.add(id);
-    persist();
+    const save = !favorites.has(id);
+    reconcileStoredSelections();
+    save ? favorites.add(id) : favorites.delete(id);
+    persist(['favorites']);
     renderProducts();
+    if (isProductPage) { renderProductDetail(); restoreFocus(focusReference(button), `[data-favorite="${id}"]`); }
     toast(favorites.has(id) ? 'toast.favoriteAdded' : 'toast.favoriteRemoved');
     return;
   }
@@ -583,24 +627,25 @@ document.addEventListener('click', event => {
     return;
   }
   if (button.id === 'add-cart') {
-    try { addToCart(activeProduct.id, selectedSize, selectedColor); $('#product-dialog').close(); toast('toast.added'); }
+    try { addToCart(activeProduct.id, selectedSize, selectedColor); if (!isProductPage) $('#product-dialog').close(); toast('toast.added'); }
     catch (error) { toast(error.translationKey || 'errors.selection'); }
     return;
   }
   if (button.dataset.quantity !== undefined || button.dataset.remove !== undefined) {
     const reference = focusReference(button);
     const index = Number(button.dataset.quantity ?? button.dataset.remove);
-    const line = cart[index];
+    let line = cart[index];
     if (!line) return;
     refreshEditionWindow();
-    // The window may have closed since this drawer was rendered. Keep the
-    // clicked line's identity so removing earlier lines cannot shift the target.
-    const currentIndex = cart.indexOf(line);
+    // Reconciliation may remove or reorder lines. Find the clicked variant in
+    // the latest bag rather than applying its old index to a different product.
+    const currentIndex = cart.findIndex(current => current.id === line.id && current.size === line.size && current.color === line.color);
     if (currentIndex === -1) return;
+    line = cart[currentIndex];
     const remove = button.dataset.remove !== undefined || (button.dataset.delta === '-1' && line.quantity === 1);
     if (remove) { cart.splice(currentIndex, 1); toast('toast.removed'); }
     else line.quantity = Math.max(1, Math.min(10, line.quantity + Number(button.dataset.delta)));
-    persist();
+    persist(['cart']);
     renderCart();
     restoreFocus(reference, cart.length ? '#review-order' : '[data-continue]');
     return;
@@ -623,9 +668,10 @@ document.addEventListener('click', event => {
     cart = [];
     favorites.clear();
     editionInterest = false;
-    persist();
+    persist(['favorites', 'cart', 'interest']);
     renderProducts();
     renderEdition();
+    if (isProductPage) renderProductDetail();
     $('#info-dialog').close();
     toast('toast.cleared');
   }
@@ -633,7 +679,13 @@ document.addEventListener('click', event => {
 
 $('#cart-toggle').addEventListener('click', event => openCart(event.currentTarget));
 $('#catalog-share')?.addEventListener('click', shareCatalogView);
-$('#edition-interest')?.addEventListener('click', () => { editionInterest = !editionInterest; persist(); renderEdition(); });
+$('#edition-interest')?.addEventListener('click', () => {
+  const save = !editionInterest;
+  reconcileStoredSelections();
+  editionInterest = save;
+  persist(['interest']);
+  renderEdition();
+});
 $('#favorites-toggle').addEventListener('click', () => {
   if (!isCatalogPage) { window.location.assign(catalogPageURL({}, 'favorites').href); return; }
   query = '';
@@ -700,6 +752,12 @@ $$('dialog').forEach(dialog => {
       infoReturn = null;
       if (target === 'product' && activeProduct) {
         renderProductDetail();
+        if (isProductPage) {
+          document.body.classList.remove('modal-open');
+          refreshFeedback();
+          $('[data-guide]')?.focus({preventScroll:true});
+          return;
+        }
         // Keep the original catalog trigger for the product dialog's eventual close.
         const originalTrigger = dialogTriggers.get($('#product-dialog'));
         openDialog($('#product-dialog'), originalTrigger);
@@ -731,7 +789,7 @@ i18n.subscribe(() => {
 
 $('#year').textContent = new Date().getFullYear();
 syncCatalogControls();
-if (!isCatalogPage && window.location) {
+if (!isCatalogPage && !isProductPage && window.location) {
   const params = new URLSearchParams(window.location.search);
   if (['category','q','size','color','price','sort'].some(key => params.has(key))) {
     window.location.replace(catalogPageURL(initialView).href);
@@ -741,12 +799,17 @@ if (!isCatalogPage && window.location) {
 }
 renderProducts();
 renderEdition();
+if (pageProduct) { selectProduct(pageProduct); renderProductDetail(); }
 updateCounts();
-if (Array.isArray(savedCart) && savedCart.length !== cart.length) persist();
+if (Array.isArray(savedCart) && savedCart.length !== cart.length) persist(['cart']);
 setInterval(() => { if (!document.hidden) refreshEditionWindow(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshEditionWindow(); });
 window.addEventListener('popstate', restoreCatalogView);
 window.addEventListener('pageshow', event => { if (event.persisted) reconcileStoredSelections(); });
+window.addEventListener('focus', refreshEditionWindow);
+window.addEventListener('storage', event => {
+  if (event.key === null || ['alr-cart', 'alr-favorites', 'alr-edition-interest'].includes(event.key)) refreshEditionWindow();
+});
 
 if (document.modelContext?.registerTool) {
   let lifecycle;

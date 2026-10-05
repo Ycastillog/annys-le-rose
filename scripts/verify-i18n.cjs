@@ -275,4 +275,30 @@ test('New home and category copy resolves in both languages; campaign and motto 
   assert.equal(harness.i18n.t('identity.signature', {}, 'es'), 'Tu propia forma de ser femenina.');
 });
 
+test('Another tab updates language and metadata without writing back', () => {
+  const harness = createHarness({page:'catalog'});
+  let notifications = 0;
+  harness.i18n.subscribe(() => notifications++);
+  harness.storage.set('alr-language', 'es');
+  harness.emit('storage', {key:'alr-cart'});
+  assertAligned(harness, 'en');
+  harness.emit('storage', {key:'alr-language'});
+  assertAligned(harness, 'es');
+  harness.emit('storage', {key:'alr-language'});
+  assert.equal(notifications, 1);
+  assert.equal(harness.writes.length, 0);
+});
+
+test('Tab focus adopts a missed locale change and keeps memory if reads fail', () => {
+  const harness = createHarness({saved:'en'});
+  harness.storage.set('alr-language', 'es');
+  harness.emit('focus');
+  assertAligned(harness, 'es');
+  harness.permissions.denyRead = true;
+  harness.select.value = 'en';
+  harness.emit('focus');
+  assertAligned(harness, 'es');
+  assert.equal(harness.writes.length, 0);
+});
+
 console.log(`${passed} locale lifecycle regressions passed.`);
