@@ -1,0 +1,264 @@
+/* Home campaign: the ALR signature, one quiet entrance and three clear rituals. */
+.home-welcome {
+  isolation: isolate;
+  /* Crop the decorative curve without creating a nested scroll container. */
+  overflow: clip;
+  min-height: clamp(33rem, 43vw, 41rem);
+  background: #eee2d0;
+}
+.home-welcome .hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #fffcf752 0%, #fffcf712 36%, transparent 56%);
+}
+.home-welcome .hero-copy {
+  width: min(45%, 38rem);
+  padding-block: 2.25rem;
+}
+.home-welcome .hero-copy::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: min(35vw, 30rem);
+  height: 112%;
+  left: -12%;
+  top: 13%;
+  border: 1px solid #94112c16;
+  border-radius: 50%;
+  transform: rotate(-27deg);
+  pointer-events: none;
+}
+.home-welcome .hero-signature {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  margin-bottom: 1.35rem;
+  color: var(--red-dark);
+}
+.hero-signature .hero-monogram {
+  display: block;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  overflow: visible;
+  fill: none;
+  color: var(--red);
+  stroke: currentColor;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hero-signature > span {
+  max-width: 17rem;
+  font: italic 400 clamp(1.15rem, 1.65vw, 1.45rem)/1.2 var(--serif);
+}
+.home-welcome .eyebrow { margin-bottom: .8rem; }
+.home-welcome h1 {
+  margin-bottom: 1.2rem;
+  font-size: clamp(3.6rem, 6vw, 6rem);
+  line-height: .98;
+}
+.home-welcome .hero-copy > p:not(.eyebrow) { max-width: 23rem; }
+.home-welcome .hero-caption {
+  border: 1px solid #fffcf766;
+  background: #fffcf7ed;
+}
+
+/* These are ordinary category links, available before any animation finishes. */
+.ritual-navigation {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0;
+  max-height: none;
+  overflow: visible;
+  padding: 0 max(var(--page-gutter), calc((100vw - 1280px) / 2));
+  border-block: 1px solid #e8cdcc;
+  background: linear-gradient(110deg, #faf0e9, #fffcf7 46%, #f8ece7);
+}
+.ritual-navigation > a {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: center;
+  gap: .1rem .8rem;
+  min-width: 0;
+  min-height: 106px;
+  margin: 0;
+  padding: 1rem 1.5rem;
+  border: 0;
+  text-align: left;
+  color: var(--red-dark);
+  transition: background-color .2s;
+}
+.ritual-navigation > a:first-child { padding-left: 0; }
+.ritual-navigation > a:last-child { padding-right: 0; }
+.ritual-navigation > a + a::before {
+  content: '';
+  position: absolute;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  left: 0;
+  border-left: 1px solid #ddbdbe;
+}
+.ritual-navigation .ritual-number {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  margin: 0;
+  color: var(--red);
+  font: italic 400 1.8rem/1 var(--serif);
+}
+.ritual-navigation .ritual-name {
+  grid-column: 2;
+  grid-row: 1;
+  font: 500 clamp(1.5rem, 2.1vw, 2rem)/1.12 var(--serif);
+}
+.ritual-navigation .ritual-note {
+  grid-column: 2;
+  grid-row: 2;
+  color: #725257;
+  font-size: .75rem;
+  line-height: 1.6;
+}
+.ritual-navigation .ritual-arrow {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  font-size: 1.2rem;
+  transition: transform .2s;
+}
+.ritual-navigation > a:focus-visible {
+  z-index: 1;
+  outline-offset: -5px;
+  background: #f5e3e3;
+}
+.ritual-navigation > a:focus-visible .ritual-name {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+.home-universes { padding-top: clamp(2.5rem, 4.5vw, 4.25rem); }
+.home-universes .section-heading { margin-bottom: 1.65rem; }
+.home-universes .section-heading h2 { font-size: clamp(2.7rem, 4vw, 4rem); }
+.home-universes .universe-grid { gap: 1.35rem; }
+.home-universes .universe-card { border-bottom: 1px solid #d7acb2; }
+.home-universes .universe-image {
+  position: relative;
+  border-top: 2px solid var(--red);
+  background: #f4e9df;
+}
+.home-universes .universe-image img {
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  transform: none;
+}
+.home-universes .universe-copy { padding: 1.15rem .1rem 1rem; }
+.home-universes .universe-index {
+  margin-bottom: .55rem;
+  font: italic 400 1.15rem/1 var(--serif);
+  letter-spacing: 0;
+}
+.home-universes .universe-copy p { margin-top: .55rem; }
+.home-universes .universe-link { padding-top: .9rem; }
+
+@media (hover: hover) and (pointer: fine) {
+  .ritual-navigation > a:hover { background: #f5e3e380; }
+  .ritual-navigation > a:hover .ritual-arrow { transform: translateX(3px); }
+  .home-universes .universe-card:hover .universe-image img { transform: scale(1.025); }
+}
+
+@media (max-width: 900px) and (min-width: 681px) {
+  .home-welcome { min-height: 34rem; }
+  .home-welcome .hero-copy { width: 45%; padding-block: 1.75rem; }
+  .home-welcome h1 { font-size: clamp(3.15rem, 6.4vw, 3.8rem); }
+  .home-welcome .hero-signature { gap: .5rem; margin-bottom: 1rem; }
+  .hero-signature .hero-monogram { flex-basis: 44px; width: 44px; height: 44px; }
+  .hero-signature > span { font-size: 1.1rem; }
+  .home-welcome .hero-copy > p:not(.eyebrow) { font-size: .875rem; }
+  .ritual-navigation > a { gap: .2rem .65rem; padding: 1rem; }
+  .ritual-navigation .ritual-number { font-size: 1.4rem; }
+  .ritual-navigation .ritual-name { font-size: 1.6rem; }
+  .ritual-navigation .ritual-note { font-size: .6875rem; }
+  .home-universes .section-heading { flex-direction: row; gap: 2rem; }
+  .home-universes .section-heading > p { max-width: 20rem; }
+}
+
+@media (max-width: 680px) {
+  .home-welcome { min-height: 0; }
+  .home-welcome .hero-media { height: clamp(220px, 59vw, 270px); }
+  .home-welcome .hero-media::after { background: none; }
+  .home-welcome .hero-copy {
+    width: 100%;
+    padding: .95rem var(--page-gutter) 1.2rem;
+    background: linear-gradient(120deg, #fffcf7 20%, #faf0e8 100%);
+  }
+  .home-welcome .hero-copy::before {
+    top: -2.5rem;
+    left: 70%;
+    width: 20rem;
+    height: 34rem;
+    border-color: #94112c12;
+  }
+  .home-welcome .hero-signature { gap: .55rem; margin-bottom: .65rem; }
+  .hero-signature .hero-monogram { flex-basis: 32px; width: 32px; height: 32px; }
+  .hero-signature > span { max-width: none; font-size: 1.05rem; }
+  .home-welcome .eyebrow { margin-bottom: .55rem; font-size: .6875rem; letter-spacing: .1em; }
+  .home-welcome h1 { margin-bottom: .65rem; font-size: clamp(2.7rem, 10.7vw, 3.8rem); line-height: .98; }
+  .home-welcome .hero-copy > p:not(.eyebrow) { margin-bottom: .85rem; font-size: .875rem; line-height: 1.65; }
+  .home-welcome .hero-actions { gap: .7rem; }
+  .home-welcome .hero-actions .button { min-height: 48px; }
+  .ritual-navigation { padding-inline: .7rem; }
+  .ritual-navigation > a {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: .2rem .25rem;
+    min-height: 108px;
+    padding: .85rem .65rem;
+  }
+  .ritual-navigation > a:first-child { padding-left: .25rem; }
+  .ritual-navigation > a:last-child { padding-right: .25rem; }
+  .ritual-navigation > a + a::before { top: .85rem; bottom: .85rem; }
+  .ritual-navigation .ritual-number { grid-column: 1; grid-row: 1; font-size: 1rem; }
+  .ritual-navigation .ritual-name { grid-column: 1 / -1; grid-row: 2; font-size: 1.35rem; }
+  .ritual-navigation .ritual-note { grid-column: 1 / -1; grid-row: 3; font-size: .6875rem; line-height: 1.55; }
+  .ritual-navigation .ritual-arrow { grid-column: 2; grid-row: 1; font-size: 1rem; }
+  .home-universes { padding-top: 2rem; }
+  .home-universes .section-heading { gap: .75rem; margin-bottom: 1.2rem; }
+  .home-universes .section-heading h2 { font-size: clamp(2.6rem, 9vw, 3.3rem); }
+  .home-universes .section-heading > p { font-size: .8125rem; line-height: 1.7; }
+  .home-universes .universe-grid { gap: .85rem; }
+  .home-universes .universe-card { grid-template-columns: minmax(0, .39fr) minmax(0, .61fr); min-height: 178px; }
+  .home-universes .universe-image { border-top: 0; border-left: 2px solid var(--red); }
+  .home-universes .universe-image img { aspect-ratio: auto; }
+  .home-universes .universe-copy { padding: .9rem .9rem .6rem; }
+  .home-universes .universe-index { margin-bottom: .35rem; font-size: 1rem; }
+  .home-universes .universe-copy h3 { font-size: 1.9rem; }
+  .home-universes .universe-copy p { margin-top: .4rem; font-size: .75rem; line-height: 1.65; }
+  .home-universes .universe-link { padding-top: .45rem; font-size: .75rem; }
+}
+
+@media (max-width: 360px) {
+  .ritual-navigation { padding-inline: .5rem; }
+  .ritual-navigation > a { padding-inline: .5rem; }
+  .ritual-navigation .ritual-name { font-size: 1.25rem; }
+  .home-universes .universe-copy { padding-inline: .7rem; }
+  .home-universes .universe-copy h3 { font-size: 1.75rem; }
+}
+
+/* No opacity gate or JavaScript prerequisite: navigation and text are immediate. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-signature .hero-monogram path { animation: alr-signature-draw .85s ease-out both; }
+  @keyframes alr-signature-draw {
+    from { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    to { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-signature .hero-monogram path { stroke-dasharray: none; stroke-dashoffset: 0; }
+  .ritual-navigation > a:hover .ritual-arrow,
+  .home-universes .universe-card:hover .universe-image img { transform: none; }
+}

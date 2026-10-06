@@ -22,7 +22,9 @@
   <link rel="preload" href="assets/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts.css?v=f212715fea">
   <link rel="stylesheet" href="styles.css?v=570e33b16b">
-  <script src="i18n.js?v=d02dbb9144" defer></script>
+  <link rel="stylesheet" href="home.css?v=2eddbaa00d">
+  <link rel="stylesheet" href="edition-presentation.css?v=b1dba8ff5b">
+  <script src="i18n.js?v=695e9da9da" defer></script>
   <script src="catalog.js?v=b629b019e2" defer></script>
   <script src="catalog-query.js?v=a4ec0cdde8" defer></script>
   <script src="edition.js?v=e14353736e" defer></script>
@@ -71,21 +73,37 @@
 
   <main id="main-content" tabindex="-1">
     <noscript><p class="small-note section" data-i18n="site.noScript">Catalog results and filters, language changes, favorites, the sample bag and Édition 05 interest need JavaScript. You can still read our story and visit the brand studio. Shopping is not enabled.</p></noscript>
-    <section class="hero hero-campaign" id="inicio" aria-labelledby="hero-title">
+    <section class="hero hero-campaign home-welcome" id="inicio" aria-labelledby="hero-title">
       <figure class="hero-media">
         <img src="assets/campaign-hero.jpg" alt="Two adult women with different body types wearing cherry-red and ivory sleepwear, conceptual Annys Le´ Rose editorial photography." data-i18n-alt="hero.imageAlt" fetchpriority="high" decoding="async" width="1536" height="1024">
         <figcaption class="hero-caption" data-i18n="hero.caption">Annys Le´ Rose · Campaign concept</figcaption>
       </figure>
       <div class="hero-copy">
+        <div class="hero-signature">
+          <svg class="hero-monogram" viewBox="0 0 96 96" fill="none" width="64" height="64" aria-hidden="true" focusable="false">
+            <g stroke="currentColor" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round">
+              <path pathLength="1" d="M18 76C27 53 35 33 48 16C58 33 66 54 77 76"/>
+              <path pathLength="1" d="M31 51C41 46 51 45 63 50"/>
+              <path pathLength="1" d="M47 37V76H65"/>
+              <path pathLength="1" d="M47 37C61 29 77 37 73 48C70 56 58 60 47 57"/>
+              <path pathLength="1" d="M56 58L77 76"/>
+            </g>
+          </svg>
+          <span data-i18n="hero.tagline">Your own kind of feminine.</span>
+        </div>
         <p class="eyebrow" data-i18n="hero.eyebrow">INTIMATES · FRAGRANCE · BEAUTY</p>
         <h1 id="hero-title" data-i18n-html="hero.title">Softness.<br><em>With character.</em></h1>
         <p data-i18n="hero.copy">Lace, scent and a touch of gloss. A feminine world, expressed your way.</p>
         <div class="hero-actions"><a class="button" href="#universos" data-i18n="hero.cta">Find your ritual</a><a class="hero-secondary underlined" href="catalog.html?category=all#coleccion" data-discover="all" data-i18n="hero.secondary">Explore the concepts</a></div>
       </div>
     </section>
-    <div class="brand-strip"><span data-i18n="strip.softness">Wear your mood</span><span data-i18n="strip.details">Make scent personal</span><span data-i18n="strip.confidence">Add your touch</span></div>
+    <nav class="ritual-navigation" aria-label="Choose your ritual" data-i18n-aria-label="universe.navigation">
+      <a href="catalog.html?category=intimates#coleccion" data-discover="intimates"><span class="ritual-number" aria-hidden="true">01</span><span class="ritual-name" data-i18n="universe.intimatesTitle">Intimates</span><span class="ritual-note" data-i18n="strip.softness">Wear your mood</span><span class="ritual-arrow" aria-hidden="true">↗</span></a>
+      <a href="catalog.html?category=fragrance#coleccion" data-discover="fragrance"><span class="ritual-number" aria-hidden="true">02</span><span class="ritual-name" data-i18n="universe.fragranceTitle">Fragrance</span><span class="ritual-note" data-i18n="strip.details">Make scent personal</span><span class="ritual-arrow" aria-hidden="true">↗</span></a>
+      <a href="catalog.html?category=beauty#coleccion" data-discover="beauty"><span class="ritual-number" aria-hidden="true">03</span><span class="ritual-name" data-i18n="universe.lipglossTitle">Lip gloss</span><span class="ritual-note" data-i18n="strip.confidence">Add your touch</span><span class="ritual-arrow" aria-hidden="true">↗</span></a>
+    </nav>
 
-    <section class="universes section" id="universos" aria-labelledby="universe-title">
+    <section class="universes home-universes section" id="universos" aria-labelledby="universe-title">
       <div class="section-heading"><div><p class="eyebrow" data-i18n="universe.eyebrow">EXPLORE YOUR WORLD</p><h2 id="universe-title" data-i18n-html="universe.title">Three rituals.<br><em>Entirely yours.</em></h2></div><p data-i18n="universe.copy">Lace, scent or a touch of gloss. Begin with what feels like you.</p></div>
       <div class="universe-grid">
         <a class="universe-card" href="catalog.html?category=intimates#coleccion" data-discover="intimates">
@@ -113,7 +131,7 @@
       <div class="featured-actions"><a class="button" href="capsule.html" data-i18n="featured.cta">Meet the proposed capsule</a><a class="text-button" href="catalog.html" data-i18n="hero.secondary">Explore the concepts</a></div>
     </section>
 
-    <section class="edition edition-feature section" id="edicion" aria-labelledby="edition-title">
+    <section class="edition edition-feature edition-showcase section" id="edicion" aria-labelledby="edition-title">
       <figure class="edition-media"><img src="assets/edition-coffret.jpg" alt="Conceptual cherry red ALR Édition 05 coffret with fragrance and lip gloss" data-i18n-alt="edition.imageAlt" loading="lazy" decoding="async" width="1024" height="1280"><figcaption data-i18n="edition.imageCaption">Scent. Gloss. A shared ritual.</figcaption></figure>
       <div class="edition-copy">
         <p class="eyebrow" data-i18n="edition.eyebrow">THE ANNUAL ANNYS LE´ ROSE RITUAL</p>
