@@ -289,6 +289,7 @@
     'strip.details':['Haz tuyo el perfume','Make scent personal'],
     'strip.confidence':['Añade tu toque','Add your touch'],
     'universe.eyebrow':['EXPLORA TU UNIVERSO','EXPLORE YOUR WORLD'],
+    'universe.navigation':['Elige tu ritual','Choose your ritual'],
     'universe.title':['Tres rituales.<br><em>Muy tuyos.</em>','Three rituals.<br><em>Entirely yours.</em>'],
     'universe.copy':['Encaje, perfume o un toque de brillo. Empieza por lo que sientes tuyo.','Lace, scent or a touch of gloss. Begin with what feels like you.'],
     'universe.intimatesTitle':['Ropa íntima','Intimates'],

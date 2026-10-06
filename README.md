@@ -150,6 +150,12 @@ Las cinco entrevistas de `PROCESO.md` siguen pendientes. No existen ventas, pedi
 
 CSS y JavaScript llevan una versión de caché en el HTML; al modificarlos se debe renovar su parámetro `v`.
 
+### Firma visual de portada — 6 de octubre de 2026
+
+La portada incorpora el monograma ALR con un trazo de 850 ms, tres entradas directas a ropa íntima, perfumes y brillo de labios, tarjetas editoriales compactas en móvil y un capítulo Édition 05 sobre rojo cereza profundo. `home.css` y `edition-presentation.css` se cargan sólo en la portada. El contenido y los enlaces están disponibles desde el inicio; la animación es decorativa y se omite con movimiento reducido. Se reutilizan las fotografías conceptuales existentes.
+
+Validación: 87 regresiones de catálogo/bolsa e idioma, estructura de 20 páginas y navegación de 16 fichas. Se revisó la portada en navegador a 320, 390, 768 y 1280 píxeles, con contenido EN/ES, sin desbordamiento horizontal. Los tres enlaces abrieron sus categorías (9 conceptos de ropa, 3 de perfume y 4 de brillo). Se comprobó el foco marfil de Édition 05. Una curva decorativa causaba desplazamiento interno al regresar a la portada tras redimensionar; `overflow: clip` evita ese contenedor desplazable, y se repitió el recorrido 320→768 y el acceso por teclado. No se observaron errores ni advertencias de consola. Las reglas de movimiento reducido se revisaron en código; no se emuló esa preferencia en el navegador. Édition 05 conserva fechas pendientes y guardado local, sin notificaciones ni ventas.
+
 ### Identidad v1, cápsula y fichas — 4 de octubre de 2026
 
 La revisión de esta entrega pasa 61 regresiones de catálogo/bolsa y 15 de idioma. Se verifican las 20 páginas públicas, sus activos y anclas, 156 claves globales de traducción y las 16 fichas con metadatos específicos, contenido inicial legible y restricción anual. El estudio tiene 118 campos bilingües comprobados y la cápsula 59; estos conteos corresponden a campos de contenido, no a pruebas adicionales de comportamiento.

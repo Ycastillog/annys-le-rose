@@ -197,3 +197,9 @@ Verificación final: 61 regresiones de catálogo y bolsa, 15 de idioma, comproba
 La observación visual mostró que los controles desplazaban los productos hasta unos 827 píxeles desde el inicio en móvil de 390 píxeles. Se compactaron la introducción y las utilidades, se hicieron visibles las seis categorías y se redujo ese espacio hasta unos 508 píxeles. El panel de filtros tiene una acción para ver resultados; limpiar sus criterios mantiene la categoría y búsqueda. El orden aplicado se muestra y puede retirarse por separado.
 
 Pasar a una ficha y volver conserva los filtros, incluidos los favoritos locales; la talla elegida en vista rápida también viaja a la ficha. Los enlaces públicos para compartir productos siguen limpios. La entrega pasa 87 regresiones de comportamiento, además de estructura y navegación, con revisión en navegador entre 320 y 1280 píxeles. Esta comprobación técnica no sustituye las entrevistas ni las muestras físicas pendientes.
+
+### Atmósfera de portada y edición anual — 6 de octubre de 2026
+
+Se trabajó con tres agentes en la firma visual de portada, la presentación de Édition 05 y una revisión independiente de accesibilidad y movimiento. El monograma aparece mediante un trazo breve; los tres rituales tienen acceso directo al catálogo. La edición anual usa un fondo cereza y mantiene explícitos sus cinco días propuestos, fechas por anunciar y guardado exclusivo en este navegador. No se añadieron imágenes ni productos nuevos.
+
+La revisión en móvil y tableta detectó y corrigió un desplazamiento interno provocado por la curva decorativa de portada. Se comprobaron navegación, idiomas, foco y composición entre 320 y 1280 píxeles, junto con 87 regresiones de comportamiento y las 20 páginas. Los detalles y límites de esta verificación figuran en `README.md`. Las entrevistas y validación física de productos siguen pendientes.
